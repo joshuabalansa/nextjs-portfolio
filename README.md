@@ -1,1 +1,1 @@
-Next JS
+NextJS + Tailwind
