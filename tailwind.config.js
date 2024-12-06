@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        burtons: "burtons",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
