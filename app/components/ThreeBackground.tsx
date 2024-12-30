@@ -38,7 +38,7 @@ export default function PortfolioObjectWithIcons() {
         textureLoader.load("/icons/go.png"),
         textureLoader.load("/icons/linux.png"),
         textureLoader.load("/icons/php.png"),
-        textureLoader.load("/icons/javascript.png"), 
+        textureLoader.load("/icons/javascript.png"),
       ];
 
       // Cube Geometry
