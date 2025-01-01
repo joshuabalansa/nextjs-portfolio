@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
-
 import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const MainSection = ({ name, title, description }) => {
   const socialLinks = [
@@ -15,11 +15,35 @@ const MainSection = ({ name, title, description }) => {
     { href: "mailto:jbalansa143@gmail.com", Icon: FaEnvelope },
   ];
 
+
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1 },
+    },
+  };
+
+  const socialVariants = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 1, delay: 0.3 },
+    },
+  };
+
   return (
-    <section className="min-h-screen">
+    <motion.section
+      className="min-h-screen"
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <nav className="py-10 mb-12 flex justify-between">
         <h1 className="text-xl font-bold dark:text-white">
-          {/* <Link href="#">{ name }</Link> */}
+          <Link href="#">{ name }</Link>
         </h1>
         <ul className="flex items-center">
           <li>
@@ -34,24 +58,52 @@ const MainSection = ({ name, title, description }) => {
       </nav>
 
       <div className="text-center p-10">
-        <h2 className="text-5xl py-2 text-teal-600 font-bold md:text-6xl dark:text-teal-400">
+        <motion.h2
+          className="text-4xl py-2 text-teal-600 font-bold md:text-6xl dark:text-teal-400"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {name}
-        </h2>
-        <h3 className="text-2xl py-2 font-bold md:text-3xl dark:text-white">
+        </motion.h2>
+        <motion.h3
+          className="text-2xl py-2 font-bold md:text-3xl dark:text-white"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {title}
-        </h3>
-        <p className="text-medium py-9 leading-6 md:text-xl max-w-6xl mx-auto dark:text-gray-300">
+        </motion.h3>
+        <motion.p
+          className="text-medium py-9 leading-5 md:text-xl max-w-6xl mx-auto dark:text-gray-300"
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {description}
-        </p>
+        </motion.p>
       </div>
-      <div className="text-5xl flex justify-center gap-16 py-3 text-gray-600 dark:text-gray-300">
+
+      <motion.div
+        className="text-5xl flex justify-center gap-10 py-3 text-gray-600 dark:text-gray-300"
+        variants={socialVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {socialLinks.map(({ href, Icon }, index) => (
           <Link key={index} href={href}>
-            <Icon className="cursor-pointer hover:text-teal-500 dark:hover:text-teal-400" />
+            <motion.div
+              whileHover={{
+                scale: 1.2,  // Scale to 120% when hovered
+                transition: { duration: 0.3 },
+              }}
+            >
+              <Icon className="cursor-pointer hover:text-teal-500 dark:hover:text-teal-400" />
+            </motion.div>
           </Link>
         ))}
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 };
 

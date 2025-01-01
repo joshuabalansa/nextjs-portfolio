@@ -8,8 +8,8 @@ import web6 from "../../public/web6.png";
 
 const Projects = () => {
   return (
-    <section className="py-10 dark:bg-gray-900">
-    <h3 className="text-3xl py-1 mb-5 dark:text-white">Projects</h3>
+    <section className="py-10 dark:bg-gray-900 lg:mt-20">
+    <h3 className="text-3xl py-1 mb-5 dark:text-white font-bold">Projects</h3>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:flex-wrap lg:flex-row">
       {[web1, web2, web3, web4, web5, web6].map((web, index) => (
         <div

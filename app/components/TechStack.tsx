@@ -38,7 +38,7 @@ import {
     return (
       <section className="bg-white dark:bg-gray-800 py-10 px-10 rounded-md">
         <div>
-          <h3 className="text-3xl py-1 dark:text-white">{ title }</h3>
+          <h3 className="text-3xl py-1 dark:text-white font-bold">{ title }</h3>
           <p className="text-md py-2 leading-8 text-gray-800 dark:text-gray-300">
            { description }
           </p>
@@ -48,7 +48,7 @@ import {
             const { Icon, label, color } = item;
             return (
               <motion.div
-                className="flex items-center gap-4 mb-5 cursor-pointer"
+                className="flex items-center gap-4 mb-5 cursor-pointer mt-20"
                 key={label}
                 custom={index}
                 variants={itemVariants}
