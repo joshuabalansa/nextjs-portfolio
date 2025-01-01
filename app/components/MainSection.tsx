@@ -4,6 +4,7 @@ import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { motion } from "framer-motion";
 
+
 const MainSection = ({ name, title, description }) => {
   const socialLinks = [
     { href: "https://instagram.com/joo.schwa/", Icon: AiFillInstagram },
@@ -47,12 +48,13 @@ const MainSection = ({ name, title, description }) => {
         </h1>
         <ul className="flex items-center">
           <li>
-            <a
+          <Link
               className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md ml-8"
-              href="https://github.com/joshuabalansa"
+              href="/JoshuaBalansaResume.pdf"
+              target="_blank"
             >
-              Github
-            </a>
+              Resume
+            </Link>
           </li>
         </ul>
       </nav>
