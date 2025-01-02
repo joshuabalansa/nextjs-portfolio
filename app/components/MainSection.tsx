@@ -9,7 +9,7 @@ const MainSection = ({ name, title, description }) => {
   const [theme, setTheme] = useState("light");
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
+    const newTheme = theme === "light" ? "dark" : "dark";
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
     localStorage.setItem("theme", newTheme);
