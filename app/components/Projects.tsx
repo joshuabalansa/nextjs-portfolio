@@ -50,8 +50,8 @@ const Projects = () => {
             >
               <Image
                 src={web}
-                width={"100%"}
-                height={"100%"}
+                width={100}
+                height={100}
                 layout="responsive"
                 alt={`web${index + 1}`}
                 className="rounded-lg object-cover cursor-pointer"
