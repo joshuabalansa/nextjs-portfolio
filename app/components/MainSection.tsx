@@ -6,18 +6,17 @@ import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
 
 const MainSection = ({ name, title, description }) => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "dark";
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
     localStorage.setItem("theme", newTheme);
   };
 
-
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
+    const savedTheme = localStorage.getItem("theme") || "dark";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }, []);
@@ -59,22 +58,22 @@ const MainSection = ({ name, title, description }) => {
     >
       <nav className="py-10 mb-12 flex flex-col sm:flex-row items-center justify-between">
         <h1 className="text-xl font-bold dark:text-white text-center sm:text-left">
-        <button
-              className="text-3xl dark:text-gray-300 text-gray-800 cursor-pointer"
-              onClick={toggleTheme}
-              title="Toggle theme"
-            >
-              {theme === "dark" ? <BsSun /> : <BsMoon />}
-            </button>
+          <button
+            className="text-3xl dark:text-gray-300 text-gray-800 cursor-pointer"
+            onClick={toggleTheme}
+            title="Toggle theme"
+          >
+            {theme === "dark" ? <BsSun /> : <BsMoon />}
+          </button>
         </h1>
         <div className="flex items-center justify-between mt-5 sm:mt-0 gap-5">
-            <Link
-              className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md"
-              href="/JoshuaBalansaResume.pdf"
-              target="_blank"
-            >
-              Resume
-            </Link>
+          <Link
+            className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md"
+            href="/JoshuaBalansaResume.pdf"
+            target="_blank"
+          >
+            Resume
+          </Link>
         </div>
       </nav>
 
