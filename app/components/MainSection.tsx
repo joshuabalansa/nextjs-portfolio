@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
+import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
 
 const MainSection = ({ name, title, description }) => {
+  const [theme, setTheme] = useState("light");
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("theme", newTheme);
+  };
+
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+  }, []);
+
   const socialLinks = [
     { href: "https://instagram.com/joo.schwa/", Icon: AiFillInstagram },
     {
@@ -42,10 +59,15 @@ const MainSection = ({ name, title, description }) => {
     >
       <nav className="py-10 mb-12 flex flex-col sm:flex-row items-center justify-between">
         <h1 className="text-xl font-bold dark:text-white text-center sm:text-left">
-          <Link href="#">{name}</Link>
+        <button
+              className="text-3xl dark:text-gray-300 text-gray-800 cursor-pointer"
+              onClick={toggleTheme}
+              title="Toggle theme"
+            >
+              {theme === "dark" ? <BsSun /> : <BsMoon />}
+            </button>
         </h1>
-        <ul className="flex items-center mt-5 sm:mt-0">
-          <li>
+        <div className="flex items-center justify-between mt-5 sm:mt-0 gap-5">
             <Link
               className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md"
               href="/JoshuaBalansaResume.pdf"
@@ -53,8 +75,7 @@ const MainSection = ({ name, title, description }) => {
             >
               Resume
             </Link>
-          </li>
-        </ul>
+        </div>
       </nav>
 
       <div className="text-center p-5 md:p-10">

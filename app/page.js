@@ -1,6 +1,6 @@
 "use client";
 
-import { TechStack, Projects, MainSection, Footer } from './components';
+import { TechStack, Projects, MainSection, Footer } from "./components";
 
 export default function Home() {
   return (
@@ -9,15 +9,7 @@ export default function Home() {
         <MainSection
           name="Joshua Balansa"
           title="Full Stack Developer"
-          description="👋✨ Hello, World! I'm Joshua!  I'm a passionate software
-          developer with a  for all things tech-related. My journey in the
-          world of programming began when I discovered my curiosity for
-          solving problems through code. Since then, I've been on an
-          exciting quest to explore the vast realms of software development.
-           Continuous learning is essential in the ever-evolving tech
-          landscape. 🌱📚 Presently, I'm diving deep into Php and Laravel
-          frameworks 🐘⚡ and React  ⚛️🌟 to broaden my skillset and
-          tackle more exciting challenges. 💪🎯"
+          description="👋✨ Hello, World! I'm Joshua!  a passionate software developer 💻 with a strong focus on continuous learning.📚 Currently, I’m deepening my expertise in PHP 🐘, Laravel ⚡ and React ⚛️ to tackle exciting challenges and expand my skills in software development."
         />
         <TechStack
           title="Tech Stack"
