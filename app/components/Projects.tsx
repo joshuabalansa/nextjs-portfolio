@@ -27,12 +27,12 @@ const Projects = () => {
   return (
     <section className="py-10 dark:bg-gray-900 lg:mt-20">
       <motion.h3
-        className="text-3xl py-1 mb-5 dark:text-white font-bold"
+        className="text-3xl py-1 dark:text-white font-bold text-center mb-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        Projects
+       Explore Projects
       </motion.h3>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:flex-wrap lg:flex-row">
         {[web1, web2, web3, web4, web5].map((web, index) => (
