@@ -15,18 +15,13 @@ export default function Home() {
           solving problems through code. Since then, I've been on an
           exciting quest to explore the vast realms of software development.
            Continuous learning is essential in the ever-evolving tech
-          landscape. 🌱📚 Presently, I'm diving deep into PHP Laravel
-          frameworks 🐘⚡ and React Next.js ⚛️🌟 to broaden my skillset and
+          landscape. 🌱📚 Presently, I'm diving deep into Php and Laravel
+          frameworks 🐘⚡ and React  ⚛️🌟 to broaden my skillset and
           tackle more exciting challenges. 💪🎯"
         />
         <TechStack
           title="Tech Stack"
-          description=" As a Full Stack Developer, I specialize in creating dynamic, robust, and user-friendly applications using modern technologies.
-            My expertise lies in leveraging PHP and Laravel for building scalable backend solutions, React and Next.js for seamless
-            frontend experiences, and Tailwind CSS for crafting responsive and visually appealing designs.
-            I also have experience working with Linux environments, MongoDB, and MySQL for managing data efficiently,
-            and JavaScript to tie everything together with functionality and interactivity.
-            My passion for continuous learning drives me to explore and integrate new tools and frameworks into my workflow."
+          description=" As a Full Stack Developer, I specialize in creating dynamic, robust, and user-friendly applications using modern technologies."
         />
         <Projects />
       </main>

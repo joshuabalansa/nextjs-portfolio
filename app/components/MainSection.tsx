@@ -4,7 +4,6 @@ import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-
 const MainSection = ({ name, title, description }) => {
   const socialLinks = [
     { href: "https://instagram.com/joo.schwa/", Icon: AiFillInstagram },
@@ -15,7 +14,6 @@ const MainSection = ({ name, title, description }) => {
     { href: "https://github.com/joshuabalansa", Icon: AiFillGithub },
     { href: "mailto:jbalansa143@gmail.com", Icon: FaEnvelope },
   ];
-
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -37,19 +35,19 @@ const MainSection = ({ name, title, description }) => {
 
   return (
     <motion.section
-      className="min-h-screen"
+      className="min-h-screen px-5 sm:px-10 md:px-20 lg:px-40"
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
     >
-      <nav className="py-10 mb-12 flex justify-between">
-        <h1 className="text-xl font-bold dark:text-white">
-          <Link href="#">{ name }</Link>
+      <nav className="py-10 mb-12 flex flex-col sm:flex-row items-center justify-between">
+        <h1 className="text-xl font-bold dark:text-white text-center sm:text-left">
+          <Link href="#">{name}</Link>
         </h1>
-        <ul className="flex items-center">
+        <ul className="flex items-center mt-5 sm:mt-0">
           <li>
-          <Link
-              className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md ml-8"
+            <Link
+              className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md"
               href="/JoshuaBalansaResume.pdf"
               target="_blank"
             >
@@ -59,9 +57,9 @@ const MainSection = ({ name, title, description }) => {
         </ul>
       </nav>
 
-      <div className="text-center p-10">
+      <div className="text-center p-5 md:p-10">
         <motion.h2
-          className="text-4xl py-2 text-teal-600 font-bold md:text-6xl dark:text-teal-400"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 text-teal-600 font-bold dark:text-teal-400"
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
@@ -69,7 +67,7 @@ const MainSection = ({ name, title, description }) => {
           {name}
         </motion.h2>
         <motion.h3
-          className="text-2xl py-2 font-bold md:text-3xl dark:text-white"
+          className="text-xl sm:text-2xl md:text-3xl py-2 font-bold dark:text-white"
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
@@ -77,7 +75,7 @@ const MainSection = ({ name, title, description }) => {
           {title}
         </motion.h3>
         <motion.p
-          className="text-medium py-9 leading-5 md:text-xl max-w-6xl mx-auto dark:text-gray-300"
+          className="text-sm sm:text-base md:text-lg py-6 leading-6 md:leading-8 max-w-4xl mx-auto dark:text-gray-300"
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
@@ -87,7 +85,7 @@ const MainSection = ({ name, title, description }) => {
       </div>
 
       <motion.div
-        className="text-5xl flex justify-center gap-10 py-3 text-gray-600 dark:text-gray-300"
+        className="text-4xl sm:text-5xl flex justify-center gap-5 sm:gap-10 py-5 text-gray-600 dark:text-gray-300"
         variants={socialVariants}
         initial="hidden"
         animate="visible"
@@ -96,7 +94,7 @@ const MainSection = ({ name, title, description }) => {
           <Link key={index} href={href}>
             <motion.div
               whileHover={{
-                scale: 1.2,  // Scale to 120% when hovered
+                scale: 1.2,
                 transition: { duration: 0.3 },
               }}
             >
