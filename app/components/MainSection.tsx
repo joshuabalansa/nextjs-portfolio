@@ -4,6 +4,7 @@ import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
+import Hello from './Hello'
 
 const MainSection = ({ name, title, description }) => {
   const [theme, setTheme] = useState("dark");
@@ -78,30 +79,23 @@ const MainSection = ({ name, title, description }) => {
       </nav>
 
       <div className="text-center p-5 md:p-10">
-        <motion.h2
+        {/* <motion.h2
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 text-teal-600 font-bold dark:text-teal-400"
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
         >
           {name}
-        </motion.h2>
-        <motion.h3
-          className="text-xl sm:text-2xl md:text-3xl py-2 font-bold dark:text-white"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {title}
-        </motion.h3>
-        <motion.p
+        </motion.h2> */}
+        <Hello />
+        {/* <motion.p
           className="text-sm sm:text-base md:text-lg py-6 leading-6 md:leading-8 max-w-4xl mx-auto dark:text-gray-300"
           variants={sectionVariants}
           initial="hidden"
           animate="visible"
         >
           {description}
-        </motion.p>
+        </motion.p> */}
       </div>
 
       <motion.div
