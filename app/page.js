@@ -11,7 +11,7 @@ export default function Home() {
         <MainSection
           name="Joshua Balansa"
           title="Full Stack Developer"
-          description="👋✨ Hello, World! I'm Joshua!  a passionate software developer 💻 with a strong focus on continuous learning.📚 Currently, I’m deepening my expertise in PHP 🐘, Laravel ⚡ and React ⚛️ to tackle exciting challenges and expand my skills in software development."
+          description="As a developer with a passion for solving complex problems 💡, I specialize in building scalable and innovative solutions ⚙️. I am always seeking new opportunities to apply my skills 💻, contribute to impactful projects 🌍, and expand my expertise in modern web technologies 🌐"
         />
         <TechStack
           title="Tech Stack"
