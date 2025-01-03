@@ -4,7 +4,6 @@ import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
-import Hello from './Hello'
 
 const MainSection = ({ name, title, description }) => {
   const [theme, setTheme] = useState("dark");
@@ -79,7 +78,7 @@ const MainSection = ({ name, title, description }) => {
       </nav>
 
       <div className="text-center p-5 md:p-10">
-          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!</span> I'm Joshua!</h1>
+          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!&quot;</span> I&apos;m Joshua!</h1>
           <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Full Stack Developer</h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">A passionate software developer 💻 with a strong focus on continuous learning.📚 Currently, I’m deepening my expertise in PHP 🐘, Laravel ⚡ and React ⚛️ to tackle exciting challenges and expand my skills in software development.</p>
       </div>
