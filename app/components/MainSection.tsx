@@ -79,23 +79,9 @@ const MainSection = ({ name, title, description }) => {
       </nav>
 
       <div className="text-center p-5 md:p-10">
-        {/* <motion.h2
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 text-teal-600 font-bold dark:text-teal-400"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {name}
-        </motion.h2> */}
-        <Hello />
-        {/* <motion.p
-          className="text-sm sm:text-base md:text-lg py-6 leading-6 md:leading-8 max-w-4xl mx-auto dark:text-gray-300"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {description}
-        </motion.p> */}
+          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!</span> I'm Joshua!</h1>
+          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Full Stack Developer</h1>
+          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">A passionate software developer 💻 with a strong focus on continuous learning.📚 Currently, I’m deepening my expertise in PHP 🐘, Laravel ⚡ and React ⚛️ to tackle exciting challenges and expand my skills in software development.</p>
       </div>
 
       <motion.div
