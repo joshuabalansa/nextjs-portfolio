@@ -56,7 +56,7 @@ const TechStack = ({ title, description }) => {
   return (
     <motion.section
       ref={ref}
-      className="bg-white dark:bg-gray-800 py-10 px-10 rounded-md flex flex-col items-center"
+      className="bg-white dark:bg-gray-800 py-10 px-10 rounded-md flex flex-col items-center mb-10"
       initial="hidden"
       animate={controls}
       variants={containerVariants}
@@ -65,7 +65,7 @@ const TechStack = ({ title, description }) => {
         <h3 className="text-3xl py-1 dark:text-white font-bold text-center">
           {title}
         </h3>
-        <p className="text-md py-2 leading-8 text-gray-800 dark:text-gray-300 md:text-center sm:text-center">
+        <p className="text-md py-2 leading-8 text-gray-800 dark:text-gray-300 text-center">
           {description}
         </p>
       </div>
