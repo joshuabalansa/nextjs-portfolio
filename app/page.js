@@ -6,7 +6,7 @@ import { TechStack, Projects, MainSection, Footer } from "./components";
 export default function Home() {
   return (
     <div>
-      <main className="bg-white px-10 md:px-20 lg:px-40 dark:bg-gray-900 dark:text-white">
+      <main className="bg-white md:px-20 lg:px-40 dark:bg-gray-900 dark:text-white">
 
         <MainSection
           name="Joshua Balansa"

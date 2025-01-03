@@ -59,7 +59,7 @@ const MainSection = ({ name, title, description }) => {
       <nav className="py-10 mb-12 flex flex-col sm:flex-row items-center justify-between">
         <h1 className="text-xl font-bold dark:text-white text-center sm:text-left">
           <button
-            className="text-3xl dark:text-gray-300 text-gray-800 cursor-pointer"
+            className="text-3xl dark:text-gray-300 text-gray-800 cursor-pointer hover:scale-125 transition-all"
             onClick={toggleTheme}
             title="Toggle theme"
           >
@@ -68,7 +68,7 @@ const MainSection = ({ name, title, description }) => {
         </h1>
         <div className="flex items-center justify-between mt-5 sm:mt-0 gap-5">
           <Link
-            className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md"
+            className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md hover:scale-110 transition-all"
             href="/JoshuaBalansaResume.pdf"
             target="_blank"
           >
