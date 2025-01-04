@@ -6,7 +6,7 @@ import web2 from "../../public/web2.jpg";
 import web3 from "../../public/web3.png";
 import web4 from "../../public/web4.png";
 import web5 from "../../public/web5.png";
-// import web6 from "../../public/web6.png";
+import Link from "next/link";
 
 const Projects = () => {
   const [activeIndex, setActiveIndex] = useState(null);
@@ -19,57 +19,84 @@ const Projects = () => {
     "Tourism Landing Page",
   ];
 
-  const handleClick = (index) => {
+  const techStacks = [
+    "Laravel, JavaScript, Bootstrap",
+    "Laravel, JavaScript, Bootstrap",
+    "PHP, JavaScript, Bootstrap",
+    "Laravel, JavaScript, Bootstrap",
+    "HTML, CSS, JavaScript",
+  ];
 
+  const githubLinks = [
+    "#",
+    "#",
+    "https://github.com/joshuabalansa/healthcare-information-system.git",
+    "https://github.com/joshuabalansa/tps-auth.git",
+    "https://github.com/joshuabalansa/tourism.git"
+  ];
+
+  const handleClick = (index) => {
     setActiveIndex(index === activeIndex ? null : index);
   };
 
   return (
-    <section className="py-10 p-5 dark:bg-gray-900 mt-20">
+    <section className="py-10 p-5 mt-20 dark:bg-gray-900">
       <motion.h3
-        className="text-3xl py-1 dark:text-white font-bold text-center mb-10"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="text-3xl py-1 text-black dark:text-white font-bold text-center mb-10"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
+        viewport={{ once: true, amount: 0.5 }}
       >
-       Explore Projects
+        Explore Projects
       </motion.h3>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:flex-wrap lg:flex-row">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {[web1, web2, web3, web4, web5].map((web, index) => (
-          <div
+          <motion.div
             key={index}
-            className="transition-all duration-300 group"
+            className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer"
             onClick={() => handleClick(index)}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           >
-            <motion.div
-              className="relative rounded-lg overflow-hidden transform hover:shadow-lg"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
-            >
+            {/* Image Container */}
+            <div className="relative h-48 overflow-hidden">
               <Image
                 src={web}
-                width={100}
-                height={100}
-                layout="responsive"
+                width={400}
+                height={320}
+                layout="intrinsic"
                 alt={`web${index + 1}`}
-                className="rounded-lg object-cover cursor-pointer"
+                className="w-full h-full object-cover"
               />
-              <motion.div
-                className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center ${
-                  activeIndex === index ? "opacity-100" : "opacity-0"
-                } transition-opacity duration-300`}
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <p className="text-white text-lg font-semibold">
-                  {descriptions[index]}
-                </p>
-              </motion.div>
-            </motion.div>
-          </div>
+
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                {activeIndex === index && (
+                  <div className="text-white">{descriptions[index]}</div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6">
+              <h3 className="text-xl font-medium mb-2 text-black dark:text-white">
+                {descriptions[index]}
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
+                Tech Stack: {techStacks[index]}
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt
+                fugit vitae quod fugiat.
+              </p>
+              {githubLinks[index] !== "#" ? (
+                <Link className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium" href={githubLinks[index]}>
+                    View on Github
+                </Link>
+              ) : (
+                <span className="text-sm text-gray-500 dark:text-gray-400">Private Repository</span>
+              )}
+            </div>
+          </motion.div>
         ))}
       </div>
     </section>
