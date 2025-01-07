@@ -19,6 +19,14 @@ const Projects = () => {
     "Tourism Landing Page",
   ];
 
+  const details = [
+    "PlumbersStock is an e-commerce site that services customers around the world. ",
+    "Adams & Co. has been designing their own line and wholesaling their products for more than 8 years.",
+    "Healthcare Management System is a web-based application that provides a comprehensive solution for managing patient records, appointments, and billing. ",
+    "Order Management System with Analytics is a web-based application that provides a comprehensive solution for managing orders, inventory, and shipping.",
+    "Tourism Landing Page is a web-based application that provides a comprehensive solution for promoting tourism and attracting visitors to a destination. ",
+  ];
+
   const techStacks = [
     "Laravel, JavaScript, Bootstrap",
     "Laravel, JavaScript, Bootstrap",
@@ -42,7 +50,7 @@ const Projects = () => {
   return (
     <section className="py-10 p-5 mt-20 dark:bg-gray-900">
       <motion.h3
-        className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center mb-20"
+        className="mb-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -85,8 +93,7 @@ const Projects = () => {
                 Tech Stack: {techStacks[index]}
               </p>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt
-                fugit vitae quod fugiat.
+              {details[index]}
               </p>
               {githubLinks[index] !== "#" ? (
                 <Link className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium" href={githubLinks[index]}>

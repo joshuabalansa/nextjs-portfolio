@@ -73,13 +73,10 @@ const MainSection = ({ name, title, description }) => {
             target="_blank"
             className="relative inline-block px-6 py-3 font-medium group"
           >
-            {/* First background layer with hover effect */}
             <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-gradient-to-r to-emerald-600 from-sky-400 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
 
-            {/* Second background layer with border and color change on hover */}
             <span className="absolute inset-0 w-full h-full bg-white border-2 border-black group-hover:bg-gradient-to-r from-cyan-500 to-teal-500"></span>
 
-            {/* Button content with text color change on hover */}
             <span className="relative text-black group-hover:text-white flex justify-center items-center gap-1">
               <MdCall />
               <span>Schedule a Call</span>
