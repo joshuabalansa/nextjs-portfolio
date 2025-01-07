@@ -4,6 +4,7 @@ import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
+import { MdCall } from "react-icons/md";
 
 const MainSection = ({ name, title, description }) => {
   const [theme, setTheme] = useState("dark");
@@ -68,11 +69,11 @@ const MainSection = ({ name, title, description }) => {
         </h1>
         <div className="flex items-center justify-between mt-5 sm:mt-0 gap-5">
           <Link
-            className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md hover:scale-110 transition-all"
-            href="/JoshuaBalansaResume.pdf"
+            className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md hover:scale-110 transition-all flex justify-center items-center gap-1"
+            href="https://calendly.com/jbalansa143"
             target="_blank"
           >
-            Resume
+            <MdCall /><span>Schedule a Call</span>
           </Link>
         </div>
       </nav>
