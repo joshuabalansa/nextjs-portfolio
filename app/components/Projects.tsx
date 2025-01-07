@@ -48,7 +48,7 @@ const Projects = () => {
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.5 }}
       >
-        Explore Projects
+        Projects
       </motion.h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {[web1, web2, web3, web4, web5].map((web, index) => (
