@@ -5,9 +5,11 @@ import { FaEnvelope } from "react-icons/fa";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
 import { MdCall } from "react-icons/md";
+import { BsFillArrowDownCircleFill } from "react-icons/bs"; // Import Scroll Down Icon
 
 const MainSection = ({ name, title, description }) => {
   const [theme, setTheme] = useState("dark");
+  const [isAtTop, setIsAtTop] = useState(true); // State to track if the page is at the top
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -20,6 +22,20 @@ const MainSection = ({ name, title, description }) => {
     const savedTheme = localStorage.getItem("theme") || "dark";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
+
+    const handleScroll = () => {
+      if (window.scrollY === 0) {
+        setIsAtTop(true);
+      } else {
+        setIsAtTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const socialLinks = [
@@ -52,7 +68,7 @@ const MainSection = ({ name, title, description }) => {
 
   return (
     <motion.section
-      className="min-h-screen px-5 sm:px-10 md:px-20 lg:px-40"
+      className="min-h-screen px-5 sm:px-10 md:px-20 lg:px-40 relative"
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
@@ -86,9 +102,11 @@ const MainSection = ({ name, title, description }) => {
       </nav>
 
       <div className="text-center p-5 md:p-10">
-          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!</span> I&apos;m Joshua!</h1>
-          <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Full Stack Developer</h1>
-          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.</p>
+        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!</span> I&apos;m Joshua!
+        </h1>
+        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Full Stack Developer</h1>
+        <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.</p>
       </div>
 
       <motion.div
@@ -110,6 +128,23 @@ const MainSection = ({ name, title, description }) => {
           </Link>
         ))}
       </motion.div>
+
+      {isAtTop && (
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-gray-600 dark:text-gray-300">
+          <motion.div
+            animate={{
+              y: [0, 10, 0],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <BsFillArrowDownCircleFill className="cursor-pointer text-4xl" />
+          </motion.div>
+        </div>
+      )}
     </motion.section>
   );
 };
