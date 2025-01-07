@@ -1,13 +1,13 @@
 "use client";
 
 import { TechStack, Projects, MainSection, Footer } from "./components";
-
+import CursorLight from "./components/CursorLight";
 
 export default function Home() {
   return (
     <div>
+      <CursorLight />
       <main className="bg-white md:px-20 lg:px-40 dark:bg-gray-900 dark:text-white">
-
         <MainSection
           name="Joshua Balansa"
           title="Full Stack Developer"

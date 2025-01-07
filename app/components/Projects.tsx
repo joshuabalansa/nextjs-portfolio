@@ -42,7 +42,7 @@ const Projects = () => {
   return (
     <section className="py-10 p-5 mt-20 dark:bg-gray-900">
       <motion.h3
-        className="text-3xl py-1 text-black dark:text-white font-bold text-center mb-10"
+        className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center mb-20"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -60,15 +60,15 @@ const Projects = () => {
             transition={{ duration: 0.3 }}
           >
             {/* Image Container */}
-            <div className="relative h-48 overflow-hidden">
-              <Image
+            <div className="relative overflow-hidden">
+              {/* <Image
                 src={web}
                 width={400}
                 height={320}
                 layout="intrinsic"
                 alt={`web${index + 1}`}
                 className="w-full h-full object-cover"
-              />
+              /> */}
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 {activeIndex === index && (
