@@ -1,7 +1,4 @@
-import { SiNextdotjs } from "react-icons/si";
-import { RiTailwindCssFill } from "react-icons/ri";
 import { FaHeart } from "react-icons/fa";
-import Link from "next/link";
 
 const Footer = () => {
   return (
