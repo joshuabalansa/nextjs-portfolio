@@ -23,16 +23,18 @@ const MainSection = ({ name, title, description }) => {
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
 
+    // Handle scroll event to show/hide the scroll-down indicator
     const handleScroll = () => {
       if (window.scrollY === 0) {
-        setIsAtTop(true);
+        setIsAtTop(true); // Show indicator when at top of the page
       } else {
-        setIsAtTop(false);
+        setIsAtTop(false); // Hide indicator when scrolled down
       }
     };
 
     window.addEventListener("scroll", handleScroll);
 
+    // Cleanup event listener
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -130,7 +132,7 @@ const MainSection = ({ name, title, description }) => {
       </motion.div>
 
       {isAtTop && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-gray-600 dark:text-gray-300">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-gray-600 dark:text-gray-300 sm:text-3xl md:text-4xl">
           <motion.div
             animate={{
               y: [0, 10, 0],
@@ -141,7 +143,7 @@ const MainSection = ({ name, title, description }) => {
               ease: "easeInOut",
             }}
           >
-            <BsFillArrowDownCircleFill className="cursor-pointer text-4xl" />
+            <BsFillArrowDownCircleFill className="cursor-pointer" />
           </motion.div>
         </div>
       )}
