@@ -14,7 +14,8 @@ const geistMono = localFont({
 
 export const metadata = {
   title: "Joshua Balansa",
-  description: "This is my portfolio",
+  description: "I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.",
+  robots: "index, follow",
 };
 
 export default function RootLayout({ children }) {
