@@ -97,7 +97,7 @@ const MainSection = ({ name, title, description }) => {
 
             <span className="relative text-black group-hover:text-white flex justify-center items-center gap-1">
               <MdCall />
-              <span>Schedule a Call</span>
+              <span>Let's Talk</span>
             </span>
           </Link>
         </div>
