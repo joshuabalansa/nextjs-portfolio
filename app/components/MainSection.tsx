@@ -5,11 +5,11 @@ import { FaEnvelope } from "react-icons/fa";
 import { BsSun, BsMoon } from "react-icons/bs";
 import { motion } from "framer-motion";
 import { MdCall } from "react-icons/md";
-import { BsFillArrowDownCircleFill } from "react-icons/bs"; // Import Scroll Down Icon
+import { BsFillArrowDownCircleFill } from "react-icons/bs";
 
 const MainSection = ({ name, title, description }) => {
-  const [theme, setTheme] = useState("dark");
-  const [isAtTop, setIsAtTop] = useState(true); // State to track if the page is at the top
+  const [theme, setTheme] = useState("light");
+  const [isAtTop, setIsAtTop] = useState(true);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -19,16 +19,16 @@ const MainSection = ({ name, title, description }) => {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
+    const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
 
-    // Handle scroll event to show/hide the scroll-down indicator
+
     const handleScroll = () => {
       if (window.scrollY === 0) {
-        setIsAtTop(true); // Show indicator when at top of the page
+        setIsAtTop(true);
       } else {
-        setIsAtTop(false); // Hide indicator when scrolled down
+        setIsAtTop(false);
       }
     };
 
@@ -105,9 +105,9 @@ const MainSection = ({ name, title, description }) => {
 
       <div className="text-center p-5 md:p-10">
         <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Hello, World!</span> I&apos;m Joshua!
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-6xl">Hello, World! </span><span>I&apos;m Joshua!</span>
         </h1>
-        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">Full Stack Developer</h1>
+        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">Full Stack Developer</h1>
         <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.</p>
       </div>
 

@@ -24,7 +24,7 @@ const TechStack = () => {
   return (
     <section className="grid place-content-center gap-2 px-8 py-24 dark:text-white light:text-black mb-72">
       <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center">Tech Stack</h1>
-      <p className="text-md py-2 leading-8 text-gray-800 dark:text-gray-300 mb-20">As a Full Stack Developer, I specialize in creating dynamic, robust, and user-friendly applications using modern technologies.</p>
+      <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14">As a Full Stack Developer, I specialize in creating dynamic, robust, and user-friendly applications using modern technologies.</p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
         {techStack.map((tech) => (
