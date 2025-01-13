@@ -49,7 +49,7 @@ const Projects = () => {
   };
 
   return (
-    <section className="py-10 p-5 mt-20 dark:bg-gray-900 mb-16">
+    <section className="py-10 p-5 mt-20 dark:bg-gray-900">
       <motion.h3
         className="mb-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center"
         initial={{ opacity: 0, y: 50 }}
