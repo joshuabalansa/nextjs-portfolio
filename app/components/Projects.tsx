@@ -12,35 +12,36 @@ const Projects = () => {
   const [activeIndex, setActiveIndex] = useState(null);
 
   const descriptions = [
-    "PlumbersStock",
-    "Adamsandco",
     "Healthcare Management System",
     "Order Management System with Analytics",
     "Tourism Landing Page",
+    "PlumbersStock",
+    "Adamsandco",
   ];
 
   const details = [
-    "PlumbersStock is an e-commerce site that services customers around the world. ",
-    "Adams & Co. has been designing their own line and wholesaling their products for more than 8 years.",
     "Healthcare Management System is a web-based application that provides a comprehensive solution for managing patient records, appointments, and billing. ",
     "Order Management System with Analytics is a web-based application that provides a comprehensive solution for managing orders, inventory, and shipping.",
     "Tourism Landing Page is a web-based application that provides a comprehensive solution for promoting tourism and attracting visitors to a destination. ",
+    "PlumbersStock is an e-commerce site that services customers around the world. ",
+    "Adams & Co. has been designing their own line and wholesaling their products for more than 8 years.",
   ];
 
   const techStacks = [
-    "Laravel, JavaScript, Bootstrap",
-    "Laravel, JavaScript, Bootstrap",
     "PHP, JavaScript, Bootstrap",
     "Laravel, JavaScript, Bootstrap",
     "HTML, CSS, JavaScript",
+    "Laravel, Livewire",
+    "Laravel",
   ];
 
   const githubLinks = [
-    "#",
-    "#",
     "https://github.com/joshuabalansa/healthcare-information-system.git",
     "https://github.com/joshuabalansa/tps-auth.git",
-    "https://github.com/joshuabalansa/tourism.git"
+    "https://github.com/joshuabalansa/tourism.git",
+    "#",
+    "#",
+
   ];
 
   const handleClick = (index) => {
@@ -96,7 +97,7 @@ const Projects = () => {
               {details[index]}
               </p>
               {githubLinks[index] !== "#" ? (
-                <Link className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium" href={githubLinks[index]}>
+                <Link target="_blank" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium" href={githubLinks[index]}>
                     View on Github
                 </Link>
               ) : (
