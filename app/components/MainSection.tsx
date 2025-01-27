@@ -70,7 +70,7 @@ const MainSection = ({ name, title, description }) => {
 
   return (
     <motion.section
-      className="min-h-screen px-5 sm:px-10 md:px-20 lg:px-40 relative"
+      className="min-h-screen px-2 sm:px-10 md:px-20 lg:px-40 relative"
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
