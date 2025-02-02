@@ -101,7 +101,7 @@ const Projects = () => {
                     View on Github
                 </Link>
               ) : (
-                <span className="text-sm text-gray-500 dark:text-gray-400">Private Repository</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Company Project</span>
               )}
             </div>
           </motion.div>
