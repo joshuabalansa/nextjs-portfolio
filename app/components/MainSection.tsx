@@ -105,8 +105,7 @@ const MainSection = ({ name, title, description }) => {
 
       <div className="text-center p-5 md:p-10">
         <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 lg:text-6xl text-5xl">Hello, World!</span>
-          <span className="block lg:inline text-4xl lg:text-6xl"> I&apos;m Joshua!</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-5xl md:text-8xl">Hello</span><span className=""> I&apos;m Josh {"\u{1F44B}"}</span>
         </h1>
         <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">Full Stack Developer</h1>
         <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.</p>

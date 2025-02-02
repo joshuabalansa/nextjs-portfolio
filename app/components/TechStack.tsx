@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaPhp, FaLinux, FaReact, FaLaravel, FaJs } from 'react-icons/fa';
-import { SiNextdotjs, SiTailwindcss, SiTypescript, SiFirebase, SiMongodb, SiMysql, SiRedis } from 'react-icons/si';
-
+import { SiNextdotjs, SiTailwindcss, SiTypescript, SiFirebase, SiMongodb, SiMysql, SiRedis, SiGnubash } from 'react-icons/si';
 const DURATION = 0.25;
 
 const techStack = [
@@ -12,7 +11,7 @@ const techStack = [
   { name: "Next.js", icon: <SiNextdotjs />, color: "" },
   { name: "Laravel", icon: <FaLaravel />, color: "#FF2D20" },
   { name: "JavaScript", icon: <FaJs />, color: "#F7DF1E" },
-  { name: "Tailwind CSS", icon: <SiTailwindcss />, color: "#38B2AC" },
+  { name: "Bash", icon: <SiGnubash />, color: "#4EAA25" },
   { name: "TypeScript", icon: <SiTypescript />, color: "#007ACC" },
   { name: "Firebase", icon: <SiFirebase />, color: "#FFCA28" },
   { name: "MongoDB", icon: <SiMongodb />, color: "#47A248" },
