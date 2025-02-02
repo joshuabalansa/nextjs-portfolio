@@ -108,7 +108,7 @@ const MainSection = ({ name, title, description }) => {
           <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-5xl md:text-8xl">Hello,</span><span> I&apos;m Josh! {"\u{1F44B}"}</span>
         </h1>
         <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">Full Stack Developer</h1>
-        <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.</p>
+        <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">Passionate about building innovative, high-performance applications. With expertise in modern web technologies, I create seamless and user-friendly web experiences. Let&apos;s build something amazing together.</p>
       </div>
 
       <motion.div
