@@ -13,7 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title: "Joshua Balansa",
+  title: "Josh - Full Stack Developer",
   description: "I specialize in building scalable and innovative solutions. I am always seeking new opportunities to apply my skills, contribute to impactful projects, and expand my expertise in modern web technologies.",
   robots: "index, follow",
 };
