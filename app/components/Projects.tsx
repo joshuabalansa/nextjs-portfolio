@@ -1,92 +1,90 @@
+
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useState } from "react";
-import web1 from "../../public/web1.png";
-import web2 from "../../public/web2.jpg";
-import web3 from "../../public/web3.png";
-import web4 from "../../public/web4.png";
-import web5 from "../../public/web5.png";
 import Link from "next/link";
-import { MdOutlineTimeToLeave } from "react-icons/md";
+
+const projects = [
+  {
+    title: "Automated Daily Tech Blog Posts",
+    details: "An AI-powered app that automatically generates tech related blog posts.",
+    techStack: "Next JS, Google Gemini",
+    githubLink: "https://github.com/joshuabalansa/automated-blog-posting",
+  },
+  {
+    title: "Healthcare Management System",
+    details:
+      "A web-based application for managing patient records, appointments, and billing.",
+    techStack: "PHP, JavaScript, Bootstrap",
+    githubLink: "https://github.com/joshuabalansa/healthcare-information-system.git",
+  },
+  {
+    title: "Order Management System with Analytics",
+    details:
+      "A web-based system for managing orders, inventory, and shipping with analytics.",
+    techStack: "Laravel, JavaScript, Bootstrap",
+    githubLink: "https://github.com/joshuabalansa/tps-auth.git",
+  },
+  {
+    title: "Tourism Landing Page",
+    details:
+      "A web-based application for promoting tourism and attracting visitors.",
+    techStack: "HTML, CSS, JavaScript",
+    githubLink: "https://github.com/joshuabalansa/tourism.git",
+  },
+  {
+    title: "PlumbersStock",
+    details: "An e-commerce site for plumbers and their supplies.",
+    techStack: "Laravel, Livewire",
+    githubLink: "#",
+  },
+  {
+    title: "Adamsandco",
+    details: "A wholesaler and designer of custom products for over 8 years.",
+    techStack: "Laravel",
+    githubLink: "#",
+  },
+];
 
 const Projects = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
-
-  const title = [
-    "Healthcare Management System",
-    "Order Management System with Analytics",
-    "Tourism Landing Page",
-    "PlumbersStock",
-    "Adamsandco",
-  ];
-
-  const details = [
-    "Healthcare Management System is a web-based application that provides a comprehensive solution for managing patient records, appointments, and billing. ",
-    "Order Management System with Analytics is a web-based application that provides a comprehensive solution for managing orders, inventory, and shipping.",
-    "Tourism Landing Page is a web-based application that provides a comprehensive solution for promoting tourism and attracting visitors to a destination. ",
-    "PlumbersStock is an e-commerce site that services customers around the world. ",
-    "Adams & Co. has been designing their own line and wholesaling their products for more than 8 years.",
-  ];
-
-  const techStacks = [
-    "PHP, JavaScript, Bootstrap",
-    "Laravel, JavaScript, Bootstrap",
-    "HTML, CSS, JavaScript",
-    "Laravel, Livewire",
-    "Laravel",
-  ];
-
-  const githubLinks = [
-    "https://github.com/joshuabalansa/healthcare-information-system.git",
-    "https://github.com/joshuabalansa/tps-auth.git",
-    "https://github.com/joshuabalansa/tourism.git",
-    "#",
-    "#",
-
-  ];
-
-  const handleClick = (index) => {
-    setActiveIndex(index === activeIndex ? null : index);
-  };
-
   return (
     <section className="py-10 p-3 mt-20 dark:bg-gray-900">
       <motion.h3
-        className="mb-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center"
+        className="mb-20 text-4xl font-extrabold text-center text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true, amount: 0.5 }}
       >
-       Recent Projects
+        Recent Projects
       </motion.h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {[web1, web2, web3, web4, web5].map((web, index) => (
+        {projects.map((project, index) => (
           <motion.div
             key={index}
-            className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer"
-            onClick={() => handleClick(index)}
+            className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer p-6"
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="p-6">
-              <h3 className="text-sm font-medium mb-2 text-black dark:text-white">
-                {title[index]}
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
-                Tech Stack: {techStacks[index]}
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-              {details[index]}
-              </p>
-              {githubLinks[index] !== "#" ? (
-                <Link target="_blank" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium" href={githubLinks[index]}>
-                    View on Github
-                </Link>
-              ) : (
-                <span className="text-sm text-gray-500 dark:text-gray-400">Company Project</span>
-              )}
-            </div>
+            <h3 className="text-sm font-medium mb-2 text-black dark:text-white">
+              {project.title}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
+              Tech Stack: {project.techStack}
+            </p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              {project.details}
+            </p>
+            {project.githubLink !== "#" ? (
+              <Link
+                target="_blank"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium"
+                href={project.githubLink}
+              >
+                View on Github
+              </Link>
+            ) : (
+              <span className="text-sm text-gray-500 dark:text-gray-400">Company Project</span>
+            )}
           </motion.div>
         ))}
       </div>
