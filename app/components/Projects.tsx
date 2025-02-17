@@ -1,9 +1,14 @@
 
 import { motion } from "framer-motion";
-import { useState } from "react";
 import Link from "next/link";
 
 const projects = [
+  {
+    title: "Research Title Generator",
+    details: "A web-based application for generating research titles.",
+    techStack: "Next JS, Google Gemini",
+    githubLink: "https://github.com/joshuabalansa/Research-Title-Generator",
+  },
   {
     title: "Automated Daily Tech Blog Posts",
     details: "An AI-powered app that automatically generates tech related blog posts.",
