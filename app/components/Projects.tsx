@@ -35,19 +35,19 @@ const projects = [
       "A web-based application for promoting tourism and attracting visitors.",
     techStack: "HTML, CSS, JavaScript",
     githubLink: "https://github.com/joshuabalansa/tourism.git",
-  },
-  {
-    title: "PlumbersStock",
-    details: "An e-commerce site for plumbers and their supplies.",
-    techStack: "Laravel, Livewire",
-    githubLink: "#",
-  },
-  {
-    title: "Adamsandco",
-    details: "A wholesaler and designer of custom products for over 8 years.",
-    techStack: "Laravel",
-    githubLink: "#",
-  },
+  }
+  // {
+  //   title: "PlumbersStock",
+  //   details: "An e-commerce site for plumbers and their supplies.",
+  //   techStack: "Laravel, Livewire",
+  //   githubLink: "#",
+  // },
+  // {
+  //   title: "Adamsandco",
+  //   details: "A wholesaler and designer of custom products for over 8 years.",
+  //   techStack: "Laravel",
+  //   githubLink: "#",
+  // },
 ];
 
 const Projects = () => {
