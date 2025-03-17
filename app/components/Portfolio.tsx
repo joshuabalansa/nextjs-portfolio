@@ -209,7 +209,7 @@ const Portfolio = () => {
           </div>
         )}
 
-        <section className="px-4 sm:px-10 md:px-20 py-24 dark:bg-gray-900 rounded-lg">
+        <section className="py-24 dark:bg-gray-900 rounded-lg">
           <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white text-end sm:mr-20 mr-0">
             Tech Stack
           </h1>
