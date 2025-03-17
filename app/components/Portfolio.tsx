@@ -214,7 +214,7 @@ const Portfolio = () => {
             Tech Stack
           </h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-end sm:mr-20 mr-0">
-            I specialize in building dynamic, scalable, and user-friendly
+            I Build dynamic, scalable, and user-friendly
             applications with modern technologies.
           </p>
 
