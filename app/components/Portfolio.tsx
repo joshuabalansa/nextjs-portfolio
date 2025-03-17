@@ -161,7 +161,7 @@ const Portfolio = () => {
           </Link>
         </nav>
 
-        <div className="text-start p-5 md:p-20 bg-slate-50 dark:bg-gray-900 rounded-lg">
+        <div className="text-start p-5 md:p-20 bg-slate-100 dark:bg-gray-800 rounded-xl">
           <h1 className="mb-4 text-3xl font-extrabold md:text-5xl lg:text-6xl">
             <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-5xl md:text-8xl">
               Hello,
@@ -210,10 +210,10 @@ const Portfolio = () => {
         )}
 
         <section className="py-24 dark:bg-gray-900 rounded-lg">
-          <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-end text-center sm:mr-10 mr-0">
+          <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-center text-center sm:mr-10 mr-0">
             Tech Stack
           </h1>
-          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-center sm:text-end sm:mr-10 mr-0">
+          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-center sm:text-center sm:mr-10 mr-0">
             I Build dynamic, scalable, and user-friendly
             applications with modern technologies.
           </p>
