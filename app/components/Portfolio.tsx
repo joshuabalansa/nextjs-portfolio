@@ -210,10 +210,10 @@ const Portfolio = () => {
         )}
 
         <section className="py-24 dark:bg-gray-900 rounded-lg">
-          <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-end text-start sm:mr-20 mr-0">
+          <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-end text-center sm:mr-20 mr-0">
             Tech Stack
           </h1>
-          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-start sm:text-end sm:mr-20 mr-0">
+          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-center sm:text-end sm:mr-20 mr-0">
             I Build dynamic, scalable, and user-friendly
             applications with modern technologies.
           </p>
