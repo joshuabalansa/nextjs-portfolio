@@ -116,7 +116,24 @@ const Portfolio = () => {
       githubLink: "https://github.com/joshuabalansa/tourism.git",
       liveLink: "",
     },
+    {
+      title: "Pumbersstock Lite",
+      details:
+        "E-commerce pumbersstock products.",
+      techStack: "Next JS",
+      githubLink: "#",
+      liveLink: "",
+    },
+    {
+      title: "Talisay Water District",
+      details:
+        "Talisay Water District website.",
+      techStack: "Laravel, Bootstrap, JavaScript",
+      githubLink: "",
+      liveLink: "https://talisaywaterdistrict.gov.ph/",
+    },
   ];
+
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -260,47 +277,52 @@ const Portfolio = () => {
           drive growth and efficiency.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer p-6"
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.3 }}
-            >
-              <h3 className="text-sm font-medium mb-2 text-black dark:text-white">
-                {project.title}
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
-                Tech Stack: {project.techStack}
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                {project.details}
-              </p>
-              {project.githubLink !== "#" ? (
-                <Link
-                  target="_blank"
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium"
-                  href={project.githubLink}
-                >
-                  Github
-                </Link>
-              ) : (
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Company Project
-                </span>
-              )}
-              {" "}
-              {project.liveLink !== "" && (
-                <Link
-                  target="_blank"
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium"
-                  href={project.githubLink}
-                >
-                  | Live
-                </Link>
-              )}
-            </motion.div>
-          ))}
+        {projects.map((project, index) => (
+    <motion.div
+      key={index}
+      className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer p-6"
+      whileHover={{ scale: 1.03 }}
+      transition={{ duration: 0.3 }}
+    >
+      <h3 className="text-sm font-medium mb-2 text-black dark:text-white">
+        {project.title}
+      </h3>
+      <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
+        Tech Stack: {project.techStack}
+      </p>
+      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+        {project.details}
+      </p>
+      <div className="flex space-x-4">
+        {project.githubLink === "#" ? (
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Company Project
+          </span>
+        ) : project.githubLink ? (
+          <Link
+            target="_blank"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium"
+            href={project.githubLink}
+          >
+            Github
+          </Link>
+        ) : (
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Private Repository
+          </span>
+        )}
+        {project.liveLink && (
+          <Link
+            target="_blank"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-600 text-sm font-medium"
+            href={project.liveLink}
+          >
+            Live
+          </Link>
+        )}
+      </div>
+    </motion.div>
+  ))}
         </div>
       </section>
       <footer className="dark:bg-gray-900 light:bg-white dark:text-white light:text-black py-4 text-center p-10">
