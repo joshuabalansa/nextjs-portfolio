@@ -16,12 +16,11 @@ import { BsSun, BsMoon, BsFillArrowDownCircleFill } from "react-icons/bs";
 import { MdCall } from "react-icons/md";
 import {
   SiNextdotjs,
-  SiTailwindcss,
   SiTypescript,
   SiFirebase,
   SiMongodb,
   SiMysql,
-  SiRedis,
+  SiVuedotjs,
   SiGnubash,
 } from "react-icons/si";
 import { motion } from "framer-motion";
@@ -72,7 +71,7 @@ const Portfolio = () => {
     { name: "Firebase", icon: <SiFirebase />, color: "#FFCA28" },
     { name: "MongoDB", icon: <SiMongodb />, color: "#47A248" },
     { name: "MySQL", icon: <SiMysql />, color: "#4479A1" },
-    { name: "Redis", icon: <SiRedis />, color: "#DC382D" },
+    { name: "Vue.js", icon: <SiVuedotjs />, color: "#DC382D" },
   ];
 
   const projects = [
