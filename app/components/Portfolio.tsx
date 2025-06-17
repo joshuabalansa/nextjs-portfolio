@@ -116,9 +116,9 @@ const Portfolio = () => {
       liveLink: "",
     },
     {
-      title: "Pumbersstock Lite",
+      title: "Ecommerce",
       details:
-        "E-commerce pumbersstock products.",
+        "E-commerce.",
       techStack: "Next JS",
       githubLink: "#",
       liveLink: "",
