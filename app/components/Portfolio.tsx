@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AiFillInstagram, AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 import {
@@ -24,10 +24,31 @@ import {
   SiGnubash,
 } from "react-icons/si";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const Portfolio = () => {
   const [theme, setTheme] = useState("light");
   const [isAtTop, setIsAtTop] = useState(true);
+
+  // Refs for GSAP animations
+  const heroRef = useRef(null);
+  const heroTitleRef = useRef(null);
+  const heroSubtitleRef = useRef(null);
+  const heroDescriptionRef = useRef(null);
+  const socialLinksRef = useRef(null);
+  const socialIconsRef = useRef([]);
+  const techStackRef = useRef(null);
+  const techStackTitleRef = useRef(null);
+  const techStackItemsRef = useRef([]);
+  const projectsRef = useRef(null);
+  const projectsTitleRef = useRef(null);
+  const projectCardsRef = useRef([]);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -46,7 +67,216 @@ const Portfolio = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // GSAP Animations - SIMPLE & PROFESSIONAL
+    if (typeof window !== "undefined") {
+      // Hero section - Clean and Professional
+      const heroTimeline = gsap.timeline();
+
+      // Initial state for hero elements - Clean fade in
+      gsap.set([heroTitleRef.current, heroSubtitleRef.current, heroDescriptionRef.current], {
+        opacity: 0,
+        y: 30,
+      });
+
+      gsap.set(socialLinksRef.current, {
+        opacity: 1,
+        y: 0,
+      });
+
+      // Social icons - no GSAP animations
+
+      // Hero entrance animation - Professional sequence
+      heroTimeline
+        .to(heroTitleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        })
+        .to(heroSubtitleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        }, "-=0.4")
+        .to(heroDescriptionRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        }, "-=0.3")
+
+      // Tech Stack animations - Clean and Professional
+      ScrollTrigger.create({
+        trigger: techStackRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        onEnter: () => {
+          // Title with clean fade in
+          gsap.fromTo(techStackTitleRef.current,
+            {
+              opacity: 0,
+              y: 30
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power2.out"
+            }
+          );
+
+          // Tech items with subtle stagger
+          gsap.fromTo(techStackItemsRef.current,
+            {
+              opacity: 0,
+              y: 20
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.1,
+              delay: 0.2,
+            }
+          );
+        }
+      });
+
+      // Projects animations - Professional and Clean
+      ScrollTrigger.create({
+        trigger: projectsRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        onEnter: () => {
+          // Title with clean fade in
+          gsap.fromTo(projectsTitleRef.current,
+            {
+              opacity: 0,
+              y: 30
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power2.out"
+            }
+          );
+
+          // Project cards with subtle stagger
+          gsap.fromTo(projectCardsRef.current,
+            {
+              opacity: 0,
+              y: 40
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.15,
+              delay: 0.2,
+            }
+          );
+
+          // Professional hover effect for project cards
+          projectCardsRef.current.forEach((card, index) => {
+            if (card) {
+              card.addEventListener('mouseenter', () => {
+                gsap.to(card, {
+                  scale: 1.02,
+                  y: -5,
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                  duration: 0.3,
+                  ease: "power2.out"
+                });
+              });
+
+              card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                  scale: 1,
+                  y: 0,
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  duration: 0.3,
+                  ease: "power2.out"
+                });
+              });
+            }
+          });
+        }
+      });
+
+      // Simple Parallax Effect
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          gsap.to(heroRef.current, {
+            y: progress * 50,
+            ease: "none",
+          });
+        }
+      });
+
+      // Smooth scroll behavior
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Add smooth scrolling to the entire page
+      ScrollTrigger.config({
+        ignoreMobileResize: true,
+      });
+
+      // Social icons - no animations
+
+      // Professional hover effects for tech stack
+      techStackItemsRef.current.forEach((item, index) => {
+        if (item) {
+          item.addEventListener('mouseenter', () => {
+            gsap.to(item, {
+              scale: 1.15,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          });
+
+          item.addEventListener('mouseleave', () => {
+            gsap.to(item, {
+              scale: 1,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          });
+        }
+      });
+
+      // Professional text reveal animation
+      const heroTitleText = heroTitleRef.current?.querySelector('.text-transparent');
+      if (heroTitleText) {
+        gsap.fromTo(heroTitleText,
+          {
+            backgroundPosition: "200% center",
+            opacity: 0.7
+          },
+          {
+            backgroundPosition: "0% center",
+            opacity: 1,
+            duration: 1.5,
+            ease: "power2.out",
+            delay: 0.5
+          }
+        );
+      }
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   const socialLinks = [
@@ -75,6 +305,13 @@ const Portfolio = () => {
   ];
 
   const projects = [
+    {
+      title: "Task Management Dashboard with Deployment Tracking",
+      details: "A modern task management dashboard with deployment tracking, team management, and analytics.",
+      techStack: "React, TypeScript, Tailwind CSS",
+      githubLink: "https://github.com/joshuabalansa/taskflow",
+      liveLink: "",
+    },
     {
       title: "Research Title Generator",
       details: "A web-based application for generating research titles.",
@@ -148,6 +385,7 @@ const Portfolio = () => {
     <div className="min-h-screen dark:bg-gray-900 dark:text-white">
       {/* Main Section */}
       <motion.section
+        ref={heroRef}
         className="min-h-screen px-4 sm:px-10 md:px-20 lg:px-40 relative"
         variants={sectionVariants}
         initial="hidden"
@@ -178,55 +416,60 @@ const Portfolio = () => {
         </nav>
 
         <div className="text-start p-5 md:p-20 bg-slate-100 dark:bg-gray-800 rounded-xl">
-          <h1 className="mb-4 text-3xl font-extrabold md:text-5xl lg:text-6xl">
+          <h1 ref={heroTitleRef} className="mb-4 text-3xl font-extrabold md:text-5xl lg:text-6xl">
             <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 text-5xl md:text-8xl">
               Hello,
             </span>
             <span className="text-gray-800 dark:text-white"> I&apos;m Josh! {"\u{1F44B}"}</span>
           </h1>
-          <h1 className="mb-4 text-2xl font-extrabold md:text-4xl lg:text-5xl text-gray-800 dark:text-white">
+          <h1 ref={heroSubtitleRef} className="mb-4 text-2xl font-extrabold md:text-4xl lg:text-5xl text-gray-800 dark:text-white">
             Full Stack Developer
           </h1>
-          <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">
+          <p ref={heroDescriptionRef} className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mt-10">
             Need a professional website or a powerful web app? I design and
             develop custom web applications tailored to your business needs.
           </p>
 
-          <motion.div
+          <div
+            ref={socialLinksRef}
             className="text-4xl sm:text-5xl flex gap-1 sm:gap-10 py-5 text-gray-600 dark:text-gray-300"
-            variants={socialVariants}
-            initial="hidden"
-            animate="visible"
           >
             {socialLinks.map(({ href, Icon }, index) => (
               <Link key={index} href={href}>
-                <motion.div
-                  whileHover={{ scale: 1.2, transition: { duration: 0.3 } }}
+                <div
+                  ref={(el) => {
+                    if (el) socialIconsRef.current[index] = el;
+                  }}
                 >
                   <Icon className="cursor-pointer hover:text-teal-500 dark:hover:text-teal-400" />
-                </motion.div>
+                </div>
               </Link>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {isAtTop && (
           <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-gray-600 dark:text-gray-300 sm:text-3xl md:text-4xl">
             <motion.div
-              animate={{ y: [0, 10, 0] }}
+              animate={{
+                y: [0, 10, 0],
+                scale: [1, 1.1, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
               transition={{
-                duration: 1.5,
+                duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
+              className="cursor-pointer hover:text-teal-500 dark:hover:text-teal-400 transition-colors duration-300"
             >
-              <BsFillArrowDownCircleFill className="cursor-pointer" />
+              <BsFillArrowDownCircleFill />
             </motion.div>
           </div>
         )}
 
-        <section className="py-24 dark:bg-gray-900 rounded-lg">
-          <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-center text-center sm:mr-10 mr-0">
+        <section ref={techStackRef} className="py-24 dark:bg-gray-900 rounded-lg">
+          <h1 ref={techStackTitleRef} className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-800 md:text-5xl lg:text-6xl dark:text-white sm:text-center text-center sm:mr-10 mr-0">
             Tech Stack
           </h1>
           <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 mb-14 text-center sm:text-center sm:mr-10 mr-0">
@@ -236,9 +479,12 @@ const Portfolio = () => {
 
           {/* Tech Stack Section */}
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-12 gap-1">
-            {techStack.map((tech) => (
+            {techStack.map((tech, index) => (
               <motion.div
                 key={tech.name}
+                ref={(el) => {
+                  if (el) techStackItemsRef.current[index] = el;
+                }}
                 whileHover={{ scale: 1.1, color: tech.color }}
                 className="flex flex-col items-center"
                 transition={{ duration: 0.25 }}
@@ -258,8 +504,9 @@ const Portfolio = () => {
       </motion.section>
 
       {/* Projects Section */}
-      <section className="px-4 sm:px-10 md:px-20 lg:px-40 py-24 dark:bg-gray-900">
+      <section ref={projectsRef} className="px-4 sm:px-10 md:px-20 lg:px-40 py-24 dark:bg-gray-900">
         <motion.h3
+          ref={projectsTitleRef}
           className="mb-5 text-4xl font-extrabold text-start text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -279,6 +526,9 @@ const Portfolio = () => {
         {projects.map((project, index) => (
     <motion.div
       key={index}
+      ref={(el) => {
+        if (el) projectCardsRef.current[index] = el;
+      }}
       className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 group cursor-pointer p-6"
       whileHover={{ scale: 1.03 }}
       transition={{ duration: 0.3 }}
@@ -335,3 +585,4 @@ const Portfolio = () => {
 };
 
 export default Portfolio;
+
