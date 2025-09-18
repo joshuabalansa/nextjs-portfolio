@@ -690,14 +690,14 @@ const Portfolio = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <div className="aspect-square bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-8 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <FaUser className="text-8xl mb-4 opacity-80" />
-                  <h3 className="text-2xl font-bold">Joshua Balansa</h3>
-                  <p className="text-blue-100">Full Stack Developer</p>
-                </div>
+              <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                <img
+                  src="/img-1.jpeg"
+                  alt="Joshua Balansa"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center">
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <FaCode className="text-3xl text-white" />
               </div>
             </motion.div>
