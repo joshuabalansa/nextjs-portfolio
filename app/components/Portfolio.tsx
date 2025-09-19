@@ -153,14 +153,14 @@ const Portfolio = () => {
           ease: "power2.out",
         }, "-=0.4");
 
-      // Floating animation for hero elements
-      gsap.to(heroTitleRef.current, {
-        y: -10,
-        duration: 3,
-        ease: "power1.inOut",
-        yoyo: true,
-        repeat: -1,
-      });
+      // Floating animation for hero elements - REMOVED
+      // gsap.to(heroTitleRef.current, {
+      //   y: -10,
+      //   duration: 3,
+      //   ease: "power1.inOut",
+      //   yoyo: true,
+      //   repeat: -1,
+      // });
 
       // Tech Stack animations
       ScrollTrigger.create({
@@ -407,34 +407,10 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 dark:text-white overflow-x-hidden">
-      {/* Animated Background Elements */}
+      {/* Static Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -100, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, 100, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/20 rounded-full blur-3xl" />
       </div>
 
       {/* Navigation */}
@@ -514,7 +490,7 @@ const Portfolio = () => {
           >
             <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-4">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 bg-clip-text text-transparent">
-                Hello, I&apos;m Josh! 👋
+                Hi, I&apos;m Josh! 👋
               </span>
             </h1>
           </motion.div>
@@ -527,7 +503,7 @@ const Portfolio = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <h3 className="text-2xl md:text-4xl font-semibold text-gray-600 dark:text-gray-300 mb-4">
-              Full Stack Developer & Digital Innovator
+              Full Stack Developer
             </h3>
             <div className="flex items-center justify-center gap-4 text-lg text-gray-500 dark:text-gray-400">
               <span className="flex items-center gap-2">
@@ -604,20 +580,9 @@ const Portfolio = () => {
           </motion.div>
 
           {isAtTop && (
-            <motion.div
-              className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-              animate={{
-                y: [0, 10, 0],
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
               <BsFillArrowDownCircleFill className="text-4xl text-gray-400 dark:text-gray-500 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" />
-            </motion.div>
+            </div>
           )}
         </div>
       </motion.section>
@@ -929,7 +894,7 @@ const Portfolio = () => {
 
       {/* Footer */}
       <motion.footer
-        className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900/50 dark:bg-gray-800/50 backdrop-blur-sm border-t border-gray-200/20 dark:border-gray-700/20"
+        className="py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-800/50 backdrop-blur-sm border-t border-gray-200/20 dark:border-gray-700/20"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1 }}
