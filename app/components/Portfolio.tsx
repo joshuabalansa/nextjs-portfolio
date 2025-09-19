@@ -914,7 +914,7 @@ const Portfolio = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            © 2024 All rights reserved. Built with Next.js, TypeScript, and Tailwind CSS.
+            © 2024 Built with Next.js, TypeScript, and Tailwind CSS.
           </motion.p>
         </div>
       </motion.footer>
