@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { AiFillInstagram, AiFillLinkedin, AiFillGithub, AiOutlineArrowRight } from "react-icons/ai";
 import {
   FaEnvelope,
@@ -329,6 +330,20 @@ const Portfolio = () => {
   ];
 
   const projects = [
+    {
+      title: "E-Tinda Farmers Marketplace",
+      details: "A comprehensive web-based marketplace that connects local farmers directly with buyers, eliminating middlemen and creating an efficient agricultural supply chain.",
+      techStack: "Laravel 12, JavaScript, Bootstrap",
+      githubLink: "https://github.com/joshuabalansa/e-tinda-web-marketplace-",
+      liveLink: "",
+    },
+    {
+      title: "Kingdom Development Group Philippines Page",
+      details: "A stunning, modern landing page for Kingdom Development Group Philippines.",
+      techStack: "Next.js 14, Tailwind CSS, DaisyUI",
+      githubLink: "https://github.com/joshuabalansa/KDG",
+      liveLink: "",
+    },
     {
       title: "Task Management Dashboard with Deployment Tracking",
       details: "A modern task management dashboard with deployment tracking, team management, and analytics.",
@@ -918,6 +933,10 @@ const Portfolio = () => {
           </motion.p>
         </div>
       </motion.footer>
+
+      <Script id="chatbase-script" strategy="afterInteractive">
+        {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="${process.env.NEXT_PUBLIC_CHATBOT_ID}";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
+      </Script>
     </div>
   );
 };
