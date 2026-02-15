@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Script from "next/script";
 import { AiFillInstagram, AiFillLinkedin, AiFillGithub, AiOutlineArrowRight } from "react-icons/ai";
 import {
@@ -665,11 +666,12 @@ const Portfolio = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
-                <img
+              <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                <Image
                   src="/img-1.jpeg"
                   alt="Joshua Balansa"
-                  className="w-full h-full object-cover object-top"
+                  fill
+                  className="object-cover object-top"
                 />
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
