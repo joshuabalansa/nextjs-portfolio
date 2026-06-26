@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
@@ -36,6 +36,8 @@ import {
 const Portfolio = () => {
   const [theme, setTheme] = useState("light");
   const [activeSection, setActiveSection] = useState("home");
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -58,8 +60,9 @@ const Portfolio = () => {
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
 
     const handleScroll = () => {
+      const currentScrollY = window.scrollY;
       const sections = ['home', 'about', 'tech', 'projects', 'contact'];
-      const scrollPosition = window.scrollY + 100;
+      const scrollPosition = currentScrollY + 100;
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -71,6 +74,16 @@ const Portfolio = () => {
           }
         }
       }
+
+      if (currentScrollY <= 0) {
+        setIsNavVisible(true);
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 64) {
+        setIsNavVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        setIsNavVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -197,7 +210,11 @@ const Portfolio = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/20 dark:border-gray-700/20 transition-transform duration-300 ${
+          isNavVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-center h-16">
             <button
@@ -239,16 +256,17 @@ const Portfolio = () => {
           </div>
 
           <div className="mb-8">
-            <h3 className="text-2xl md:text-4xl font-semibold text-gray-600 dark:text-gray-300 mb-4">
-              Web Developer
-            </h3>
-            <div className="flex items-center justify-center gap-4 text-lg text-gray-500 dark:text-gray-400">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-lg text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-2">
+                <FaCode />
+                Web Developer
+              </span>
               <span className="flex items-center gap-2">
                 <MdLocationOn />
                 Philippines
               </span>
               <span className="flex items-center gap-2">
-                <FaCode />
+                <MdWork />
                 Available for Work
               </span>
             </div>
