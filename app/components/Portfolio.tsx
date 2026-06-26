@@ -393,21 +393,21 @@ const Portfolio = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 max-w-4xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto">
             {techStack.map((tech) => (
               <div
                 key={tech.name}
-                className="group w-[72px] sm:w-20 p-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 hover:bg-white/80 dark:group-hover:bg-gray-800/80 cursor-pointer"
+                className="group w-[84px] sm:w-24 p-2.5 sm:p-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 hover:bg-white/80 dark:group-hover:bg-gray-800/80 cursor-pointer"
               >
                 <div className="flex flex-col items-center text-center">
                   <div
-                    className="flex items-center justify-center w-5 h-5 mb-1 text-lg"
+                    className="flex items-center justify-center w-6 h-6 mb-1.5 text-xl"
                     style={{ color: tech.color }}
                   >
                     {tech.icon}
                   </div>
-                  <h3 className="text-[10px] sm:text-[11px] font-semibold text-gray-800 dark:text-white leading-tight">{tech.name}</h3>
-                  <p className="text-[8px] sm:text-[9px] text-gray-500 dark:text-gray-400 leading-tight mt-0.5">{tech.category}</p>
+                  <h3 className="text-[11px] sm:text-xs font-semibold text-gray-800 dark:text-white leading-tight">{tech.name}</h3>
+                  <p className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 leading-tight mt-0.5">{tech.category}</p>
                 </div>
               </div>
             ))}
