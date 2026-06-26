@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react";
+import { getCalApi } from "@calcom/embed-react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
@@ -91,6 +92,13 @@ const Portfolio = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({ namespace: "1h" });
+      cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
+    })();
   }, []);
 
   const socialLinks = [
@@ -515,14 +523,16 @@ const Portfolio = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="https://calendly.com/jbalansa143/30min"
-              target="_blank"
+            <button
+              type="button"
+              data-cal-namespace="1h"
+              data-cal-link="joshua-balansa-iulx9o/1h"
+              data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl"
             >
               <MdCall className="mr-2" />
               Schedule a Call
-            </Link>
+            </button>
             <Link
               href="mailto:jbalansa143@gmail.com"
               className="inline-flex items-center px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:border-blue-600 hover:text-blue-600 dark:hover:text-blue-400"
