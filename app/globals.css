@@ -13,22 +13,6 @@ body {
   overflow-x: hidden;
 }
 
-/* GSAP Animation Enhancements */
-.gsap-fade-in {
-  opacity: 0;
-  transform: translateY(50px);
-}
-
-.gsap-scale-in {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-/* Smooth transitions for theme changes */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-
 @font-face {
   font-family: "burtons";
   src: url('../public/Burtons.otf');
