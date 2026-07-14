@@ -131,6 +131,14 @@ const Portfolio = () => {
 
   const projects = [
     {
+      title: "Centimo AI Powered POS",
+      details:
+        "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights. Plans range from a free trial to paid tiers for growing and multi-location stores.",
+      techStack: "Next.js, TypeScript, Tailwind CSS",
+      githubLink: "",
+      liveLink: "",
+    },
+    {
       title: "E-Tinda Farmers Marketplace",
       details: "A comprehensive web-based marketplace that connects local farmers directly with buyers, eliminating middlemen and creating an efficient agricultural supply chain.",
       techStack: "Laravel 12, JavaScript, Bootstrap",
@@ -141,8 +149,8 @@ const Portfolio = () => {
       title: "Kingdom Development Group Philippines Page",
       details: "A stunning, modern landing page for Kingdom Development Group Philippines.",
       techStack: "Next.js 14, Tailwind CSS, DaisyUI",
-      githubLink: "https://github.com/joshuabalansa/KDG",
-      liveLink: "",
+      githubLink: "",
+      liveLink: "https://www.kdgphilippines.org/",
     },
     {
       title: "Task Management Dashboard with Deployment Tracking",
