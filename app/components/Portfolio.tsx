@@ -136,7 +136,7 @@ const Portfolio = () => {
         "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights. Plans range from a free trial to paid tiers for growing and multi-location stores.",
       techStack: "Next.js, TypeScript, Tailwind CSS",
       githubLink: "",
-      liveLink: "",
+      liveLink: "centimocloud.vercel.app",
     },
     {
       title: "E-Tinda Farmers Marketplace",
@@ -466,7 +466,7 @@ const Portfolio = () => {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {project.githubLink && project.githubLink !== "#" ? (
+                  {project.githubLink && project.githubLink !== "#" && (
                     <Link
                       href={project.githubLink}
                       target="_blank"
@@ -475,11 +475,6 @@ const Portfolio = () => {
                       <AiFillGithub />
                       Code
                     </Link>
-                  ) : (
-                    <span className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full text-sm">
-                      <FaBriefcase />
-                      Company Project
-                    </span>
                   )}
                   {project.liveLink && (
                     <Link
