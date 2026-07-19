@@ -136,7 +136,7 @@ const Portfolio = () => {
         "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights. Plans range from a free trial to paid tiers for growing and multi-location stores.",
       techStack: "Next.js, TypeScript, Tailwind CSS",
       githubLink: "",
-      liveLink: "centimocloud.vercel.app",
+      liveLink: "centimo.app",
     },
     {
       title: "E-Tinda Farmers Marketplace",
