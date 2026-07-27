@@ -39,11 +39,11 @@ const roles = [
   "Full Stack Developer",
   "React & Next.js Developer",
   "Laravel Developer",
-  "Problem Solver",
+  "Front-end Developer",
 ];
 
 const Portfolio = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
   const [activeSection, setActiveSection] = useState("home");
   const [isNavVisible, setIsNavVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -74,7 +74,7 @@ const Portfolio = () => {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
+    const savedTheme = localStorage.getItem("theme") || "dark";
     setTheme(savedTheme);
     document.documentElement.classList.toggle("dark", savedTheme === "dark");
 
