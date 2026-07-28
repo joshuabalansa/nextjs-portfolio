@@ -18,7 +18,7 @@ import {
   FaChevronDown,
   FaRocket,
 } from "react-icons/fa";
-import { LuSun, LuMoon } from "react-icons/lu";
+import { LuSun, LuMoon, LuMenu, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdLocationOn, MdWork } from "react-icons/md";
 import {
   SiNextdotjs,
@@ -60,7 +60,16 @@ const Portfolio = () => {
   const [theme, setTheme] = useState("dark");
   const [activeSection, setActiveSection] = useState("home");
   const [isNavVisible, setIsNavVisible] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
+
+  const navItems = [
+    { id: "home", label: "Home" },
+    { id: "about", label: "About" },
+    { id: "tech", label: "Stack" },
+    { id: "projects", label: "Work" },
+    { id: "contact", label: "Contact" },
+  ] as const;
 
   // Typewriter state
   const [roleIndex, setRoleIndex] = useState(0);
@@ -84,6 +93,7 @@ const Portfolio = () => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       setActiveSection(sectionId);
+      setIsMobileMenuOpen(false);
     }
   };
 
@@ -112,6 +122,7 @@ const Portfolio = () => {
         setIsNavVisible(true);
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 64) {
         setIsNavVisible(false);
+        setIsMobileMenuOpen(false);
       } else if (currentScrollY < lastScrollY.current) {
         setIsNavVisible(true);
       }
@@ -329,26 +340,66 @@ const Portfolio = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative flex items-center justify-center h-16">
+          <div className="flex items-center justify-between h-16">
             <button
               onClick={toggleTheme}
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              className="absolute left-0 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               {theme === "dark" ? <LuSun className="w-5 h-5" /> : <LuMoon className="w-5 h-5" />}
             </button>
-            <div className="flex flex-wrap justify-center gap-x-1 gap-y-1 px-10 text-xs sm:text-sm md:gap-x-2 md:text-base">
-              {['home', 'about', 'tech', 'projects', 'contact'].map((section) => (
+
+            {/* Desktop links */}
+            <div className="hidden md:flex items-center gap-1">
+              {navItems.map(({ id, label }) => (
                 <button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`capitalize font-medium px-3 py-1.5 rounded-full transition-all duration-300 ${
-                    activeSection === section
-                      ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  key={id}
+                  onClick={() => scrollToSection(id)}
+                  className={`font-medium px-3 py-1.5 rounded-full transition-all duration-300 ${
+                    activeSection === id
+                      ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
                 >
-                  {section === 'tech' ? 'Stack' : section === 'projects' ? 'Work' : section}
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Mobile menu toggle */}
+            <button
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+              className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              {isMobileMenuOpen ? <LuX className="w-5 h-5" /> : <LuMenu className="w-5 h-5" />}
+            </button>
+
+            {/* Spacer so desktop theme button stays left-aligned with centered-feel layout */}
+            <div className="hidden md:block w-9" aria-hidden="true" />
+          </div>
+        </div>
+
+        {/* Mobile menu panel */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
+            isMobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="px-4 pb-4 pt-1 border-t border-gray-200/60 dark:border-gray-800/60 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md">
+            <div className="flex flex-col gap-1">
+              {navItems.map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={() => scrollToSection(id)}
+                  className={`w-full text-left font-medium px-4 py-3 rounded-xl transition-all duration-300 ${
+                    activeSection === id
+                      ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
+                      : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900"
+                  }`}
+                >
+                  {label}
                 </button>
               ))}
             </div>
