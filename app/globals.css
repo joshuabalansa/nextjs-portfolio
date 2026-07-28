@@ -20,20 +20,9 @@ body {
 
 /* ---------- Keyframes ---------- */
 
-@keyframes blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(40px, -50px) scale(1.15); }
-  66% { transform: translate(-30px, 30px) scale(0.9); }
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-16px); }
-}
-
-@keyframes gradient-x {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 @keyframes fade-up {
@@ -51,12 +40,6 @@ body {
   to { transform: translateX(0); }
 }
 
-@keyframes wave {
-  0%, 60%, 100% { transform: rotate(0deg); }
-  10%, 30% { transform: rotate(16deg); }
-  20%, 40% { transform: rotate(-8deg); }
-}
-
 @keyframes caret-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -64,18 +47,8 @@ body {
 
 /* ---------- Utility classes ---------- */
 
-.animate-blob { animation: blob 9s ease-in-out infinite; }
 .animate-float { animation: float 6s ease-in-out infinite; }
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 5s ease infinite;
-}
 .animate-fade-up { animation: fade-up 0.8s ease-out both; }
-.animate-wave {
-  display: inline-block;
-  transform-origin: 70% 70%;
-  animation: wave 2.4s ease-in-out infinite;
-}
 .animate-caret { animation: caret-blink 1s step-end infinite; }
 
 .marquee-track { animation: marquee 32s linear infinite; }
@@ -114,11 +87,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-blob,
   .animate-float,
-  .animate-gradient-x,
   .animate-fade-up,
-  .animate-wave,
   .marquee-track,
   .marquee-track-reverse {
     animation: none;
