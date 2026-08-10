@@ -13,10 +13,7 @@ import {
   FaReact,
   FaLaravel,
   FaJs,
-  FaBriefcase,
-  FaDownload,
   FaChevronDown,
-  FaRocket,
 } from "react-icons/fa";
 import { LuSun, LuMoon, LuMenu, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdLocationOn, MdWork } from "react-icons/md";
@@ -246,7 +243,7 @@ const Portfolio = () => {
 
   const projects = [
     {
-      title: "Centimo AI Powered POS",
+      title: "Centimo - AI Powered POS",
       details:
         "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights.",
       techStack: "Next.js, TypeScript, Tailwind CSS",
@@ -324,15 +321,21 @@ const Portfolio = () => {
     },
   ];
 
-  const floatingIcons = [
-    { icon: <FaReact />, color: "#61DAFB", className: "top-[22%] left-[8%]", delay: "0s" },
-    { icon: <SiNextdotjs />, color: "#888888", className: "top-[18%] right-[10%]", delay: "1.2s" },
-    { icon: <SiTypescript />, color: "#007ACC", className: "bottom-[28%] left-[12%]", delay: "0.6s" },
-    { icon: <FaLaravel />, color: "#FF2D20", className: "bottom-[24%] right-[8%]", delay: "1.8s" },
+  const heroIcons = [
+    { Icon: FaReact, color: "#61DAFB", label: "React", pos: "top-[8%] left-[22%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "0s", sx: "-18px", sy: "-36px", r: "-8deg" },
+    { Icon: SiNextdotjs, color: "#a1a1aa", label: "Next.js", pos: "top-[4%] right-[18%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.4s", sx: "28px", sy: "-42px", r: "10deg" },
+    { Icon: SiTypescript, color: "#3178C6", label: "TypeScript", pos: "top-[28%] right-[4%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-c", delay: "0.8s", sx: "40px", sy: "-8px", r: "12deg" },
+    { Icon: FaLaravel, color: "#FF2D20", label: "Laravel", pos: "top-[48%] right-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.2s", sx: "34px", sy: "22px", r: "6deg" },
+    { Icon: SiNodedotjs, color: "#339933", label: "Node.js", pos: "bottom-[22%] right-[8%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "1s", sx: "30px", sy: "40px", r: "-6deg" },
+    { Icon: SiTailwindcss, color: "#06B6D4", label: "Tailwind", pos: "bottom-[8%] left-[30%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.6s", sx: "-6px", sy: "44px", r: "8deg" },
+    { Icon: FaPhp, color: "#8892BF", label: "PHP", pos: "bottom-[26%] left-[6%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-c", delay: "1.2s", sx: "-38px", sy: "30px", r: "-12deg" },
+    { Icon: SiMongodb, color: "#47A248", label: "MongoDB", pos: "top-[36%] left-[4%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-d", delay: "0.3s", sx: "-42px", sy: "-6px", r: "-10deg" },
+    { Icon: FaJs, color: "#F7DF1E", label: "JavaScript", pos: "top-[58%] left-[18%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-a", delay: "0.9s", sx: "-28px", sy: "18px", r: "14deg" },
+    { Icon: SiVuedotjs, color: "#4FC08D", label: "Vue.js", pos: "bottom-[42%] right-[28%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "1.4s", sx: "18px", sy: "14px", r: "-4deg" },
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white overflow-x-clip">
       {/* Navigation */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-950/80 border-b border-gray-200/60 dark:border-gray-800/60 transition-transform duration-300 ${
@@ -410,150 +413,326 @@ const Portfolio = () => {
       {/* Hero Section */}
       <section
         id="home"
-        className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20"
+        className="relative min-h-dvh flex items-center justify-center overflow-x-clip"
       >
-        <div className="hero-grid absolute inset-0 pointer-events-none" />
-
-        {/* Floating tech icons */}
-        {floatingIcons.map((item, index) => (
-          <div
-            key={index}
-            className={`hidden md:flex absolute ${item.className} p-4 rounded-2xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm border border-gray-200/60 dark:border-gray-800/60 shadow-sm animate-float pointer-events-none`}
-            style={{ animationDelay: item.delay, color: item.color }}
-          >
-            <span className="text-3xl">{item.icon}</span>
-          </div>
-        ))}
-
-        <div className="relative max-w-4xl mx-auto text-center">
-          <div className="animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-white/70 dark:bg-gray-900/70 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              Open to new projects
-            </span>
-          </div>
-
-          <h1 className="animate-fade-up text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-gray-900 dark:text-white" style={{ animationDelay: "0.25s" }}>
-            Hi, I&apos;m Josh.
-          </h1>
-
-          <div className="animate-fade-up mb-8 h-8 md:h-9" style={{ animationDelay: "0.4s" }}>
-            <p className="text-xl md:text-2xl font-medium text-gray-500 dark:text-gray-400">
-              {typedText}
-              <span className="animate-caret text-gray-400 dark:text-gray-500">|</span>
-            </p>
-          </div>
-
-          <p className="animate-fade-up mb-12 max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed" style={{ animationDelay: "0.55s" }}>
-            I design and build clean, fast web applications — from polished
-            interfaces to reliable back-end systems. Based in the Philippines,
-            working with clients everywhere.
-          </p>
-
-          <div className="animate-fade-up flex flex-col sm:flex-row gap-3 justify-center mb-12" style={{ animationDelay: "0.7s" }}>
-            <button
-              onClick={() => scrollToSection('projects')}
-              className="group inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
-            >
-              See my work
-              <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-            </button>
-            <Link
-              href="/JoshuaBalansaResume.pdf"
-              download
-              className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
-            >
-              <FaDownload className="mr-2 text-sm" />
-              Resume
-            </Link>
-          </div>
-
-          <div className="animate-fade-up flex justify-center gap-3" style={{ animationDelay: "0.85s" }}>
-            {socialLinks.map(({ href, Icon, label }, index) => (
-              <Link key={index} href={href} target="_blank" aria-label={label} className="group">
-                <div className="p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 transition-all duration-300 group-hover:border-gray-900 dark:group-hover:border-white group-hover:-translate-y-1">
-                  <Icon className="text-xl text-gray-500 dark:text-gray-400 transition-colors group-hover:text-gray-900 dark:group-hover:text-white" />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <button
-            onClick={() => scrollToSection('about')}
-            aria-label="Scroll to about section"
-            className="animate-fade-up mt-16 mx-auto flex flex-col items-center gap-1 text-gray-400 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-colors"
-            style={{ animationDelay: "1s" }}
-          >
-            <span className="text-xs uppercase tracking-widest">Scroll</span>
-            <FaChevronDown className="animate-bounce" />
-          </button>
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="hero-mesh absolute inset-0" />
+          <div className="hero-grid absolute inset-0" />
+          <div className="hero-orb hero-orb-a" />
+          <div className="hero-orb hero-orb-b" />
         </div>
-      </section>
 
-      {/* About Section — Bento Grid */}
-      <section
-        id="about"
-        className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900/40"
-      >
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading overline="About" title="A bit about me" />
+        <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-24">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Copy */}
+            <div className="lg:col-span-6 xl:col-span-5 relative z-10 text-center lg:text-left">
+              <div className="animate-fade-up" style={{ animationDelay: "0.08s" }}>
+                <div className="inline-flex items-center gap-2.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  Open to new projects
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
-            {/* Photo tile */}
-            <div className="reveal col-span-2 row-span-2 relative rounded-2xl overflow-hidden group min-h-[320px] bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 transition-transform duration-300 hover:-translate-y-1">
-              <Image
-                src="/img-1.jpeg"
-                alt="Joshua Balansa"
-                fill
-                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-950/70 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <p className="text-white font-semibold text-xl">Joshua Balansa</p>
-                <p className="text-gray-300 text-sm">Full Stack Developer</p>
+              <div className="animate-fade-up mt-6 sm:mt-8" style={{ animationDelay: "0.18s" }}>
+                <p className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-medium mb-2 sm:mb-3">
+                  Hi, I&apos;m
+                </p>
+                <h1 className="text-[clamp(3.75rem,14vw,8.5rem)] font-bold tracking-tighter leading-[0.88] text-gray-900 dark:text-white">
+                  Josh<span className="text-gray-300 dark:text-gray-600">.</span>
+                </h1>
+                <div className="hero-line mt-5 h-px w-20 bg-gray-900 dark:bg-white mx-auto lg:mx-0" />
+              </div>
+
+              <div className="animate-fade-up mt-7 sm:mt-8 h-8 sm:h-9" style={{ animationDelay: "0.32s" }}>
+                <p className="text-xl sm:text-2xl font-medium tracking-tight text-gray-500 dark:text-gray-400 font-[family-name:var(--font-geist-mono)]">
+                  {typedText}
+                  <span className="animate-caret text-gray-400 dark:text-gray-500">|</span>
+                </p>
+              </div>
+
+              <p
+                className="animate-fade-up mt-6 sm:mt-8 max-w-md mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
+                style={{ animationDelay: "0.45s" }}
+              >
+                I design and build clean, fast web applications — polished
+                interfaces, reliable back ends. Based in the Philippines,
+                working with clients everywhere.
+              </p>
+
+              <div
+                className="animate-fade-up mt-9 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start"
+                style={{ animationDelay: "0.58s" }}
+              >
+                <button
+                  onClick={() => scrollToSection("projects")}
+                  className="group inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
+                >
+                  See my work
+                  <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+                <button
+                  onClick={() => scrollToSection("contact")}
+                  className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
+                >
+                  Get in touch
+                </button>
+              </div>
+
+              <div
+                className="animate-fade-up mt-10 sm:mt-12 flex items-center justify-center lg:justify-start gap-1"
+                style={{ animationDelay: "0.72s" }}
+              >
+                {socialLinks.map(({ href, Icon, label }, index) => (
+                  <Link
+                    key={index}
+                    href={href}
+                    target="_blank"
+                    aria-label={label}
+                    className="p-2.5 text-gray-400 dark:text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
+                  >
+                    <Icon className="text-xl" />
+                  </Link>
+                ))}
               </div>
             </div>
 
-            {/* What I do tile */}
-            <div className="reveal col-span-2 row-span-2 p-8 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">What I do</h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                I&apos;m a full-stack developer who enjoys taking products from idea
-                to launch. I work across the stack — React and Next.js on the
-                front-end, Laravel and Node.js on the back-end.
-              </p>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                I care about clean code, thoughtful design, and shipping things
-                that actually get used.
-              </p>
+            {/* Floating language / framework constellation */}
+            <div
+              className="lg:col-span-6 xl:col-span-7 animate-fade-up"
+              style={{ animationDelay: "0.3s" }}
+            >
+              <div className="hero-constellation group/constellation">
+                <div className="absolute inset-[28%] rounded-full bg-gradient-to-br from-gray-200/50 to-transparent dark:from-gray-700/30 dark:to-transparent blur-2xl pointer-events-none" />
+
+                {heroIcons.map(({ Icon, color, label, pos, size, float, delay, sx, sy, r }, index) => (
+                  <div
+                    key={label}
+                    className={`hero-icon-wrap absolute ${pos}`}
+                    style={{
+                      "--sx": sx,
+                      "--sy": sy,
+                      "--r": r,
+                      transitionDelay: `${index * 20}ms`,
+                    } as React.CSSProperties}
+                    title={label}
+                  >
+                    <div className={float} style={{ animationDelay: delay }}>
+                      <div className={`hero-icon ${size}`}>
+                        <Icon style={{ color }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => scrollToSection("about")}
+          aria-label="Scroll to about section"
+          className="animate-fade-up absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+          style={{ animationDelay: "0.9s" }}
+        >
+          <span className="text-[10px] uppercase tracking-[0.25em] font-medium">Scroll</span>
+          <FaChevronDown className="animate-bounce text-sm" />
+        </button>
+      </section>
+
+      {/* About Section */}
+      <section
+        id="about"
+        className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="pointer-events-none absolute inset-0 bg-gray-50 dark:bg-gray-900/40" />
+        <div className="pointer-events-none absolute top-0 right-0 w-[55%] h-full bg-gradient-to-l from-gray-100/80 to-transparent dark:from-gray-800/20" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-gray-200/40 dark:bg-gray-800/30 blur-3xl" />
+
+        <div className="relative max-w-7xl mx-auto">
+          <SectionHeading
+            overline="About"
+            title="A bit about me"
+            subtitle="The person behind the projects."
+          />
+
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* Portrait — sticky while story scrolls */}
+            <div className="reveal lg:col-span-5 lg:sticky lg:top-28 lg:self-start">
+              <div className="relative mx-auto max-w-sm lg:max-w-none">
+                <div
+                  aria-hidden
+                  className="absolute -inset-px rounded-[1.85rem] bg-gradient-to-br from-gray-300 via-gray-200/40 to-gray-400/50 dark:from-gray-600 dark:via-gray-700/30 dark:to-gray-500/40"
+                />
+                <div className="relative aspect-[4/5] rounded-[1.75rem] overflow-hidden group bg-gray-200 dark:bg-gray-800">
+                  <Image
+                    src="/img-1.jpeg"
+                    alt="Joshua Balansa"
+                    fill
+                    sizes="(max-width: 1024px) 24rem, 40vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950/85 via-gray-950/15 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
+                    <p className="text-white text-2xl font-semibold tracking-tight">
+                      Joshua Balansa
+                    </p>
+                    <p className="mt-1 text-sm text-gray-300">
+                      Full Stack Developer
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Stat tiles */}
-            <div className="reveal p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <FaRocket className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h4 className="text-3xl font-bold text-gray-900 dark:text-white">50+</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Projects shipped</p>
-            </div>
+            {/* Story */}
+            <div className="lg:col-span-7 space-y-14">
+              <div className="reveal" style={{ transitionDelay: "80ms" }}>
+                <div className="inline-flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 font-medium mb-5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  Open to freelance & full-time
+                </div>
+                <h3 className="text-2xl sm:text-3xl lg:text-[2.15rem] font-bold tracking-tight text-gray-900 dark:text-white leading-[1.2] mb-6">
+                  I take products from idea to launch — clean interfaces, solid backends, real results.
+                </h3>
+                <div className="space-y-4 text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl">
+                  <p>
+                    I&apos;m a full-stack developer who works across the stack —
+                    React and Next.js on the front-end, Laravel and Node.js on
+                    the back-end — with a focus on speed, clarity, and craft.
+                  </p>
+                  <p>
+                    I care about clean code, thoughtful design, and shipping
+                    things people actually use. Based in the Philippines,
+                    collaborating with clients worldwide.
+                  </p>
+                </div>
+              </div>
 
-            <div className="reveal p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <FaBriefcase className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h4 className="text-3xl font-bold text-gray-900 dark:text-white">4.5+</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Years of experience</p>
-            </div>
+              <div className="reveal" style={{ transitionDelay: "120ms" }}>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500 mb-5">
+                  How I work
+                </p>
+                <div className="space-y-6 max-w-xl">
+                  {[
+                    {
+                      step: "01",
+                      title: "Understand the goal",
+                      body: "I start with the problem, users, and constraints — not a stack preference. Clear scope and outcomes first.",
+                    },
+                    {
+                      step: "02",
+                      title: "Design & build in parallel",
+                      body: "Interfaces and APIs come together early so we can validate quickly, tighten the UX, and avoid late surprises.",
+                    },
+                    {
+                      step: "03",
+                      title: "Ship, measure, refine",
+                      body: "Production-ready code with room to iterate: performance, feedback, and small improvements that compound over time.",
+                    },
+                  ].map(({ step, title, body }) => (
+                    <div key={step} className="flex gap-5">
+                      <span className="shrink-0 text-sm font-bold tabular-nums text-gray-300 dark:text-gray-600 pt-0.5">
+                        {step}
+                      </span>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5">
+                          {title}
+                        </h4>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                          {body}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <div className="reveal p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <MdLocationOn className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Philippines</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Based in</p>
-            </div>
+              <dl
+                className="reveal divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 max-w-xl"
+                style={{ transitionDelay: "160ms" }}
+              >
+                {[
+                  { label: "Front-end", value: "React, Next.js, TypeScript, Tailwind" },
+                  { label: "Back-end", value: "Laravel, Node.js, Express, REST APIs" },
+                  { label: "Data", value: "MySQL, MongoDB, Firebase" },
+                  { label: "Mindset", value: "Ship sharp, iterate fast" },
+                ].map(({ label, value }) => (
+                  <div
+                    key={label}
+                    className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 py-4"
+                  >
+                    <dt className="sm:w-28 shrink-0 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                      {label}
+                    </dt>
+                    <dd className="text-gray-800 dark:text-gray-200 font-medium">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-            <div className="reveal p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <MdWork className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Open to work</h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Freelance & full-time</p>
+              <div className="reveal" style={{ transitionDelay: "200ms" }}>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500 mb-5">
+                  What I bring
+                </p>
+                <ul className="space-y-4 max-w-xl">
+                  {[
+                    "End-to-end ownership — from UI details to database design and deployment.",
+                    "Product-minded delivery: prioritise what matters, cut what doesn’t, keep velocity high.",
+                    "Clear async communication so remote work stays simple across time zones.",
+                    "A bias toward maintainable systems — not just a quick demo that breaks next month.",
+                  ].map((item) => (
+                    <li key={item} className="flex gap-3 text-gray-600 dark:text-gray-400 leading-relaxed">
+                      <span
+                        aria-hidden
+                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gray-900 dark:bg-white"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div
+                className="reveal grid grid-cols-3 gap-4 sm:gap-8 max-w-xl"
+                style={{ transitionDelay: "240ms" }}
+              >
+                {[
+                  { value: "E2E", label: "Idea to launch" },
+                  { value: "4.5+", label: "Years experience" },
+                  { value: "PH", label: "GMT+8 base" },
+                ].map(({ value, label }) => (
+                  <div key={label}>
+                    <p className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white tabular-nums">
+                      {value}
+                    </p>
+                    <p className="mt-1.5 text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-snug">
+                      {label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="reveal" style={{ transitionDelay: "280ms" }}>
+                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl mb-8">
+                  Whether you need a polished landing experience, a full product
+                  build, or help tightening an existing codebase — I&apos;m
+                  ready to jump in and ship.
+                </p>
+                <button
+                  onClick={() => scrollToSection("contact")}
+                  className="group inline-flex items-center text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
+                >
+                  Let&apos;s work together
+                  <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
