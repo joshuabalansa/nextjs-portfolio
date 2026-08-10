@@ -16,7 +16,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { LuSun, LuMoon, LuMenu, LuX } from "react-icons/lu";
-import { MdCall, MdEmail, MdLocationOn, MdWork } from "react-icons/md";
+import { MdCall, MdEmail } from "react-icons/md";
 import {
   SiNextdotjs,
   SiTypescript,
@@ -110,6 +110,10 @@ const Portfolio = () => {
   // Projects scroll-pin progress (0 → 1)
   const projectsRef = useRef<HTMLElement>(null);
   const [projectsProgress, setProjectsProgress] = useState(0);
+
+  // Contact scroll-pin progress (0 → 1)
+  const contactRef = useRef<HTMLElement>(null);
+  const [contactProgress, setContactProgress] = useState(0);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -206,7 +210,7 @@ const Portfolio = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Sticky section scroll progress (philosophy + tech + projects)
+  // Sticky section scroll progress (philosophy + tech + projects + contact)
   useEffect(() => {
     let frame = 0;
 
@@ -223,6 +227,10 @@ const Portfolio = () => {
       if (projectsRef.current) {
         const next = getPinnedSectionProgress(projectsRef.current);
         setProjectsProgress((prev) => (prev === next ? prev : next));
+      }
+      if (contactRef.current) {
+        const next = getPinnedSectionProgress(contactRef.current);
+        setContactProgress((prev) => (prev === next ? prev : next));
       }
     };
 
@@ -1092,13 +1100,6 @@ const Portfolio = () => {
                         transform: `scale(${0.94 + cardEase * 0.06}) translateY(${(1 - cardEase) * 28}px)`,
                       }}
                     >
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute -right-2 -top-4 text-[5.5rem] sm:text-[6.5rem] font-bold leading-none tabular-nums text-gray-100 dark:text-gray-900/80 select-none transition-transform duration-500 group-hover:scale-105"
-                      >
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-
                       <div className="relative z-10 flex flex-col h-full">
                         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
                           Project {String(index + 1).padStart(2, "0")}
@@ -1191,54 +1192,113 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
+      {/* Contact Section — centered sticky finale */}
       <section
+        ref={contactRef}
         id="contact"
-        className="py-24 px-4 sm:px-6 lg:px-8"
+        className="relative h-[140vh] overflow-hidden"
       >
-        <div className="max-w-4xl mx-auto text-center">
-          <SectionHeading
-            overline="Contact"
-            title="Let's work together"
-            subtitle="Have a project in mind? Tell me about it."
-          />
-
-          <div className="reveal grid md:grid-cols-3 gap-4 mb-12">
-            <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <MdEmail className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 break-all">jbalansa143@gmail.com</p>
-            </div>
-            <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <MdLocationOn className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Location</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Philippines (GMT+8)</p>
-            </div>
-            <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none dark:hover:border-gray-700">
-              <MdWork className="text-2xl text-gray-400 dark:text-gray-500 mb-3 mx-auto" />
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Availability</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Open to new projects</p>
-            </div>
+        <div className="sticky top-0 h-dvh flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-16">
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <div className="hero-mesh absolute inset-0 opacity-70" />
+            <div className="hero-grid absolute inset-0 opacity-80" />
+            <div className="hero-orb hero-orb-a opacity-40" />
+            <div className="hero-orb hero-orb-b opacity-50" />
           </div>
 
-          <div className="reveal flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              type="button"
-              data-cal-namespace="1h"
-              data-cal-link="joshua-balansa-iulx9o/1h"
-              data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-              className="inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
+          <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
+            <h2
+              className="text-[clamp(2.75rem,10vw,5.5rem)] font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white"
+              style={{
+                opacity: Math.min(1, Math.max(0, contactProgress / 0.18)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, contactProgress / 0.18))) * 28}px) scale(${0.96 + Math.min(1, Math.max(0, contactProgress / 0.18)) * 0.04})`,
+              }}
             >
-              <MdCall className="mr-2" />
-              Schedule a call
-            </button>
-            <Link
-              href="mailto:jbalansa143@gmail.com"
-              className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
+              Let&apos;s work
+              <span className="block">together<span className="text-gray-300 dark:text-gray-600">.</span></span>
+            </h2>
+
+            <p
+              className="mt-6 sm:mt-8 max-w-lg mx-auto text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
+              style={{
+                opacity: Math.min(1, Math.max(0, (contactProgress - 0.08) / 0.16)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.08) / 0.16))) * 16}px)`,
+              }}
             >
-              <MdEmail className="mr-2" />
-              Send an email
-            </Link>
+              Have a project in mind? Tell me about it — freelance, product
+              builds, or full-time opportunities.
+            </p>
+
+            <dl
+              className="mt-10 sm:mt-12 max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 text-left"
+              style={{
+                opacity: Math.min(1, Math.max(0, (contactProgress - 0.16) / 0.18)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.16) / 0.18))) * 20}px)`,
+              }}
+            >
+              {[
+                {
+                  label: "Email",
+                  value: "jbalansa143@gmail.com",
+                  href: "mailto:jbalansa143@gmail.com",
+                },
+                {
+                  label: "Location",
+                  value: "Philippines · GMT+8",
+                },
+                {
+                  label: "Status",
+                  value: "Freelance & full-time",
+                },
+              ].map(({ label, value, href }) => (
+                <div
+                  key={label}
+                  className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-8 py-4"
+                >
+                  <dt className="sm:w-24 shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
+                    {label}
+                  </dt>
+                  <dd className="text-gray-900 dark:text-white font-medium">
+                    {href ? (
+                      <Link
+                        href={href}
+                        className="hover:opacity-70 transition-opacity break-all"
+                      >
+                        {value}
+                      </Link>
+                    ) : (
+                      value
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <div
+              className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 justify-center"
+              style={{
+                opacity: Math.min(1, Math.max(0, (contactProgress - 0.28) / 0.18)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.28) / 0.18))) * 16}px)`,
+              }}
+            >
+              <button
+                type="button"
+                data-cal-namespace="1h"
+                data-cal-link="joshua-balansa-iulx9o/1h"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                className="inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
+              >
+                <MdCall className="mr-2" />
+                Schedule a call
+              </button>
+              <Link
+                href="mailto:jbalansa143@gmail.com"
+                className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
+              >
+                <MdEmail className="mr-2" />
+                Send an email
+              </Link>
+            </div>
           </div>
         </div>
       </section>
