@@ -28,6 +28,7 @@ import {
   SiTailwindcss,
   SiNodedotjs,
   SiExpress,
+  SiNestjs,
 } from "react-icons/si";
 
 const roles = [
@@ -231,6 +232,7 @@ const Portfolio = () => {
     { name: "Tailwind CSS", icon: <SiTailwindcss />, color: "#06B6D4" },
     { name: "Node.js", icon: <SiNodedotjs />, color: "#339933" },
     { name: "Express", icon: <SiExpress />, color: "#888888" },
+    { name: "NestJS", icon: <SiNestjs />, color: "#E0234E" },
     { name: "PHP", icon: <FaPhp />, color: "#8892BF" },
     { name: "Laravel", icon: <FaLaravel />, color: "#FF2D20" },
     { name: "Vue.js", icon: <SiVuedotjs />, color: "#4FC08D" },
@@ -322,16 +324,22 @@ const Portfolio = () => {
   ];
 
   const heroIcons = [
-    { Icon: FaReact, color: "#61DAFB", label: "React", pos: "top-[8%] left-[22%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "0s", sx: "-18px", sy: "-36px", r: "-8deg" },
-    { Icon: SiNextdotjs, color: "#a1a1aa", label: "Next.js", pos: "top-[4%] right-[18%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.4s", sx: "28px", sy: "-42px", r: "10deg" },
-    { Icon: SiTypescript, color: "#3178C6", label: "TypeScript", pos: "top-[28%] right-[4%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-c", delay: "0.8s", sx: "40px", sy: "-8px", r: "12deg" },
-    { Icon: FaLaravel, color: "#FF2D20", label: "Laravel", pos: "top-[48%] right-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.2s", sx: "34px", sy: "22px", r: "6deg" },
-    { Icon: SiNodedotjs, color: "#339933", label: "Node.js", pos: "bottom-[22%] right-[8%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "1s", sx: "30px", sy: "40px", r: "-6deg" },
-    { Icon: SiTailwindcss, color: "#06B6D4", label: "Tailwind", pos: "bottom-[8%] left-[30%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.6s", sx: "-6px", sy: "44px", r: "8deg" },
-    { Icon: FaPhp, color: "#8892BF", label: "PHP", pos: "bottom-[26%] left-[6%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-c", delay: "1.2s", sx: "-38px", sy: "30px", r: "-12deg" },
-    { Icon: SiMongodb, color: "#47A248", label: "MongoDB", pos: "top-[36%] left-[4%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-d", delay: "0.3s", sx: "-42px", sy: "-6px", r: "-10deg" },
-    { Icon: FaJs, color: "#F7DF1E", label: "JavaScript", pos: "top-[58%] left-[18%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-a", delay: "0.9s", sx: "-28px", sy: "18px", r: "14deg" },
-    { Icon: SiVuedotjs, color: "#4FC08D", label: "Vue.js", pos: "bottom-[42%] right-[28%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "1.4s", sx: "18px", sy: "14px", r: "-4deg" },
+    { Icon: FaReact, color: "#61DAFB", label: "React", pos: "top-[6%] left-[38%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "0s", sx: "0px", sy: "-38px", r: "-6deg" },
+    { Icon: SiNextdotjs, color: "#888888", label: "Next.js", pos: "top-[10%] right-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.3s", sx: "32px", sy: "-34px", r: "10deg" },
+    { Icon: SiTypescript, color: "#007ACC", label: "TypeScript", pos: "top-[28%] right-[2%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-c", delay: "0.6s", sx: "40px", sy: "-6px", r: "12deg" },
+    { Icon: FaJs, color: "#F7DF1E", label: "JavaScript", pos: "top-[48%] right-[6%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-d", delay: "0.15s", sx: "36px", sy: "18px", r: "8deg" },
+    { Icon: SiTailwindcss, color: "#06B6D4", label: "Tailwind CSS", pos: "bottom-[28%] right-[4%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-a", delay: "0.9s", sx: "38px", sy: "28px", r: "-8deg" },
+    { Icon: SiNodedotjs, color: "#339933", label: "Node.js", pos: "bottom-[12%] right-[18%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-b", delay: "0.45s", sx: "24px", sy: "40px", r: "6deg" },
+    { Icon: SiExpress, color: "#888888", label: "Express", pos: "bottom-[4%] left-[40%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-c", delay: "1.1s", sx: "4px", sy: "44px", r: "-4deg" },
+    { Icon: SiNestjs, color: "#E0234E", label: "NestJS", pos: "bottom-[22%] left-[28%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.55s", sx: "-12px", sy: "28px", r: "7deg" },
+    { Icon: FaPhp, color: "#8892BF", label: "PHP", pos: "bottom-[14%] left-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.25s", sx: "-28px", sy: "36px", r: "-12deg" },
+    { Icon: FaLaravel, color: "#FF2D20", label: "Laravel", pos: "bottom-[32%] left-[2%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-a", delay: "0.75s", sx: "-40px", sy: "16px", r: "10deg" },
+    { Icon: SiVuedotjs, color: "#4FC08D", label: "Vue.js", pos: "top-[46%] left-[2%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "1.2s", sx: "-42px", sy: "4px", r: "-10deg" },
+    { Icon: SiMongodb, color: "#47A248", label: "MongoDB", pos: "top-[26%] left-[6%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-c", delay: "0.5s", sx: "-38px", sy: "-14px", r: "8deg" },
+    { Icon: SiMysql, color: "#4479A1", label: "MySQL", pos: "top-[12%] left-[16%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "1s", sx: "-30px", sy: "-32px", r: "-14deg" },
+    { Icon: SiFirebase, color: "#FFCA28", label: "Firebase", pos: "top-[36%] left-[28%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-a", delay: "0.35s", sx: "-16px", sy: "-8px", r: "12deg" },
+    { Icon: FaLinux, color: "#FCC624", label: "Linux", pos: "bottom-[40%] right-[26%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "0.85s", sx: "20px", sy: "12px", r: "-6deg" },
+    { Icon: SiGnubash, color: "#4EAA25", label: "Bash", pos: "top-[56%] right-[24%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-c", delay: "1.35s", sx: "14px", sy: "20px", r: "9deg" },
   ];
 
   return (
