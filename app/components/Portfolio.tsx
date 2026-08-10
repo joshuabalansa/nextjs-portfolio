@@ -38,6 +38,26 @@ const roles = [
   "Front-end Developer",
 ];
 
+/** Scroll progress for sticky pin sections: starts as section enters the viewport. */
+const getPinnedSectionProgress = (section: HTMLElement) => {
+  const rect = section.getBoundingClientRect();
+  const vh = window.innerHeight || 1;
+  const pinDistance = Math.max(1, section.offsetHeight - vh);
+
+  // Still fully below the fold
+  if (rect.top >= vh) return 0;
+
+  // Approaching / partially visible: map rect.top (vh → 0) to progress 0 → 0.88
+  if (rect.top > 0) {
+    const approach = 1 - rect.top / vh;
+    return Math.round(approach * 0.88 * 1000) / 1000;
+  }
+
+  // Sticky pinned: remaining scroll 0.88 → 1
+  const pin = Math.min(1, Math.max(0, -rect.top / pinDistance));
+  return Math.round((0.88 + pin * 0.12) * 1000) / 1000;
+};
+
 const SectionHeading = ({ overline, title, subtitle }: { overline: string; title: string; subtitle?: string }) => (
   <div className="text-center mb-16 reveal">
     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">
@@ -78,6 +98,18 @@ const Portfolio = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [activePage, setActivePage] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+
+  // Philosophy scroll-pin progress (0 → 1)
+  const philosophyRef = useRef<HTMLElement>(null);
+  const [philosophyProgress, setPhilosophyProgress] = useState(0);
+
+  // Tech stack scroll-pin progress (0 → 1)
+  const techRef = useRef<HTMLElement>(null);
+  const [techProgress, setTechProgress] = useState(0);
+
+  // Projects scroll-pin progress (0 → 1)
+  const projectsRef = useRef<HTMLElement>(null);
+  const [projectsProgress, setProjectsProgress] = useState(0);
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -172,6 +204,42 @@ const Portfolio = () => {
     );
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  // Sticky section scroll progress (philosophy + tech + projects)
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      if (philosophyRef.current) {
+        const next = getPinnedSectionProgress(philosophyRef.current);
+        setPhilosophyProgress((prev) => (prev === next ? prev : next));
+      }
+      if (techRef.current) {
+        const next = getPinnedSectionProgress(techRef.current);
+        setTechProgress((prev) => (prev === next ? prev : next));
+      }
+      if (projectsRef.current) {
+        const next = getPinnedSectionProgress(projectsRef.current);
+        setProjectsProgress((prev) => (prev === next ? prev : next));
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   // Track carousel pages for the dot indicators
@@ -746,112 +814,346 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Tech Stack Section — Marquee Carousel */}
+      {/* Philosophy — scroll-pinned MINIMALIST statement */}
       <section
-        id="tech"
-        className="py-24 px-0 overflow-hidden"
+        ref={philosophyRef}
+        id="philosophy"
+        className="relative h-[180vh] bg-white dark:bg-gray-950"
+        aria-label="Design philosophy"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeading
-            overline="Stack"
-            title="Tools I work with"
-            subtitle="The technologies behind my day-to-day work."
+        <div className="sticky top-0 h-dvh flex items-center justify-center overflow-hidden px-4 sm:px-6">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 philosophy-grid opacity-40 dark:opacity-30"
           />
-        </div>
 
-        <div className="reveal space-y-4">
-          {[
-            { items: techStack.slice(0, 8), reverse: false },
-            { items: techStack.slice(8), reverse: true },
-          ].map((row, rowIndex) => (
-            <div key={rowIndex} className="marquee relative overflow-hidden">
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-white dark:from-gray-950 to-transparent" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-white dark:from-gray-950 to-transparent" />
-              <div className={`flex w-max gap-3 ${row.reverse ? "marquee-track-reverse" : "marquee-track"}`}>
-                {[...row.items, ...row.items].map((tech, index) => (
-                  <div
-                    key={`${tech.name}-${index}`}
-                    className="flex items-center gap-3 px-5 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors hover:border-gray-400 dark:hover:border-gray-600"
+          <div className="relative z-10 w-full max-w-6xl mx-auto text-center">
+            <p
+              className="text-xs sm:text-sm font-semibold uppercase tracking-[0.35em] text-gray-400 dark:text-gray-500 mb-6 sm:mb-8"
+              style={{
+                opacity: Math.min(1, philosophyProgress / 0.12),
+                transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.12)) * 16}px)`,
+                transition: "none",
+              }}
+            >
+              Philosophy
+            </p>
+
+            <h2
+              className="philosophy-word font-bold tracking-tighter text-gray-900 dark:text-white select-none"
+              aria-label="Minimalist"
+            >
+              {"MINIMALIST".split("").map((letter, index) => {
+                const letterStart = 0.05 + index * 0.035;
+                const letterEnd = letterStart + 0.14;
+                const t = Math.min(
+                  1,
+                  Math.max(0, (philosophyProgress - letterStart) / (letterEnd - letterStart))
+                );
+                const ease = 1 - Math.pow(1 - t, 3);
+                return (
+                  <span
+                    key={`${letter}-${index}`}
+                    className="inline-block"
+                    style={{
+                      opacity: ease,
+                      transform: `translateY(${(1 - ease) * 48}px) scale(${0.88 + ease * 0.12})`,
+                      filter: `blur(${(1 - ease) * 8}px)`,
+                      willChange: "transform, opacity, filter",
+                    }}
                   >
-                    <span className="text-xl" style={{ color: tech.color }}>{tech.icon}</span>
-                    <span className="font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">{tech.name}</span>
-                  </div>
-                ))}
-              </div>
+                    {letter}
+                  </span>
+                );
+              })}
+            </h2>
+
+            <div
+              className="mx-auto mt-8 sm:mt-10 max-w-xl"
+              style={{
+                opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22)),
+                transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22))) * 28}px)`,
+              }}
+            >
+              <div
+                className="h-px w-12 bg-gray-900 dark:bg-white mx-auto mb-6 sm:mb-8 origin-center"
+                style={{
+                  transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.18))})`,
+                }}
+              />
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
+                Less noise, more clarity. I design and build with restraint —
+                clean layouts, purposeful motion, and only the details that
+                earn their place. Complexity lives under the hood so the
+                experience stays simple.
+              </p>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* Projects Section — Carousel */}
+      {/* Tech Stack Section — scroll-linked marquees */}
       <section
-        id="projects"
-        className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900/40"
+        ref={techRef}
+        id="tech"
+        className="relative h-[140vh] overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            overline="Work"
-            title="Selected work"
-            subtitle="A few projects I've designed, built, and shipped."
-          />
+        <div className="sticky top-0 h-dvh flex flex-col justify-center py-16 sm:py-20">
+          <div
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+            style={{
+              opacity: Math.min(1, Math.max(0, techProgress / 0.12)),
+              transform: `translateY(${(1 - Math.min(1, Math.max(0, techProgress / 0.12))) * 28}px)`,
+            }}
+          >
+            <div className="text-center mb-10 sm:mb-14">
+              <p
+                className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3"
+                style={{
+                  opacity: Math.min(1, Math.max(0, techProgress / 0.14)),
+                  transform: `translateY(${(1 - Math.min(1, Math.max(0, techProgress / 0.14))) * 10}px)`,
+                }}
+              >
+                Stack
+              </p>
+              <h2
+                className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
+                style={{
+                  opacity: Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16)),
+                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16))) * 18}px) scale(${0.97 + Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16)) * 0.03})`,
+                }}
+              >
+                Tools I work with
+              </h2>
+              <p
+                className="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto"
+                style={{
+                  opacity: Math.min(1, Math.max(0, (techProgress - 0.1) / 0.16)),
+                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.1) / 0.16))) * 14}px)`,
+                }}
+              >
+                The technologies behind my day-to-day work.
+              </p>
+            </div>
+          </div>
 
-          <div className="reveal relative">
+          <div className="space-y-3 sm:space-y-4 w-full">
+            {(() => {
+              const rowCount = 4;
+              const perRow = Math.ceil(techStack.length / rowCount);
+              return Array.from({ length: rowCount }, (_, rowIndex) => {
+                const items = techStack.slice(rowIndex * perRow, (rowIndex + 1) * perRow);
+                if (items.length === 0) return null;
+                const reverse = rowIndex % 2 === 1;
+                // Reveal while section is still approaching the top
+                const start = 0.12 + rowIndex * 0.08;
+                const end = start + 0.18;
+                const t = Math.min(
+                  1,
+                  Math.max(0, (techProgress - start) / (end - start))
+                );
+                const ease = 1 - Math.pow(1 - t, 3);
+                const fromX = reverse ? 10 : -10;
+                const drift = reverse
+                  ? (1 - ease) * 6 + Math.max(0, techProgress - 0.5) * -4
+                  : (1 - ease) * -6 + Math.max(0, techProgress - 0.5) * 4;
+
+                return (
+                  <div
+                    key={rowIndex}
+                    className="marquee relative overflow-hidden"
+                    style={{
+                      opacity: ease,
+                      transform: `translateX(${fromX * (1 - ease) + drift * 0.35}%)`,
+                      filter: `blur(${(1 - ease) * 4}px)`,
+                    }}
+                  >
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-white dark:from-gray-950 to-transparent" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-white dark:from-gray-950 to-transparent" />
+                    <div
+                      className={`flex w-max gap-3 ${reverse ? "marquee-track-reverse" : "marquee-track"}`}
+                      style={{
+                        animationPlayState: t > 0.2 ? "running" : "paused",
+                      }}
+                    >
+                      {[...items, ...items, ...items].map((tech, index) => {
+                        const chipStart = start + 0.02 + (index % items.length) * 0.015;
+                        const chipT = Math.min(
+                          1,
+                          Math.max(0, (techProgress - chipStart) / 0.12)
+                        );
+                        const chipEase = 1 - Math.pow(1 - chipT, 3);
+
+                        return (
+                          <div
+                            key={`${tech.name}-${index}`}
+                            className="flex items-center gap-3 px-5 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors hover:border-gray-400 dark:hover:border-gray-600"
+                            style={{
+                              opacity: chipEase,
+                              transform: `scale(${0.9 + chipEase * 0.1}) translateY(${(1 - chipEase) * 12}px)`,
+                            }}
+                          >
+                            <span className="text-xl" style={{ color: tech.color }}>
+                              {tech.icon}
+                            </span>
+                            <span className="font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                              {tech.name}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+
+          <p
+            className="mt-10 sm:mt-12 text-center text-sm text-gray-400 dark:text-gray-500 px-4"
+            style={{
+              opacity: Math.min(1, Math.max(0, (techProgress - 0.45) / 0.2)),
+              transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.45) / 0.2))) * 12}px)`,
+            }}
+          >
+            Front-end, back-end, data, and the shell — ships on these tools.
+          </p>
+        </div>
+      </section>
+
+      {/* Projects Section — centered sticky showcase */}
+      <section
+        ref={projectsRef}
+        id="projects"
+        className="relative h-[150vh] overflow-hidden bg-gray-50 dark:bg-gray-900/40"
+      >
+        <div className="sticky top-0 h-dvh flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="max-w-7xl mx-auto w-full">
             <div
-              ref={carouselRef}
-              className="no-scrollbar flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+              className="text-center max-w-2xl mx-auto mb-10 sm:mb-14"
+              style={{
+                opacity: Math.min(1, projectsProgress / 0.14),
+                transform: `translateY(${(1 - Math.min(1, projectsProgress / 0.14)) * 24}px)`,
+              }}
             >
-              {projects.map((project, index) => (
-                <div
-                  key={index}
-                  className="group snap-start shrink-0 w-[88%] sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] flex flex-col p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-none hover:border-gray-400 dark:hover:border-gray-600"
-                >
-                  <span className="text-sm font-mono text-gray-400 dark:text-gray-600 mb-3">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed text-sm line-clamp-4">
-                    {project.details}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.techStack.split(', ').map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-auto flex flex-wrap gap-3">
-                    {project.githubLink && project.githubLink !== "#" && (
-                      <Link
-                        href={project.githubLink}
-                        target="_blank"
-                        className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white text-sm transition-colors"
-                      >
-                        <AiFillGithub />
-                        Code
-                      </Link>
-                    )}
-                    {project.liveLink && (
-                      <Link
-                        href={project.liveLink}
-                        target="_blank"
-                        className="group/live flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full hover:opacity-90 text-sm font-medium transition-all"
-                      >
-                        Live site
-                        <AiOutlineArrowRight className="-rotate-45 transition-transform group-hover/live:rotate-0" />
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              ))}
+              <p
+                className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3"
+                style={{
+                  opacity: Math.min(1, projectsProgress / 0.16),
+                }}
+              >
+                Work
+              </p>
+              <h2
+                className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
+                style={{
+                  opacity: Math.min(1, Math.max(0, (projectsProgress - 0.04) / 0.16)),
+                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.04) / 0.16))) * 16}px)`,
+                }}
+              >
+                Selected work
+              </h2>
+              <p
+                className="mt-4 text-lg text-gray-500 dark:text-gray-400"
+                style={{
+                  opacity: Math.min(1, Math.max(0, (projectsProgress - 0.1) / 0.16)),
+                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.1) / 0.16))) * 12}px)`,
+                }}
+              >
+                A few projects I&apos;ve designed, built, and shipped.
+              </p>
             </div>
 
-            {/* Carousel controls */}
-            <div className="mt-8 flex items-center justify-center gap-6">
+            <div
+              className="relative"
+              style={{
+                opacity: Math.min(1, Math.max(0, (projectsProgress - 0.12) / 0.2)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.12) / 0.2))) * 36}px)`,
+              }}
+            >
+              <div
+                ref={carouselRef}
+                className="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
+              >
+                {projects.map((project, index) => {
+                  const cardStart = 0.14 + Math.min(index, 5) * 0.04;
+                  const cardT = Math.min(
+                    1,
+                    Math.max(0, (projectsProgress - cardStart) / 0.18)
+                  );
+                  const cardEase = 1 - Math.pow(1 - cardT, 3);
+
+                  return (
+                    <article
+                      key={index}
+                      className="group snap-center shrink-0 w-[min(88vw,22rem)] sm:w-[min(70vw,24rem)] lg:w-[calc(33.333%-14px)] relative flex flex-col min-h-[340px] sm:min-h-[360px] p-7 sm:p-8 rounded-[1.35rem] border border-gray-200/90 dark:border-gray-800 bg-white/90 dark:bg-gray-950/80 backdrop-blur-sm overflow-hidden transition-colors duration-300 hover:border-gray-400 dark:hover:border-gray-600"
+                      style={{
+                        opacity: cardEase,
+                        transform: `scale(${0.94 + cardEase * 0.06}) translateY(${(1 - cardEase) * 28}px)`,
+                      }}
+                    >
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute -right-2 -top-4 text-[5.5rem] sm:text-[6.5rem] font-bold leading-none tabular-nums text-gray-100 dark:text-gray-900/80 select-none transition-transform duration-500 group-hover:scale-105"
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                      <div className="relative z-10 flex flex-col h-full">
+                        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
+                          Project {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-3 leading-snug">
+                          {project.title}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 mb-5 leading-relaxed text-sm sm:text-[0.95rem] line-clamp-4">
+                          {project.details}
+                        </p>
+
+                        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-6 font-[family-name:var(--font-geist-mono)]">
+                          {project.techStack.split(", ").join(" · ")}
+                        </p>
+
+                        <div className="mt-auto flex flex-wrap items-center gap-4">
+                          {project.liveLink && (
+                            <Link
+                              href={project.liveLink}
+                              target="_blank"
+                              className="group/live inline-flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
+                            >
+                              Live site
+                              <AiOutlineArrowRight className="transition-transform group-hover/live:translate-x-0.5 -rotate-45 group-hover/live:rotate-0" />
+                            </Link>
+                          )}
+                          {project.githubLink && project.githubLink !== "#" && (
+                            <Link
+                              href={project.githubLink}
+                              target="_blank"
+                              className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                            >
+                              <AiFillGithub className="text-base" />
+                              Code
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* edge fades */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-gray-50 dark:from-gray-950 to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent z-10" />
+            </div>
+
+            <div
+              className="mt-8 sm:mt-10 flex items-center justify-center gap-6"
+              style={{
+                opacity: Math.min(1, Math.max(0, (projectsProgress - 0.28) / 0.18)),
+                transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.28) / 0.18))) * 14}px)`,
+              }}
+            >
               <button
                 onClick={() => scrollCarousel(-1)}
                 aria-label="Previous projects"
@@ -867,10 +1169,10 @@ const Portfolio = () => {
                     key={index}
                     onClick={() => goToPage(index)}
                     aria-label={`Go to page ${index + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
                       activePage === index
-                        ? "w-7 bg-gray-900 dark:bg-white"
-                        : "w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-500"
+                        ? "w-8 bg-gray-900 dark:bg-white"
+                        : "w-1.5 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-500"
                     }`}
                   />
                 ))}

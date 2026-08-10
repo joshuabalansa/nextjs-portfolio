@@ -286,6 +286,29 @@ body {
   to { transform: scaleX(1); opacity: 1; }
 }
 
+.philosophy-word {
+  font-size: clamp(2.75rem, 12vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.philosophy-grid {
+  background-image:
+    linear-gradient(to right, rgba(100, 116, 139, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(100, 116, 139, 0.08) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .philosophy-word span {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
   .animate-float-a,
