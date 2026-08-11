@@ -58,6 +58,28 @@ const getPinnedSectionProgress = (section: HTMLElement) => {
   return Math.round((0.88 + pin * 0.12) * 1000) / 1000;
 };
 
+/**
+ * Progress driven by sticky-pin scroll (content centered while animating).
+ * Most of 0→1 plays while the section is fixed to the viewport.
+ */
+const getStickyPinProgress = (section: HTMLElement) => {
+  const rect = section.getBoundingClientRect();
+  const vh = window.innerHeight || 1;
+  const pinDistance = Math.max(1, section.offsetHeight - vh);
+
+  if (rect.top >= vh) return 0;
+
+  // Soft pre-roll as section enters (0 → 0.06)
+  if (rect.top > 0) {
+    const approach = 1 - rect.top / vh;
+    return Math.round(approach * 0.06 * 1000) / 1000;
+  }
+
+  // Main animation across the sticky pin distance (0.06 → 1)
+  const pin = Math.min(1, Math.max(0, -rect.top / pinDistance));
+  return Math.round((0.06 + pin * 0.94) * 1000) / 1000;
+};
+
 const SectionHeading = ({ overline, title, subtitle }: { overline: string; title: string; subtitle?: string }) => (
   <div className="text-center mb-16 reveal">
     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">
@@ -217,7 +239,7 @@ const Portfolio = () => {
     const update = () => {
       frame = 0;
       if (philosophyRef.current) {
-        const next = getPinnedSectionProgress(philosophyRef.current);
+        const next = getStickyPinProgress(philosophyRef.current);
         setPhilosophyProgress((prev) => (prev === next ? prev : next));
       }
       if (techRef.current) {
@@ -826,7 +848,7 @@ const Portfolio = () => {
       <section
         ref={philosophyRef}
         id="philosophy"
-        className="relative h-[180vh] bg-white dark:bg-gray-950"
+        className="relative h-[220vh] bg-white dark:bg-gray-950"
         aria-label="Design philosophy"
       >
         <div className="sticky top-0 h-dvh flex items-center justify-center overflow-hidden px-4 sm:px-6">
@@ -839,9 +861,8 @@ const Portfolio = () => {
             <p
               className="text-xs sm:text-sm font-semibold uppercase tracking-[0.35em] text-gray-400 dark:text-gray-500 mb-6 sm:mb-8"
               style={{
-                opacity: Math.min(1, philosophyProgress / 0.12),
-                transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.12)) * 16}px)`,
-                transition: "none",
+                opacity: Math.min(1, philosophyProgress / 0.14),
+                transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.14)) * 20}px)`,
               }}
             >
               Philosophy
@@ -852,8 +873,8 @@ const Portfolio = () => {
               aria-label="Minimalist"
             >
               {"MINIMALIST".split("").map((letter, index) => {
-                const letterStart = 0.05 + index * 0.035;
-                const letterEnd = letterStart + 0.14;
+                const letterStart = 0.08 + index * 0.055;
+                const letterEnd = letterStart + 0.18;
                 const t = Math.min(
                   1,
                   Math.max(0, (philosophyProgress - letterStart) / (letterEnd - letterStart))
@@ -862,12 +883,11 @@ const Portfolio = () => {
                 return (
                   <span
                     key={`${letter}-${index}`}
-                    className="inline-block"
+                    className="inline-block will-change-transform"
                     style={{
                       opacity: ease,
-                      transform: `translateY(${(1 - ease) * 48}px) scale(${0.88 + ease * 0.12})`,
-                      filter: `blur(${(1 - ease) * 8}px)`,
-                      willChange: "transform, opacity, filter",
+                      transform: `translateY(${(1 - ease) * 56}px) scale(${0.82 + ease * 0.18})`,
+                      filter: ease > 0.98 ? "none" : `blur(${(1 - ease) * 10}px)`,
                     }}
                   >
                     {letter}
@@ -877,23 +897,21 @@ const Portfolio = () => {
             </h2>
 
             <div
-              className="mx-auto mt-8 sm:mt-10 max-w-xl"
+              className="mx-auto mt-8 sm:mt-10 max-w-md"
               style={{
-                opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22)),
-                transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22))) * 28}px)`,
+                opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.2)),
+                transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.2))) * 24}px)`,
               }}
             >
               <div
                 className="h-px w-12 bg-gray-900 dark:bg-white mx-auto mb-6 sm:mb-8 origin-center"
                 style={{
-                  transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.18))})`,
+                  transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.16))})`,
                 }}
               />
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-                Less noise, more clarity. I design and build with restraint —
-                clean layouts, purposeful motion, and only the details that
-                earn their place. Complexity lives under the hood so the
-                experience stays simple.
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                Less noise, more clarity. Clean layouts, purposeful motion, and
+                only the details that matter.
               </p>
             </div>
           </div>
