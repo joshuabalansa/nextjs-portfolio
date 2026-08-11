@@ -15,7 +15,7 @@ import {
   FaJs,
   FaChevronDown,
 } from "react-icons/fa";
-import { LuSun, LuMoon, LuMenu, LuX } from "react-icons/lu";
+import { LuMenu, LuX } from "react-icons/lu";
 import { MdCall, MdEmail } from "react-icons/md";
 import {
   SiNextdotjs,
@@ -97,7 +97,6 @@ const SectionHeading = ({ overline, title, subtitle }: { overline: string; title
 );
 
 const Portfolio = () => {
-  const [theme, setTheme] = useState("dark");
   const [activeSection, setActiveSection] = useState("home");
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -137,13 +136,6 @@ const Portfolio = () => {
   const contactRef = useRef<HTMLElement>(null);
   const [contactProgress, setContactProgress] = useState(0);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    localStorage.setItem("theme", newTheme);
-  };
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -154,9 +146,8 @@ const Portfolio = () => {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    document.documentElement.classList.remove("dark");
+    localStorage.removeItem("theme");
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -449,15 +440,7 @@ const Portfolio = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <button
-              onClick={toggleTheme}
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              {theme === "dark" ? <LuSun className="w-5 h-5" /> : <LuMoon className="w-5 h-5" />}
-            </button>
-
+          <div className="relative flex items-center justify-center h-16">
             {/* Desktop links */}
             <div className="hidden md:flex items-center gap-1">
               {navItems.map(({ id, label }) => (
@@ -480,13 +463,10 @@ const Portfolio = () => {
               onClick={() => setIsMobileMenuOpen((open) => !open)}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
-              className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="md:hidden absolute right-0 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               {isMobileMenuOpen ? <LuX className="w-5 h-5" /> : <LuMenu className="w-5 h-5" />}
             </button>
-
-            {/* Spacer so desktop theme button stays left-aligned with centered-feel layout */}
-            <div className="hidden md:block w-9" aria-hidden="true" />
           </div>
         </div>
 
