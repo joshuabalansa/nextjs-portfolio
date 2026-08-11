@@ -435,7 +435,8 @@ const Portfolio = () => {
     <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white overflow-x-clip">
       {/* Navigation */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-950/80 border-b border-gray-200/60 dark:border-gray-800/60 transition-transform duration-300 ${
+        aria-label="Primary"
+        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-950/80 transition-transform duration-300 ${
           isNavVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -496,9 +497,11 @@ const Portfolio = () => {
         </div>
       </nav>
 
+      <main>
       {/* Hero Section */}
       <section
         id="home"
+        aria-label="Introduction"
         className="relative min-h-dvh flex items-center justify-center overflow-x-clip"
       >
         <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -527,7 +530,11 @@ const Portfolio = () => {
                   Hi, I&apos;m
                 </p>
                 <h1 className="text-[clamp(3.75rem,14vw,8.5rem)] font-bold tracking-tighter leading-[0.88] text-gray-900 dark:text-white">
-                  Josh<span className="text-gray-300 dark:text-gray-600">.</span>
+                  Josh
+                  <span className="sr-only">ua Balansa — Full Stack Developer</span>
+                  <span className="text-gray-300 dark:text-gray-600" aria-hidden>
+                    .
+                  </span>
                 </h1>
                 <div className="hero-line mt-5 h-px w-20 bg-gray-900 dark:bg-white mx-auto lg:mx-0" />
               </div>
@@ -575,7 +582,8 @@ const Portfolio = () => {
                   <Link
                     key={index}
                     href={href}
-                    target="_blank"
+                    target={href.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
                     aria-label={label}
                     className="p-2.5 text-gray-400 dark:text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
                   >
@@ -655,9 +663,10 @@ const Portfolio = () => {
                 <div className="relative aspect-[4/5] rounded-[1.75rem] overflow-hidden group bg-gray-200 dark:bg-gray-800">
                   <Image
                     src="/img-1.jpeg"
-                    alt="Joshua Balansa"
+                    alt="Joshua Balansa, full stack developer based in the Philippines"
                     fill
                     sizes="(max-width: 1024px) 24rem, 40vw"
+                    priority
                     className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-950/85 via-gray-950/15 to-transparent" />
@@ -1118,6 +1127,7 @@ const Portfolio = () => {
                             <Link
                               href={project.liveLink}
                               target="_blank"
+                              rel="noopener noreferrer"
                               className="group/live inline-flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
                             >
                               Live site
@@ -1128,6 +1138,7 @@ const Portfolio = () => {
                             <Link
                               href={project.githubLink}
                               target="_blank"
+                              rel="noopener noreferrer"
                               className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                             >
                               <AiFillGithub className="text-base" />
@@ -1300,6 +1311,7 @@ const Portfolio = () => {
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-gray-200/60 dark:border-gray-800/60">
@@ -1310,7 +1322,8 @@ const Portfolio = () => {
               <Link
                 key={index}
                 href={href}
-                target="_blank"
+                target={href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
                 aria-label={label}
                 className="hover:text-gray-900 dark:hover:text-white transition-colors"
               >
