@@ -334,6 +334,14 @@ const Portfolio = () => {
 
   const projects = [
     {
+      title: "Maison Lumière",
+      details:
+        "A marketing and operations site for a boutique Airbnb management house in Manila. Investors can explore the method, live portfolio numbers, and book a call; the app also handles unit bookings, guest activity, and an admin dashboard for managed suites.",
+      techStack: "Next.js, TypeScript, Tailwind CSS, Supabase",
+      githubLink: "",
+      liveLink: "https://maison-lumiere-bice.vercel.app/",
+    },
+    {
       title: "Centimo - AI Powered POS",
       details:
         "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights.",
