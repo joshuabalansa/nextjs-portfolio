@@ -16,6 +16,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { LuMenu, LuX } from "react-icons/lu";
+import Asciify from "./Asciify";
 import { MdCall, MdEmail } from "react-icons/md";
 import {
   SiNextdotjs,
@@ -510,8 +511,23 @@ const Portfolio = () => {
       <section
         id="home"
         aria-label="Introduction"
-        className="relative min-h-dvh flex items-center justify-center overflow-x-clip"
+        className="relative min-h-dvh overflow-x-clip"
       >
+        <Asciify
+          className="min-h-dvh w-full"
+          radius={0.42}
+          softness={1}
+          scale={2}
+          spacing={1}
+          charset="ascii"
+          background="auto"
+          contrast={1.1}
+          glow={0.7}
+          aberration={0.55}
+          followSpeed={4}
+          strength={1}
+        >
+        <div className="relative min-h-dvh flex items-center justify-center overflow-x-clip">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <div className="hero-mesh absolute inset-0" />
           <div className="hero-grid absolute inset-0" />
@@ -642,6 +658,8 @@ const Portfolio = () => {
           <span className="text-[10px] uppercase tracking-[0.25em] font-medium">Scroll</span>
           <FaChevronDown className="animate-bounce text-sm" />
         </button>
+        </div>
+        </Asciify>
       </section>
 
       {/* About Section */}
@@ -668,7 +686,21 @@ const Portfolio = () => {
                   aria-hidden
                   className="absolute -inset-px rounded-[1.85rem] bg-gradient-to-br from-gray-300 via-gray-200/40 to-gray-400/50 dark:from-gray-600 dark:via-gray-700/30 dark:to-gray-500/40"
                 />
-                <div className="relative aspect-[4/5] rounded-[1.75rem] overflow-hidden group bg-gray-200 dark:bg-gray-800">
+                <Asciify
+                  className="relative aspect-[4/5] rounded-[1.75rem] overflow-hidden"
+                  radius={0.55}
+                  softness={0.9}
+                  scale={1.75}
+                  spacing={1}
+                  charset="ascii"
+                  background="auto"
+                  contrast={1.2}
+                  glow={0.85}
+                  aberration={0.4}
+                  followSpeed={4.5}
+                  strength={1}
+                >
+                <div className="relative h-full min-h-full overflow-hidden group bg-gray-200 dark:bg-gray-800">
                   <Image
                     src="/img-1.jpeg"
                     alt="Joshua Balansa, full stack developer based in the Philippines"
@@ -687,6 +719,7 @@ const Portfolio = () => {
                     </p>
                   </div>
                 </div>
+                </Asciify>
               </div>
             </div>
 
