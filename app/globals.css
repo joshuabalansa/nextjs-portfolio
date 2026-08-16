@@ -286,12 +286,6 @@ body {
   to { transform: scaleX(1); opacity: 1; }
 }
 
-.philosophy-word {
-  font-size: clamp(2.75rem, 12vw, 9.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.04em;
-}
-
 .philosophy-grid {
   background-image:
     linear-gradient(to right, rgba(100, 116, 139, 0.08) 1px, transparent 1px),
@@ -301,12 +295,164 @@ body {
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 75%);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .philosophy-word span {
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
+.tech-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  pointer-events: none;
+  animation: orb-drift 16s ease-in-out infinite;
+  will-change: transform;
+}
+
+.tech-orb-a {
+  width: min(48vw, 26rem);
+  height: min(48vw, 26rem);
+  top: 6%;
+  left: -8%;
+  background: rgba(148, 163, 184, 0.16);
+}
+
+.dark .tech-orb-a {
+  background: rgba(71, 85, 105, 0.32);
+}
+
+.tech-orb-b {
+  width: min(42vw, 22rem);
+  height: min(42vw, 22rem);
+  bottom: 4%;
+  right: -10%;
+  background: rgba(100, 116, 139, 0.12);
+  animation-delay: -7s;
+}
+
+.dark .tech-orb-b {
+  background: rgba(51, 65, 85, 0.38);
+}
+
+.tech-tile {
+  --tech-color: rgb(156 163 175);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.tech-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    color-mix(in srgb, var(--tech-color) 22%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tech-tile > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tech-tile:hover {
+  transform: translateY(-4px) scale(1.045);
+  border-color: color-mix(in srgb, var(--tech-color) 50%, rgb(209 213 219));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tech-color) 22%, transparent),
+    0 18px 40px -18px color-mix(in srgb, var(--tech-color) 55%, transparent);
+}
+
+.dark .tech-tile:hover {
+  border-color: color-mix(in srgb, var(--tech-color) 42%, rgb(31 41 55));
+}
+
+.tech-tile:hover::before {
+  opacity: 1;
+}
+
+.work-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    box-shadow 0.45s ease;
+}
+
+.work-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    rgba(15, 23, 42, 0.045),
+    transparent 42%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.work-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(15, 23, 42, 0.18),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.dark .work-card::before {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.05),
+    transparent 42%
+  );
+}
+
+.dark .work-card::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.work-card:hover {
+  transform: translateY(-6px);
+  border-color: rgb(156 163 175);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 22px 44px -24px rgba(15, 23, 42, 0.35);
+}
+
+.dark .work-card:hover {
+  border-color: rgb(75 85 99);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 22px 44px -22px rgba(0, 0, 0, 0.55);
+}
+
+.work-card:hover::before,
+.work-card:hover::after {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -319,6 +465,7 @@ body {
   .marquee-track,
   .marquee-track-reverse,
   .hero-orb,
+  .tech-orb,
   .hero-line,
   .hero-constellation::before,
   .hero-constellation::after {
@@ -332,5 +479,11 @@ body {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .tech-tile:hover {
+    transform: none;
+  }
+  .work-card:hover {
+    transform: none;
   }
 }

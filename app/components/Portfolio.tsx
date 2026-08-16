@@ -39,26 +39,6 @@ const roles = [
   "Front-end Developer",
 ];
 
-/** Scroll progress for sticky pin sections: starts as section enters the viewport. */
-const getPinnedSectionProgress = (section: HTMLElement) => {
-  const rect = section.getBoundingClientRect();
-  const vh = window.innerHeight || 1;
-  const pinDistance = Math.max(1, section.offsetHeight - vh);
-
-  // Still fully below the fold
-  if (rect.top >= vh) return 0;
-
-  // Approaching / partially visible: map rect.top (vh → 0) to progress 0 → 0.88
-  if (rect.top > 0) {
-    const approach = 1 - rect.top / vh;
-    return Math.round(approach * 0.88 * 1000) / 1000;
-  }
-
-  // Sticky pinned: remaining scroll 0.88 → 1
-  const pin = Math.min(1, Math.max(0, -rect.top / pinDistance));
-  return Math.round((0.88 + pin * 0.12) * 1000) / 1000;
-};
-
 /**
  * Progress driven by sticky-pin scroll (content centered while animating).
  * Most of 0→1 plays while the section is fixed to the viewport.
@@ -102,6 +82,8 @@ const Portfolio = () => {
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
+  const navClickScroll = useRef(false);
+  const navClickScrollTimer = useRef(0);
 
   const navItems = [
     { id: "home", label: "Home" },
@@ -125,21 +107,12 @@ const Portfolio = () => {
   const philosophyRef = useRef<HTMLElement>(null);
   const [philosophyProgress, setPhilosophyProgress] = useState(0);
 
-  // Tech stack scroll-pin progress (0 → 1)
-  const techRef = useRef<HTMLElement>(null);
-  const [techProgress, setTechProgress] = useState(0);
-
-  // Projects scroll-pin progress (0 → 1)
-  const projectsRef = useRef<HTMLElement>(null);
-  const [projectsProgress, setProjectsProgress] = useState(0);
-
-  // Contact scroll-pin progress (0 → 1)
-  const contactRef = useRef<HTMLElement>(null);
-  const [contactProgress, setContactProgress] = useState(0);
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
+      navClickScroll.current = true;
+      window.clearTimeout(navClickScrollTimer.current);
+      setIsNavVisible(true);
       element.scrollIntoView({ behavior: "smooth" });
       setActiveSection(sectionId);
       setIsMobileMenuOpen(false);
@@ -149,6 +122,12 @@ const Portfolio = () => {
   useEffect(() => {
     document.documentElement.classList.remove("dark");
     localStorage.removeItem("theme");
+
+    const endNavClickScroll = () => {
+      window.clearTimeout(navClickScrollTimer.current);
+      navClickScroll.current = false;
+      lastScrollY.current = window.scrollY;
+    };
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -166,6 +145,13 @@ const Portfolio = () => {
         }
       }
 
+      if (navClickScroll.current) {
+        lastScrollY.current = currentScrollY;
+        window.clearTimeout(navClickScrollTimer.current);
+        navClickScrollTimer.current = window.setTimeout(endNavClickScroll, 180);
+        return;
+      }
+
       if (currentScrollY <= 0) {
         setIsNavVisible(true);
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 64) {
@@ -178,10 +164,20 @@ const Portfolio = () => {
       lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll);
+    const handleUserScroll = () => {
+      if (!navClickScroll.current) return;
+      endNavClickScroll();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("wheel", handleUserScroll, { passive: true });
+    window.addEventListener("touchstart", handleUserScroll, { passive: true });
 
     return () => {
+      window.clearTimeout(navClickScrollTimer.current);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("wheel", handleUserScroll);
+      window.removeEventListener("touchstart", handleUserScroll);
     };
   }, []);
 
@@ -224,7 +220,7 @@ const Portfolio = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Sticky section scroll progress (philosophy + tech + projects + contact)
+  // Sticky section scroll progress (philosophy)
   useEffect(() => {
     let frame = 0;
 
@@ -233,18 +229,6 @@ const Portfolio = () => {
       if (philosophyRef.current) {
         const next = getStickyPinProgress(philosophyRef.current);
         setPhilosophyProgress((prev) => (prev === next ? prev : next));
-      }
-      if (techRef.current) {
-        const next = getPinnedSectionProgress(techRef.current);
-        setTechProgress((prev) => (prev === next ? prev : next));
-      }
-      if (projectsRef.current) {
-        const next = getPinnedSectionProgress(projectsRef.current);
-        setProjectsProgress((prev) => (prev === next ? prev : next));
-      }
-      if (contactRef.current) {
-        const next = getPinnedSectionProgress(contactRef.current);
-        setContactProgress((prev) => (prev === next ? prev : next));
       }
     };
 
@@ -367,7 +351,7 @@ const Portfolio = () => {
     {
       title: "Task Management Dashboard with Deployment Tracking",
       details: "A modern task management dashboard with deployment tracking, team management, and analytics.",
-      techStack: "React, TypeScript, Tailwind CSS",
+      techStack: "",
       githubLink: "https://github.com/joshuabalansa/taskflow",
       liveLink: "",
     },
@@ -874,503 +858,456 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Philosophy — scroll-pinned MINIMALIST statement */}
+      {/* Philosophy — scroll-pinned statement */}
       <section
         ref={philosophyRef}
         id="philosophy"
-        className="relative h-[220vh] bg-white dark:bg-gray-950"
+        className="relative h-[180vh] bg-white dark:bg-gray-950"
         aria-label="Design philosophy"
       >
-        <div className="sticky top-0 h-dvh flex items-center justify-center overflow-hidden px-4 sm:px-6">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 philosophy-grid opacity-40 dark:opacity-30"
-          />
-
-          <div className="relative z-10 w-full max-w-6xl mx-auto text-center">
-            <p
-              className="text-xs sm:text-sm font-semibold uppercase tracking-[0.35em] text-gray-400 dark:text-gray-500 mb-6 sm:mb-8"
-              style={{
-                opacity: Math.min(1, philosophyProgress / 0.14),
-                transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.14)) * 20}px)`,
-              }}
-            >
-              Philosophy
-            </p>
-
-            <h2
-              className="philosophy-word font-bold tracking-tighter text-gray-900 dark:text-white select-none"
-              aria-label="Minimalist"
-            >
-              {"MINIMALIST".split("").map((letter, index) => {
-                const letterStart = 0.08 + index * 0.055;
-                const letterEnd = letterStart + 0.18;
-                const t = Math.min(
-                  1,
-                  Math.max(0, (philosophyProgress - letterStart) / (letterEnd - letterStart))
-                );
-                const ease = 1 - Math.pow(1 - t, 3);
-                return (
-                  <span
-                    key={`${letter}-${index}`}
-                    className="inline-block will-change-transform"
-                    style={{
-                      opacity: ease,
-                      transform: `translateY(${(1 - ease) * 56}px) scale(${0.82 + ease * 0.18})`,
-                      filter: ease > 0.98 ? "none" : `blur(${(1 - ease) * 10}px)`,
-                    }}
-                  >
-                    {letter}
-                  </span>
-                );
-              })}
-            </h2>
-
-            <div
-              className="mx-auto mt-8 sm:mt-10 max-w-md"
-              style={{
-                opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.2)),
-                transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.2))) * 24}px)`,
-              }}
-            >
+        <div className="sticky top-0 h-dvh overflow-hidden">
+          <Asciify
+            className="h-full w-full"
+            radius={0.38}
+            softness={1}
+            scale={2}
+            spacing={1}
+            charset="ascii"
+            background="auto"
+            contrast={1.15}
+            glow={0.65}
+            aberration={0.4}
+            followSpeed={4}
+            strength={1}
+          >
+            <div className="relative h-dvh flex items-center justify-center px-4 sm:px-6">
               <div
-                className="h-px w-12 bg-gray-900 dark:bg-white mx-auto mb-6 sm:mb-8 origin-center"
-                style={{
-                  transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.62) / 0.16))})`,
-                }}
+                aria-hidden
+                className="pointer-events-none absolute inset-0 philosophy-grid opacity-40 dark:opacity-30"
               />
-              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-                Less noise, more clarity. Clean layouts, purposeful motion, and
-                only the details that matter.
-              </p>
+
+              <div className="relative z-10 w-full max-w-5xl mx-auto text-center">
+                <p
+                  className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-8 sm:mb-12"
+                  style={{
+                    opacity: Math.min(1, philosophyProgress / 0.12),
+                    transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.12)) * 16}px)`,
+                  }}
+                >
+                  Philosophy
+                </p>
+
+                <h2
+                  className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.75rem,10vw,7.25rem)]"
+                  aria-label="Less noise, more clarity."
+                >
+                  {["Less noise,", "more clarity."].map((line, lineIndex) => {
+                    const start = 0.08 + lineIndex * 0.18;
+                    const t = Math.min(
+                      1,
+                      Math.max(0, (philosophyProgress - start) / 0.22)
+                    );
+                    const ease = 1 - Math.pow(1 - t, 3);
+                    return (
+                      <span
+                        key={line}
+                        className="block will-change-transform"
+                        style={{
+                          opacity: ease,
+                          transform: `translateY(${(1 - ease) * 52}px) scale(${0.92 + ease * 0.08})`,
+                          filter: ease > 0.98 ? "none" : `blur(${(1 - ease) * 8}px)`,
+                        }}
+                      >
+                        {line}
+                      </span>
+                    );
+                  })}
+                </h2>
+
+                <div
+                  className="mx-auto mt-8 sm:mt-12 max-w-2xl"
+                  style={{
+                    opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22)),
+                    transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22))) * 20}px)`,
+                  }}
+                >
+                  <div
+                    className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-6 sm:mb-8 origin-center"
+                    style={{
+                      transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.16))})`,
+                    }}
+                  />
+                  <p className="text-[clamp(1.15rem,2.6vw,1.85rem)] font-medium tracking-tight text-gray-500 dark:text-gray-400 leading-[1.45]">
+                    Clean layouts, purposeful motion, and only the details that
+                    matter.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+          </Asciify>
         </div>
       </section>
 
-      {/* Tech Stack Section — scroll-linked marquees */}
+      {/* Tech Stack Section */}
       <section
-        ref={techRef}
         id="tech"
-        className="relative h-[140vh] overflow-hidden"
+        className="relative overflow-hidden py-24 sm:py-32"
       >
-        <div className="sticky top-0 h-dvh flex flex-col justify-center py-16 sm:py-20">
-          <div
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
-            style={{
-              opacity: Math.min(1, Math.max(0, techProgress / 0.12)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, techProgress / 0.12))) * 28}px)`,
-            }}
-          >
-            <div className="text-center mb-10 sm:mb-14">
-              <p
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3"
-                style={{
-                  opacity: Math.min(1, Math.max(0, techProgress / 0.14)),
-                  transform: `translateY(${(1 - Math.min(1, Math.max(0, techProgress / 0.14))) * 10}px)`,
-                }}
-              >
-                Stack
-              </p>
-              <h2
-                className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
-                style={{
-                  opacity: Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16)),
-                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16))) * 18}px) scale(${0.97 + Math.min(1, Math.max(0, (techProgress - 0.04) / 0.16)) * 0.03})`,
-                }}
-              >
-                Tools I work with
-              </h2>
-              <p
-                className="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto"
-                style={{
-                  opacity: Math.min(1, Math.max(0, (techProgress - 0.1) / 0.16)),
-                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.1) / 0.16))) * 14}px)`,
-                }}
-              >
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="philosophy-grid absolute inset-0 opacity-40 dark:opacity-30" />
+          <div className="tech-orb tech-orb-a" />
+          <div className="tech-orb tech-orb-b" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-5">
+              Stack
+            </p>
+            <h2
+              className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.15rem,7vw,5.25rem)]"
+              aria-label="Tools I work with."
+            >
+              <span className="block">Tools I</span>
+              <span className="block">
+                work with
+                <span className="text-gray-300 dark:text-gray-600" aria-hidden>.</span>
+              </span>
+            </h2>
+            <div className="mx-auto mt-6 sm:mt-8 max-w-xl">
+              <div className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-4" />
+              <p className="text-sm sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
                 The technologies behind my day-to-day work.
               </p>
             </div>
           </div>
 
-          <div className="space-y-3 sm:space-y-4 w-full">
-            {(() => {
-              const rowCount = 4;
-              const perRow = Math.ceil(techStack.length / rowCount);
-              return Array.from({ length: rowCount }, (_, rowIndex) => {
-                const items = techStack.slice(rowIndex * perRow, (rowIndex + 1) * perRow);
-                if (items.length === 0) return null;
-                const reverse = rowIndex % 2 === 1;
-                // Reveal while section is still approaching the top
-                const start = 0.12 + rowIndex * 0.08;
-                const end = start + 0.18;
-                const t = Math.min(
-                  1,
-                  Math.max(0, (techProgress - start) / (end - start))
-                );
-                const ease = 1 - Math.pow(1 - t, 3);
-                const fromX = reverse ? 10 : -10;
-                const drift = reverse
-                  ? (1 - ease) * 6 + Math.max(0, techProgress - 0.5) * -4
-                  : (1 - ease) * -6 + Math.max(0, techProgress - 0.5) * 4;
-
-                return (
+          <div className="max-w-5xl mx-auto">
+            <ul className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2.5">
+              {techStack.map((tech) => (
+                <li key={tech.name} className="min-w-0">
                   <div
-                    key={rowIndex}
-                    className="marquee relative overflow-hidden"
-                    style={{
-                      opacity: ease,
-                      transform: `translateX(${fromX * (1 - ease) + drift * 0.35}%)`,
-                      filter: `blur(${(1 - ease) * 4}px)`,
-                    }}
+                    className="tech-tile flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl border border-gray-200/90 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
+                    style={{ "--tech-color": tech.color } as React.CSSProperties}
                   >
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-white dark:from-gray-950 to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-white dark:from-gray-950 to-transparent" />
-                    <div
-                      className={`flex w-max gap-3 ${reverse ? "marquee-track-reverse" : "marquee-track"}`}
-                      style={{
-                        animationPlayState: t > 0.2 ? "running" : "paused",
-                      }}
+                    <span
+                      className="text-lg sm:text-2xl lg:text-3xl"
+                      style={{ color: tech.color }}
                     >
-                      {[...items, ...items, ...items].map((tech, index) => {
-                        const chipStart = start + 0.02 + (index % items.length) * 0.015;
-                        const chipT = Math.min(
-                          1,
-                          Math.max(0, (techProgress - chipStart) / 0.12)
-                        );
-                        const chipEase = 1 - Math.pow(1 - chipT, 3);
-
-                        return (
-                          <div
-                            key={`${tech.name}-${index}`}
-                            className="flex items-center gap-3 px-5 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors hover:border-gray-400 dark:hover:border-gray-600"
-                            style={{
-                              opacity: chipEase,
-                              transform: `scale(${0.9 + chipEase * 0.1}) translateY(${(1 - chipEase) * 12}px)`,
-                            }}
-                          >
-                            <span className="text-xl" style={{ color: tech.color }}>
-                              {tech.icon}
-                            </span>
-                            <span className="font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
-                              {tech.name}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                      {tech.icon}
+                    </span>
+                    <span className="text-[9px] sm:text-[11px] font-medium text-gray-600 dark:text-gray-300 tracking-tight whitespace-nowrap truncate max-w-full px-1">
+                      {tech.name}
+                    </span>
                   </div>
-                );
-              });
-            })()}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400 dark:text-gray-500">
+              Front-end, back-end, data, and the shell — ships on these tools.
+            </p>
           </div>
-
-          <p
-            className="mt-10 sm:mt-12 text-center text-sm text-gray-400 dark:text-gray-500 px-4"
-            style={{
-              opacity: Math.min(1, Math.max(0, (techProgress - 0.45) / 0.2)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (techProgress - 0.45) / 0.2))) * 12}px)`,
-            }}
-          >
-            Front-end, back-end, data, and the shell — ships on these tools.
-          </p>
         </div>
       </section>
 
-      {/* Projects Section — centered sticky showcase */}
+      {/* Projects Section */}
       <section
-        ref={projectsRef}
         id="projects"
-        className="relative h-[150vh] overflow-hidden bg-gray-50 dark:bg-gray-900/40"
+        className="relative overflow-hidden bg-gray-50 dark:bg-gray-900/40 py-24 sm:py-32"
       >
-        <div className="sticky top-0 h-dvh flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="max-w-7xl mx-auto w-full">
-            <div
-              className="text-center max-w-2xl mx-auto mb-10 sm:mb-14"
-              style={{
-                opacity: Math.min(1, projectsProgress / 0.14),
-                transform: `translateY(${(1 - Math.min(1, projectsProgress / 0.14)) * 24}px)`,
-              }}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="philosophy-grid absolute inset-0 opacity-50 dark:opacity-30" />
+          <div className="tech-orb tech-orb-a opacity-70" />
+          <div className="tech-orb tech-orb-b opacity-60" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-5">
+              Work
+            </p>
+            <h2
+              className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.15rem,7vw,5.25rem)]"
+              aria-label="Selected work."
             >
-              <p
-                className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3"
-                style={{
-                  opacity: Math.min(1, projectsProgress / 0.16),
-                }}
-              >
-                Work
-              </p>
-              <h2
-                className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white"
-                style={{
-                  opacity: Math.min(1, Math.max(0, (projectsProgress - 0.04) / 0.16)),
-                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.04) / 0.16))) * 16}px)`,
-                }}
-              >
-                Selected work
-              </h2>
-              <p
-                className="mt-4 text-lg text-gray-500 dark:text-gray-400"
-                style={{
-                  opacity: Math.min(1, Math.max(0, (projectsProgress - 0.1) / 0.16)),
-                  transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.1) / 0.16))) * 12}px)`,
-                }}
-              >
+              <span className="block">Selected</span>
+              <span className="block">
+                work
+                <span className="text-gray-300 dark:text-gray-600" aria-hidden>.</span>
+              </span>
+            </h2>
+            <div className="mx-auto mt-6 sm:mt-8 max-w-xl">
+              <div className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-4" />
+              <p className="text-sm sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
                 A few projects I&apos;ve designed, built, and shipped.
               </p>
             </div>
+          </div>
 
+          <div className="relative">
             <div
-              className="relative"
-              style={{
-                opacity: Math.min(1, Math.max(0, (projectsProgress - 0.12) / 0.2)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.12) / 0.2))) * 36}px)`,
-              }}
+              ref={carouselRef}
+              className="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
             >
-              <div
-                ref={carouselRef}
-                className="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
-              >
-                {projects.map((project, index) => {
-                  const cardStart = 0.14 + Math.min(index, 5) * 0.04;
-                  const cardT = Math.min(
-                    1,
-                    Math.max(0, (projectsProgress - cardStart) / 0.18)
-                  );
-                  const cardEase = 1 - Math.pow(1 - cardT, 3);
-
-                  return (
-                    <article
-                      key={index}
-                      className="group snap-center shrink-0 w-[min(88vw,22rem)] sm:w-[min(70vw,24rem)] lg:w-[calc(33.333%-14px)] relative flex flex-col min-h-[340px] sm:min-h-[360px] p-7 sm:p-8 rounded-[1.35rem] border border-gray-200/90 dark:border-gray-800 bg-white/90 dark:bg-gray-950/80 backdrop-blur-sm overflow-hidden transition-colors duration-300 hover:border-gray-400 dark:hover:border-gray-600"
-                      style={{
-                        opacity: cardEase,
-                        transform: `scale(${0.94 + cardEase * 0.06}) translateY(${(1 - cardEase) * 28}px)`,
-                      }}
+              {projects.map((project, index) => (
+                <article
+                  key={project.title}
+                  className="snap-center shrink-0 w-[min(88vw,22rem)] sm:w-[min(70vw,24rem)] lg:w-[calc(33.333%-14px)]"
+                >
+                  <div className="work-card group relative flex flex-col min-h-[240px] sm:min-h-[300px] p-5 sm:p-7 rounded-[1.35rem] border border-gray-200/90 dark:border-gray-800 bg-white/90 dark:bg-gray-950/80 backdrop-blur-sm h-full">
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -right-1 -top-3 text-[4rem] sm:text-[5rem] font-bold tracking-tighter leading-none text-gray-100 dark:text-gray-800/70 select-none"
                     >
-                      <div className="relative z-10 flex flex-col h-full">
-                        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
-                          Project {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-3 leading-snug">
-                          {project.title}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-5 leading-relaxed text-sm sm:text-[0.95rem] line-clamp-4">
-                          {project.details}
-                        </p>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
 
-                        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-6 font-[family-name:var(--font-geist-mono)]">
+                    <div className="relative z-10 flex flex-col h-full">
+                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-2 sm:mb-3">
+                        Project {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="text-lg sm:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 sm:mb-3 leading-snug">
+                        {project.title}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 leading-relaxed text-sm line-clamp-3">
+                        {project.details}
+                      </p>
+                      {project.techStack && (
+                        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-4 font-[family-name:var(--font-geist-mono)]">
                           {project.techStack.split(", ").join(" · ")}
                         </p>
-
-                        <div className="mt-auto flex flex-wrap items-center gap-4">
-                          {project.liveLink && (
-                            <Link
-                              href={project.liveLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group/live inline-flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
-                            >
-                              Live site
-                              <AiOutlineArrowRight className="transition-transform group-hover/live:translate-x-0.5 -rotate-45 group-hover/live:rotate-0" />
-                            </Link>
-                          )}
-                          {project.githubLink && project.githubLink !== "#" && (
-                            <Link
-                              href={project.githubLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                            >
-                              <AiFillGithub className="text-base" />
-                              Code
-                            </Link>
-                          )}
-                        </div>
+                      )}
+                      <div className="mt-auto flex flex-wrap items-center gap-4">
+                        {project.liveLink && (
+                          <Link
+                            href={project.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/live inline-flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
+                          >
+                            Live site
+                            <AiOutlineArrowRight className="transition-transform group-hover/live:translate-x-0.5 -rotate-45 group-hover/live:rotate-0" />
+                          </Link>
+                        )}
+                        {project.githubLink && project.githubLink !== "#" && (
+                          <Link
+                            href={project.githubLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                          >
+                            <AiFillGithub className="text-base" />
+                            Code
+                          </Link>
+                        )}
                       </div>
-                    </article>
-                  );
-                })}
-              </div>
-
-              {/* edge fades */}
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-gray-50 dark:from-gray-950 to-transparent z-10" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent z-10" />
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
 
-            <div
-              className="mt-8 sm:mt-10 flex items-center justify-center gap-6"
-              style={{
-                opacity: Math.min(1, Math.max(0, (projectsProgress - 0.28) / 0.18)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (projectsProgress - 0.28) / 0.18))) * 14}px)`,
-              }}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-gray-50 dark:from-gray-950 to-transparent z-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent z-10" />
+          </div>
+
+          <div className="mt-8 sm:mt-10 flex items-center justify-center gap-6">
+            <button
+              onClick={() => scrollCarousel(-1)}
+              aria-label="Previous projects"
+              disabled={activePage === 0}
+              className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
             >
-              <button
-                onClick={() => scrollCarousel(-1)}
-                aria-label="Previous projects"
-                disabled={activePage === 0}
-                className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
-              >
-                <AiOutlineArrowLeft className="text-xl" />
-              </button>
+              <AiOutlineArrowLeft className="text-xl" />
+            </button>
 
-              <div className="flex items-center gap-2">
-                {Array.from({ length: pageCount }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToPage(index)}
-                    aria-label={`Go to page ${index + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      activePage === index
-                        ? "w-8 bg-gray-900 dark:bg-white"
-                        : "w-1.5 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-500"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <button
-                onClick={() => scrollCarousel(1)}
-                aria-label="Next projects"
-                disabled={activePage === pageCount - 1}
-                className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
-              >
-                <AiOutlineArrowRight className="text-xl" />
-              </button>
+            <div className="flex items-center gap-2">
+              {Array.from({ length: pageCount }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToPage(index)}
+                  aria-label={`Go to page ${index + 1}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activePage === index
+                      ? "w-8 bg-gray-900 dark:bg-white"
+                      : "w-1.5 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-500"
+                  }`}
+                />
+              ))}
             </div>
+
+            <button
+              onClick={() => scrollCarousel(1)}
+              aria-label="Next projects"
+              disabled={activePage === pageCount - 1}
+              className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <AiOutlineArrowRight className="text-xl" />
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Contact Section — centered sticky finale */}
+      {/* Contact Section */}
       <section
-        ref={contactRef}
         id="contact"
-        className="relative h-[140vh] overflow-hidden"
+        className="relative overflow-hidden py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
       >
-        <div className="sticky top-0 h-dvh flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-16">
-          <div className="pointer-events-none absolute inset-0" aria-hidden>
-            <div className="hero-mesh absolute inset-0 opacity-70" />
-            <div className="hero-grid absolute inset-0 opacity-80" />
-            <div className="hero-orb hero-orb-a opacity-40" />
-            <div className="hero-orb hero-orb-b opacity-50" />
-          </div>
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="hero-mesh absolute inset-0 opacity-70" />
+          <div className="hero-grid absolute inset-0 opacity-80" />
+          <div className="hero-orb hero-orb-a opacity-40" />
+          <div className="hero-orb hero-orb-b opacity-50" />
+        </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
-            <h2
-              className="text-[clamp(2.75rem,10vw,5.5rem)] font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white"
-              style={{
-                opacity: Math.min(1, Math.max(0, contactProgress / 0.18)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, contactProgress / 0.18))) * 28}px) scale(${0.96 + Math.min(1, Math.max(0, contactProgress / 0.18)) * 0.04})`,
-              }}
-            >
-              Let&apos;s work
-              <span className="block">together<span className="text-gray-300 dark:text-gray-600">.</span></span>
-            </h2>
+        <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
+          <h2 className="text-[clamp(2.75rem,10vw,5.5rem)] font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white">
+            Let&apos;s work
+            <span className="block">together<span className="text-gray-300 dark:text-gray-600">.</span></span>
+          </h2>
 
-            <p
-              className="mt-6 sm:mt-8 max-w-lg mx-auto text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
-              style={{
-                opacity: Math.min(1, Math.max(0, (contactProgress - 0.08) / 0.16)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.08) / 0.16))) * 16}px)`,
-              }}
-            >
-              Have a project in mind? Tell me about it — freelance, product
-              builds, or full-time opportunities.
-            </p>
+          <p className="mt-6 sm:mt-8 max-w-lg mx-auto text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+            Have a project in mind? Tell me about it — freelance, product
+            builds, or full-time opportunities.
+          </p>
 
-            <dl
-              className="mt-10 sm:mt-12 max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 text-left"
-              style={{
-                opacity: Math.min(1, Math.max(0, (contactProgress - 0.16) / 0.18)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.16) / 0.18))) * 20}px)`,
-              }}
-            >
-              {[
-                {
-                  label: "Email",
-                  value: "jbalansa143@gmail.com",
-                  href: "mailto:jbalansa143@gmail.com",
-                },
-                {
-                  label: "Location",
-                  value: "Philippines · GMT+8",
-                },
-                {
-                  label: "Status",
-                  value: "Freelance & full-time",
-                },
-              ].map(({ label, value, href }) => (
-                <div
-                  key={label}
-                  className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-8 py-4"
-                >
-                  <dt className="sm:w-24 shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
-                    {label}
-                  </dt>
-                  <dd className="text-gray-900 dark:text-white font-medium">
-                    {href ? (
-                      <Link
-                        href={href}
-                        className="hover:opacity-70 transition-opacity break-all"
-                      >
-                        {value}
-                      </Link>
-                    ) : (
-                      value
-                    )}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            <div
-              className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 justify-center"
-              style={{
-                opacity: Math.min(1, Math.max(0, (contactProgress - 0.28) / 0.18)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (contactProgress - 0.28) / 0.18))) * 16}px)`,
-              }}
-            >
-              <button
-                type="button"
-                data-cal-namespace="1h"
-                data-cal-link="joshua-balansa-iulx9o/1h"
-                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-                className="inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
+          <dl className="mt-10 sm:mt-12 max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 text-left">
+            {[
+              {
+                label: "Email",
+                value: "jbalansa143@gmail.com",
+                href: "mailto:jbalansa143@gmail.com",
+              },
+              {
+                label: "Location",
+                value: "Philippines · GMT+8",
+              },
+              {
+                label: "Status",
+                value: "Freelance & full-time",
+              },
+            ].map(({ label, value, href }) => (
+              <div
+                key={label}
+                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-8 py-4"
               >
-                <MdCall className="mr-2" />
-                Schedule a call
-              </button>
-              <Link
-                href="mailto:jbalansa143@gmail.com"
-                className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
-              >
-                <MdEmail className="mr-2" />
-                Send an email
-              </Link>
-            </div>
+                <dt className="sm:w-24 shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
+                  {label}
+                </dt>
+                <dd className="text-gray-900 dark:text-white font-medium">
+                  {href ? (
+                    <Link
+                      href={href}
+                      className="hover:opacity-70 transition-opacity break-all"
+                    >
+                      {value}
+                    </Link>
+                  ) : (
+                    value
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              type="button"
+              data-cal-namespace="1h"
+              data-cal-link="joshua-balansa-iulx9o/1h"
+              data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+              className="inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
+            >
+              <MdCall className="mr-2" />
+              Schedule a call
+            </button>
+            <Link
+              href="mailto:jbalansa143@gmail.com"
+              className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
+            >
+              <MdEmail className="mr-2" />
+              Send an email
+            </Link>
           </div>
         </div>
       </section>
       </main>
 
       {/* Footer */}
-      <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-gray-200/60 dark:border-gray-800/60">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-gray-400">
-          <p>© {new Date().getFullYear()} Joshua Balansa. Built with Next.js.</p>
-          <div className="flex items-center gap-4">
-            {socialLinks.map(({ href, Icon, label }, index) => (
+      <footer className="relative overflow-hidden border-t border-gray-200/60 dark:border-gray-800/60">
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <div className="philosophy-grid absolute inset-0 opacity-40 dark:opacity-25" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
+                Explore
+              </p>
+              <nav aria-label="Footer" className="flex flex-col gap-2.5">
+                {navItems.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => scrollToSection(id)}
+                    className="w-fit text-left text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </nav>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
+                Connect
+              </p>
+              <ul className="flex flex-col gap-2.5">
+                {socialLinks.map(({ href, Icon, label }) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      target={href.startsWith("mailto:") ? undefined : "_blank"}
+                      rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
+                      className="inline-flex items-center gap-2.5 w-fit text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      <Icon className="text-base" aria-hidden />
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
+                Location
+              </p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                Philippines · GMT+8
+              </p>
               <Link
-                key={index}
-                href={href}
-                target={href.startsWith("mailto:") ? undefined : "_blank"}
-                rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
-                aria-label={label}
-                className="hover:text-gray-900 dark:hover:text-white transition-colors"
+                href="mailto:jbalansa143@gmail.com"
+                className="mt-2 inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors break-all"
               >
-                <Icon className="text-lg" />
+                jbalansa143@gmail.com
               </Link>
-            ))}
+            </div>
+          </div>
+
+          <div className="mt-12 pt-6 border-t border-gray-200/60 dark:border-gray-800/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              © {new Date().getFullYear()} Joshua Balansa
+            </p>
+            <button
+              type="button"
+              onClick={() => scrollToSection("home")}
+              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Back to top
+              <AiOutlineArrowRight className="-rotate-90 transition-transform group-hover:-translate-y-0.5" />
+            </button>
           </div>
         </div>
       </footer>
