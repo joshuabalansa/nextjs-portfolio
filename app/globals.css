@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #0d1611;
-  --foreground: #eef1ff;
+  --background: #0a0a0a;
+  --foreground: #f5f5f4;
   --accent: #4487ff;
   --accent-soft: #e0e2ff;
 }
@@ -16,10 +16,7 @@ html {
 
 body {
   color: var(--foreground);
-  background-color: var(--background);
-  background-image:
-    radial-gradient(ellipse 90% 55% at 80% -10%, rgba(68, 135, 255, 0.16), transparent 55%),
-    radial-gradient(ellipse 70% 45% at 0% 70%, rgba(19, 42, 25, 0.85), transparent 60%);
+  background: var(--background);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   overflow-x: clip;
 }
@@ -28,10 +25,10 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d1611;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4487ff, #1a3d28);
+  background: linear-gradient(180deg, #3f3f46, #171717);
   border-radius: 3px;
 }
 
@@ -214,10 +211,10 @@ body {
 }
 
 .glass {
-  background: rgba(13, 22, 17, 0.58);
+  background: rgba(10, 10, 10, 0.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(224, 226, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .gradient-text {
@@ -229,8 +226,8 @@ body {
 
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(224, 226, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(224, 226, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -265,7 +262,7 @@ body {
 }
 .hover-lift:hover {
   transform: translateY(-12px);
-  box-shadow: 0 30px 60px -12px rgba(13, 22, 17, 0.7), 0 0 40px -12px rgba(68, 135, 255, 0.18);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.45);
 }
 
 .card-shine {
@@ -320,7 +317,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(13, 22, 17, 0.9) 0%, transparent 60%);
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.92) 0%, transparent 60%);
   pointer-events: none;
   z-index: 1;
 }

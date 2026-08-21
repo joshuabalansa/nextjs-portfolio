@@ -82,7 +82,7 @@ export const metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0d1611",
+  themeColor: "#0a0a0a",
 };
 
 const jsonLd = {
@@ -143,7 +143,7 @@ const jsonLd = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-neutral-950 text-stone-100 antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} bg-[#0a0a0a] text-stone-100 antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -430,11 +430,11 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-stone-100 overflow-x-clip">
+    <div className="min-h-screen bg-[#0a0a0a] text-stone-100 overflow-x-clip">
       <SplashCursor
         RAINBOW_MODE={false}
         COLOR="#4487ff"
-        BACK_COLOR={{ r: 0.051, g: 0.086, b: 0.067 }}
+        BACK_COLOR={{ r: 0.04, g: 0.04, b: 0.04 }}
         TRANSPARENT
       />
       <nav
@@ -540,7 +540,7 @@ const Portfolio = () => {
             <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
           </div>
           <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-950/25" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-neutral-950 to-transparent z-[3]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent z-[3]" />
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
             <div className="w-full mx-auto text-center">
@@ -632,6 +632,7 @@ const Portfolio = () => {
           </button>
         </section>
 
+        <div className="relative bg-[#0a0a0a]">
         <section id="about" className="py-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-12 gap-16 items-start">
@@ -1066,9 +1067,10 @@ const Portfolio = () => {
             </div>
           </div>
         </section>
+        </div>
       </main>
 
-      <footer className="py-16 px-6 border-t border-neutral-800/50">
+      <footer className="py-16 px-6 border-t border-white/5 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
