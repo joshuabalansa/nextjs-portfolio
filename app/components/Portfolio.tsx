@@ -175,13 +175,13 @@ const skills: Skill[] = [
 
 function SkillTile({ name, icon: Icon, color }: Skill) {
   return (
-    <div className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-neutral-900/40 px-4 py-3.5 transition-colors duration-300 hover:border-white/10 hover:bg-neutral-800/50">
+    <div className="group flex min-w-0 items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-white/5 bg-neutral-900/40 px-2.5 py-2.5 sm:px-4 sm:py-3.5 transition-colors duration-300 hover:border-white/10 hover:bg-neutral-800/50">
       <Icon
-        className="text-2xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+        className="text-xl sm:text-2xl shrink-0 transition-transform duration-300 group-hover:scale-110"
         style={{ color }}
         aria-hidden
       />
-      <span className="text-sm text-stone-300 transition-colors group-hover:text-stone-100">
+      <span className="truncate text-xs sm:text-sm text-stone-300 transition-colors group-hover:text-stone-100">
         {name}
       </span>
     </div>
@@ -406,6 +406,7 @@ const Portfolio = () => {
 
       const track = skillsTrackRef.current;
       if (!track || skillScrollLockRef.current || prefersReducedMotion.matches) return;
+      if (window.matchMedia("(max-width: 767px)").matches) return;
 
       const nextId = skillTabs[getSkillTabIndexFromScroll(track)].id;
       setActiveSkillTab((current) => (current === nextId ? current : nextId));
@@ -439,7 +440,13 @@ const Portfolio = () => {
   const scrollToSkillTab = (tabId: SkillTabId) => {
     setActiveSkillTab(tabId);
     const track = skillsTrackRef.current;
-    if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (
+      !track ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.matchMedia("(max-width: 767px)").matches
+    ) {
+      return;
+    }
 
     const index = skillTabs.findIndex((tab) => tab.id === tabId);
     const { top, scrollable } = getSkillTrackMetrics(track);
@@ -832,23 +839,23 @@ const Portfolio = () => {
             className="skills-pin-track relative"
             style={{ "--skill-tab-count": skillTabs.length } as React.CSSProperties}
           >
-            <div className="skills-pin-inner sticky top-0 z-20 flex h-dvh flex-col bg-[#0a0a0a] px-6 pb-8 pt-24 md:pt-28">
+            <div className="skills-pin-inner relative z-20 flex h-auto flex-col bg-[#0a0a0a] px-4 pb-10 pt-20 md:sticky md:top-0 md:h-dvh md:px-6 md:pb-8 md:pt-28">
               <div className="pointer-events-none absolute inset-0 grid-pattern opacity-50" />
               <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col">
-                <div className="mb-6 shrink-0 text-center md:mb-10">
-                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
+                <div className="mb-4 shrink-0 text-center md:mb-10">
+                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-3 md:mb-4 block reveal">
                     Tech Stack
                   </span>
-                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                     Tools I <span className="gradient-text">work with</span>
                   </h2>
-                  <p className="mt-5 text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                  <p className="mt-3 md:mt-5 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
                     The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
                   </p>
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col reveal stagger-3">
-                  <div className="mb-6 flex shrink-0 justify-center md:mb-8">
+                  <div className="mb-4 flex shrink-0 justify-center md:mb-8">
                     <div
                       role="tablist"
                       aria-label="Skill categories"
@@ -870,7 +877,7 @@ const Portfolio = () => {
                               skillTabRefs.current[tab.id] = node;
                             }}
                             onClick={() => scrollToSkillTab(tab.id)}
-                            className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
+                            className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
                               isActive
                                 ? "bg-white text-neutral-950"
                                 : "text-stone-400 hover:text-stone-200"
@@ -887,14 +894,14 @@ const Portfolio = () => {
                     id={`skill-panel-${activeSkillGroup.id}`}
                     role="tabpanel"
                     aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
-                    className="glass card-shine min-h-0 flex-1 overflow-y-auto rounded-3xl p-6 sm:p-8 md:p-10"
+                    className="glass card-shine min-h-0 flex-1 overflow-visible rounded-2xl p-4 sm:rounded-3xl sm:p-8 md:overflow-y-auto md:p-10"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3 mb-5 md:mb-8">
                       <div>
-                        <h3 className="text-2xl font-semibold text-stone-100 tracking-tight">
+                        <h3 className="text-xl md:text-2xl font-semibold text-stone-100 tracking-tight">
                           {activeSkillGroup.label}
                         </h3>
-                        <p className="text-stone-500 font-light mt-2 max-w-xl">
+                        <p className="text-sm md:text-base text-stone-500 font-light mt-1.5 md:mt-2 max-w-xl">
                           {activeSkillGroup.description}
                         </p>
                       </div>
@@ -904,7 +911,7 @@ const Portfolio = () => {
                     </div>
                     <div
                       key={activeSkillGroup.id}
-                      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 animate-fade-in"
+                      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 animate-fade-in"
                     >
                       {visibleSkills.map((skill) => (
                         <SkillTile key={skill.name} {...skill} />
