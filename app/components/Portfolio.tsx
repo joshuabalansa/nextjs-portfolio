@@ -69,6 +69,8 @@ const ShaderBackground = dynamic(
   { ssr: false }
 );
 
+const SplashCursor = dynamic(() => import("./SplashCursor"), { ssr: false });
+
 const heroStack = ["React", "Next.js", "Laravel", "Node.js"];
 
 const navItems = [
@@ -436,6 +438,12 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-stone-100 overflow-x-clip">
+      <SplashCursor
+        RAINBOW_MODE={false}
+        COLOR="#4487ff"
+        BACK_COLOR={{ r: 0.051, g: 0.086, b: 0.067 }}
+        TRANSPARENT
+      />
       <nav
         aria-label="Primary"
         className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-500 ${
