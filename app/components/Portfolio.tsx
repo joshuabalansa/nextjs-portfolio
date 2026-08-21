@@ -268,8 +268,8 @@ const approachSteps = [
 ];
 
 const stats = [
-  { value: projects.length, suffix: "+", label: "Projects" },
-  { value: 4.5, suffix: "+", label: "Years Exp", display: "4.5+" },
+  { value: 15, suffix: "+", label: "Projects" },
+  { value: 5, suffix: "+", label: "Years Exp", display: "5+" },
   { value: skills.length, suffix: "", label: "Tech Stack" },
   { value: 0, suffix: "", label: "GMT+8", display: "PH" },
 ];
@@ -394,13 +394,6 @@ const Portfolio = () => {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
     (async function () {
       const cal = await getCalApi({ namespace: "1h" });
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
@@ -451,7 +444,8 @@ const Portfolio = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="glass rounded-2xl px-6 py-4 flex items-center justify-between">
+          <div className="glass rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 flex items-center justify-between">
             <button
               type="button"
               onClick={() => scrollToSection("hero")}
@@ -486,47 +480,55 @@ const Portfolio = () => {
 
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open menu"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-nav"
               className="md:hidden text-stone-400 hover:text-stone-200 transition-colors"
             >
-              <LuMenu className="w-6 h-6" />
+              {isMobileMenuOpen ? (
+                <LuX className="w-6 h-6" />
+              ) : (
+                <LuMenu className="w-6 h-6" />
+              )}
             </button>
+            </div>
+
+            <div
+              id="mobile-nav"
+              className={`md:hidden grid transition-[grid-template-rows] duration-300 ease-out ${
+                isMobileMenuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="flex flex-col gap-1 border-t border-white/10 px-3 pb-3 pt-2">
+                  {navItems.map(({ id, label }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => scrollToSection(id)}
+                      className={`rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                        activeSection === id
+                          ? "bg-white/10 text-stone-100"
+                          : "text-stone-300 hover:bg-white/5 hover:text-stone-100"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection("contact")}
+                    className="mt-1 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-colors"
+                  >
+                    Let&apos;s Talk
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
-
-      <div
-        className={`fixed inset-0 z-[60] glass flex flex-col items-center justify-center gap-8 transition-transform duration-500 md:hidden ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <button
-          type="button"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-label="Close menu"
-          className="absolute top-8 right-8 text-stone-400 hover:text-stone-200"
-        >
-          <LuX className="w-7 h-7" />
-        </button>
-        {navItems.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => scrollToSection(id)}
-            className="text-2xl text-stone-300 hover:text-stone-100 transition-colors"
-          >
-            {label}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => scrollToSection("contact")}
-          className="text-2xl text-stone-300 hover:text-stone-100 transition-colors"
-        >
-          Contact
-        </button>
-      </div>
 
       <main>
         <section
@@ -537,11 +539,11 @@ const Portfolio = () => {
           <div className="absolute inset-0 z-0" aria-hidden="true">
             <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
           </div>
-          <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-neutral-950/40 via-neutral-950/18 to-neutral-950/10" />
+          <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-950/25" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-neutral-950 to-transparent z-[3]" />
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
-            <div className="max-w-3xl text-center lg:text-left">
+            <div className="w-full mx-auto text-center">
                 <div className="animate-fade-up inline-flex items-center gap-3 glass rounded-full px-4 py-2 mb-8">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
@@ -556,12 +558,11 @@ const Portfolio = () => {
                   </span>
                 </div>
 
-                <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8">
-                  <span className="block">Joshua</span>
-                  <span className="block gradient-text">Balansa</span>
+                <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
+                  Joshua <span className="gradient-text">Balansa</span>
                 </h1>
 
-                <div className="flex items-center justify-center lg:justify-start gap-4 mb-8 animate-fade-up hero-delay-2">
+                <div className="flex items-center justify-center gap-4 mb-8 animate-fade-up hero-delay-2">
                   <div className="h-px w-10 bg-white/40" />
                   <p className="font-mono text-sm md:text-base text-stone-100 tracking-wide">
                     Full-stack developer
@@ -569,12 +570,12 @@ const Portfolio = () => {
                   <div className="h-px w-10 bg-white/40" />
                 </div>
 
-                <p className="text-stone-200 font-normal text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-up hero-delay-3">
+                <p className="text-stone-200 font-normal text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-8 animate-fade-up hero-delay-3">
                   I design and ship clean, fast web products — interfaces with craft,
                   backends that hold up. Based in the Philippines, working with clients worldwide.
                 </p>
 
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-10 animate-fade-up hero-delay-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 mb-10 animate-fade-up hero-delay-3">
                   {heroStack.map((item) => (
                     <span
                       key={item}
@@ -585,7 +586,7 @@ const Portfolio = () => {
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-up hero-delay-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up hero-delay-4">
                   <button
                     type="button"
                     onClick={() => scrollToSection("projects")}
@@ -603,7 +604,7 @@ const Portfolio = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-up hero-delay-5">
+                <div className="flex items-center justify-center gap-3 mt-10 animate-fade-up hero-delay-5">
                   {socialLinks.map(({ href, Icon, label }) => (
                     <Link
                       key={label}
@@ -654,7 +655,7 @@ const Portfolio = () => {
                         <BsCodeSlash className="text-[#5b94ff] text-xl" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-stone-100">4.5+</p>
+                        <p className="text-2xl font-bold text-stone-100">5+</p>
                         <p className="text-xs text-stone-500">Years Coding</p>
                       </div>
                     </div>
@@ -860,7 +861,7 @@ const Portfolio = () => {
 
         <section id="projects" className="py-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
+            <div className="text-center mb-12">
               <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
                 Portfolio
               </span>
@@ -869,53 +870,51 @@ const Portfolio = () => {
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="md:col-span-2 reveal stagger-1">
-                <article className="glass rounded-3xl overflow-hidden hover-lift card-shine">
-                  <div className="grid lg:grid-cols-2">
-                    <div className={`project-cover aspect-video lg:aspect-auto min-h-[260px] bg-gradient-to-br ${featuredProject.cover}${featuredProject.image ? " has-image" : ""}`}>
-                      {featuredProject.image ? (
-                        <Image
-                          src={featuredProject.image}
-                          alt={`${featuredProject.title} screenshot`}
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                          className="object-cover object-top"
-                        />
-                      ) : null}
-                      <div className="absolute inset-0 z-[2] flex items-end p-8">
-                        <p className="relative z-10 text-5xl font-bold tracking-tighter text-white/20">
-                          01
-                        </p>
-                      </div>
-                    </div>
-                    <div className="p-8 lg:p-12 flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium border ${featuredProject.categoryClass}`}
-                        >
-                          {featuredProject.category}
-                        </span>
-                      </div>
-                      <h3 className="text-2xl lg:text-3xl font-bold text-stone-100 tracking-tight mb-4">
-                        {featuredProject.title}
-                      </h3>
-                      <p className="text-stone-400 font-light leading-relaxed mb-6">
-                        {featuredProject.details}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4">
+              <div className="md:col-span-2 lg:row-span-2 reveal stagger-1">
+                <article className="glass rounded-2xl overflow-hidden hover-lift card-shine h-full flex flex-col">
+                  <div
+                    className={`project-cover relative aspect-[16/10] shrink-0 bg-gradient-to-br ${featuredProject.cover}${featuredProject.image ? " has-image" : ""}`}
+                  >
+                    {featuredProject.image ? (
+                      <Image
+                        src={featuredProject.image}
+                        alt={`${featuredProject.title} screenshot`}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-contain object-top"
+                      />
+                    ) : null}
+                    <div className="absolute inset-0 z-[2] flex items-end p-3">
+                      <p className="relative z-10 text-2xl font-bold tracking-tighter text-white/20">
+                        01
                       </p>
-                      <div className="flex items-center gap-4">
-                        {featuredProject.liveLink ? (
-                          <Link
-                            href={featuredProject.liveLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group/btn flex items-center gap-2 text-sm text-stone-300 hover:text-stone-100 transition-colors"
-                          >
-                            Live Demo
-                            <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                          </Link>
-                        ) : null}
-                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4 sm:p-5 flex flex-col flex-1">
+                    <span
+                      className={`self-start px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${featuredProject.categoryClass}`}
+                    >
+                      {featuredProject.category}
+                    </span>
+                    <h3 className="text-lg sm:text-xl font-bold text-stone-100 tracking-tight mb-2">
+                      {featuredProject.title}
+                    </h3>
+                    <p className="text-stone-400 font-light text-sm leading-relaxed line-clamp-3 mb-4">
+                      {featuredProject.details}
+                    </p>
+                    <div className="flex items-center gap-4 mt-auto">
+                      {featuredProject.liveLink ? (
+                        <Link
+                          href={featuredProject.liveLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group/btn flex items-center gap-2 text-xs text-stone-300 hover:text-stone-100 transition-colors"
+                        >
+                          Live Demo
+                          <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 </article>
@@ -923,44 +922,44 @@ const Portfolio = () => {
 
               {otherProjects.map((project, index) => (
                 <div key={project.title} className={`reveal stagger-${Math.min(index + 2, 5)}`}>
-                  <article className="glass rounded-3xl overflow-hidden hover-lift card-shine h-full flex flex-col">
-                    <div className={`project-cover aspect-video bg-gradient-to-br ${project.cover}${project.image ? " has-image" : ""}`}>
+                  <article className="glass rounded-2xl overflow-hidden hover-lift card-shine h-full flex flex-col">
+                    <div
+                      className={`project-cover aspect-[16/10] bg-gradient-to-br ${project.cover}${project.image ? " has-image" : ""}`}
+                    >
                       {project.image ? (
                         <Image
                           src={project.image}
                           alt={`${project.title} screenshot`}
                           fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          className="object-cover object-top"
+                          sizes="(max-width: 768px) 100vw, 25vw"
+                          className="object-contain object-top"
                         />
                       ) : null}
-                      <div className="absolute inset-0 z-[2] flex items-end p-6">
-                        <p className="relative z-10 text-4xl font-bold tracking-tighter text-white/20">
+                      <div className="absolute inset-0 z-[2] flex items-end p-3">
+                        <p className="relative z-10 text-2xl font-bold tracking-tighter text-white/20">
                           {String(index + 2).padStart(2, "0")}
                         </p>
                       </div>
                     </div>
-                    <div className="p-8 flex flex-col flex-1">
-                      <div className="flex items-center gap-2 mb-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium border ${project.categoryClass}`}
-                        >
-                          {project.category}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-stone-100 tracking-tight mb-3">
+                    <div className="p-4 flex flex-col flex-1">
+                      <span
+                        className={`self-start px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${project.categoryClass}`}
+                      >
+                        {project.category}
+                      </span>
+                      <h3 className="text-sm font-bold text-stone-100 tracking-tight mb-1.5 line-clamp-2">
                         {project.title}
                       </h3>
-                      <p className="text-stone-400 font-light text-sm leading-relaxed mb-6 flex-1">
+                      <p className="text-stone-400 font-light text-xs leading-relaxed line-clamp-2 mb-3 flex-1">
                         {project.details}
                       </p>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 mt-auto">
                         {project.liveLink ? (
                           <Link
                             href={project.liveLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group/btn flex items-center gap-2 text-sm text-stone-300 hover:text-stone-100 transition-colors"
+                            className="group/btn flex items-center gap-1.5 text-xs text-stone-300 hover:text-stone-100 transition-colors"
                           >
                             Live Demo
                             <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 transition-transform" />
@@ -971,9 +970,9 @@ const Portfolio = () => {
                             href={project.githubLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group/btn flex items-center gap-2 text-sm text-stone-500 hover:text-stone-300 transition-colors"
+                            className="group/btn flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-300 transition-colors"
                           >
-                            {project.liveLink ? "Code" : "Source Code"}
+                            {project.liveLink ? "Code" : "Source"}
                             <AiFillGithub />
                           </Link>
                         ) : null}
