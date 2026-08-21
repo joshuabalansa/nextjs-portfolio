@@ -471,7 +471,9 @@ const Portfolio = () => {
               ))}
               <button
                 type="button"
-                onClick={() => scrollToSection("contact")}
+                data-cal-namespace="1h"
+                data-cal-link="joshua-balansa-iulx9o/1h"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
                 className="px-5 py-2.5 rounded-xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
               >
                 Let&apos;s Talk
@@ -518,7 +520,10 @@ const Portfolio = () => {
                   ))}
                   <button
                     type="button"
-                    onClick={() => scrollToSection("contact")}
+                    data-cal-namespace="1h"
+                    data-cal-link="joshua-balansa-iulx9o/1h"
+                    data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="mt-1 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-colors"
                   >
                     Let&apos;s Talk
