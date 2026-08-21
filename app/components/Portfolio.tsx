@@ -5,6 +5,7 @@ import { getCalApi } from "@calcom/embed-react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
+import dynamic from "next/dynamic";
 import {
   AiFillGithub,
   AiFillInstagram,
@@ -18,15 +19,7 @@ import {
   FaPhp,
   FaReact,
 } from "react-icons/fa";
-import {
-  LuArrowUp,
-  LuCalendarCheck,
-  LuFlaskConical,
-  LuMapPin,
-  LuMenu,
-  LuTestTube,
-  LuX,
-} from "react-icons/lu";
+import { LuArrowUp, LuCalendarCheck, LuChevronDown, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdOutlineApi } from "react-icons/md";
 import {
   SiBootstrap,
@@ -68,12 +61,15 @@ import {
 import { BsCodeSlash } from "react-icons/bs";
 import { siteConfig } from "../site.config";
 
-const roles = [
-  "Full Stack Developer",
-  "React & Next.js Developer",
-  "Laravel Developer",
-  "Front-end Developer",
-];
+const ShaderBackground = dynamic(
+  () =>
+    import("@/components/ui/waves-shaders-homlu-ui").then(
+      (mod) => mod.ShaderBackground
+    ),
+  { ssr: false }
+);
+
+const heroStack = ["React", "Next.js", "Laravel", "Node.js"];
 
 const navItems = [
   { id: "about", label: "About" },
@@ -198,8 +194,8 @@ const projects = [
     githubLink: "",
     liveLink: "https://maison-lumiere-bice.vercel.app/",
     category: "Web App",
-    categoryClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    cover: "from-amber-800/70 via-stone-800 to-neutral-950",
+    categoryClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    cover: "from-blue-900/70 via-stone-800 to-neutral-950",
     image: "/projects/maison-lumiere.png",
     featured: false,
   },
@@ -333,12 +329,8 @@ const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [navCompact, setNavCompact] = useState(false);
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [typedText, setTypedText] = useState(roles[0]);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
   const countedRef = useRef(false);
-  const blobsRef = useRef<HTMLDivElement>(null);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
 
   const scrollToSection = (sectionId: string) => {
@@ -348,26 +340,6 @@ const Portfolio = () => {
     setActiveSection(sectionId);
     setIsMobileMenuOpen(false);
   };
-
-  useEffect(() => {
-    const current = roles[roleIndex];
-    let delay = isDeleting ? 40 : 90;
-    if (!isDeleting && typedText === current) delay = 2200;
-    else if (isDeleting && typedText === "") delay = 400;
-
-    const timeout = window.setTimeout(() => {
-      if (!isDeleting && typedText === current) {
-        setIsDeleting(true);
-      } else if (isDeleting && typedText === "") {
-        setIsDeleting(false);
-        setRoleIndex((i) => (i + 1) % roles.length);
-      } else {
-        setTypedText(current.slice(0, typedText.length + (isDeleting ? -1 : 1)));
-      }
-    }, delay);
-
-    return () => window.clearTimeout(timeout);
-  }, [typedText, isDeleting, roleIndex]);
 
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
@@ -417,22 +389,6 @@ const Portfolio = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleMove = (event: MouseEvent) => {
-      const blobs = blobsRef.current?.querySelectorAll<HTMLElement>(".animate-morph");
-      if (!blobs?.length) return;
-      const moveX = (event.clientX - window.innerWidth / 2) * 0.01;
-      const moveY = (event.clientY - window.innerHeight / 2) * 0.01;
-      blobs.forEach((blob, index) => {
-        const factor = (index + 1) * 0.5;
-        blob.style.transform = `translate(${moveX * factor}px, ${moveY * factor}px)`;
-      });
-    };
-
-    window.addEventListener("mousemove", handleMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
   useEffect(() => {
@@ -567,86 +523,104 @@ const Portfolio = () => {
       <main>
         <section
           id="hero"
-          ref={blobsRef}
           aria-label="Introduction"
-          className="min-h-dvh flex items-center justify-center relative overflow-hidden grid-pattern"
+          className="min-h-dvh flex items-center relative overflow-hidden bg-neutral-950"
         >
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-stone-800/30 to-stone-900/30 blur-3xl animate-morph" />
-          <div
-            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-amber-900/20 to-stone-900/20 blur-3xl animate-morph"
-            style={{ animationDelay: "-5s" }}
-          />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 animate-rotate-slow">
-            <div className="orbit-ring" />
+          <div className="absolute inset-0 z-0" aria-hidden="true">
+            <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
           </div>
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-10 animate-rotate-slow"
-            style={{ animationDirection: "reverse", animationDuration: "20s" }}
+          <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-neutral-950/40 via-neutral-950/18 to-neutral-950/10" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-neutral-950 to-transparent z-[3]" />
+
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
+            <div className="max-w-3xl text-center lg:text-left">
+                <div className="animate-fade-up inline-flex items-center gap-3 glass rounded-full px-4 py-2 mb-8">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                  </span>
+                  <span className="text-xs text-stone-200 font-medium tracking-wide">
+                    Open to freelance & full-time
+                  </span>
+                  <span className="hidden sm:inline text-white/40">·</span>
+                  <span className="hidden sm:inline text-xs text-stone-300">
+                    Philippines · GMT+8
+                  </span>
+                </div>
+
+                <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8">
+                  <span className="block">Joshua</span>
+                  <span className="block gradient-text">Balansa</span>
+                </h1>
+
+                <div className="flex items-center justify-center lg:justify-start gap-4 mb-8 animate-fade-up hero-delay-2">
+                  <div className="h-px w-10 bg-white/40" />
+                  <p className="font-mono text-sm md:text-base text-stone-100 tracking-wide">
+                    Full-stack developer
+                  </p>
+                  <div className="h-px w-10 bg-white/40" />
+                </div>
+
+                <p className="text-stone-200 font-normal text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-up hero-delay-3">
+                  I design and ship clean, fast web products — interfaces with craft,
+                  backends that hold up. Based in the Philippines, working with clients worldwide.
+                </p>
+
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-10 animate-fade-up hero-delay-3">
+                  {heroStack.map((item) => (
+                    <span
+                      key={item}
+                      className="px-3 py-1 rounded-full text-xs tracking-wide border border-white/15 bg-neutral-950/40 text-stone-100"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-up hero-delay-4">
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection("projects")}
+                    className="group inline-flex items-center justify-center gap-3 w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
+                  >
+                    View My Work
+                    <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection("contact")}
+                    className="inline-flex items-center justify-center w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-stone-100 glass hover:text-white transition-all duration-500"
+                  >
+                    Get In Touch
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-up hero-delay-5">
+                  {socialLinks.map(({ href, Icon, label }) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      target={href.startsWith("mailto:") ? undefined : "_blank"}
+                      rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
+                      aria-label={label}
+                      className="w-11 h-11 rounded-xl glass flex items-center justify-center text-stone-200 hover:text-white hover:border-white/20 transition-all duration-300"
+                    >
+                      <Icon className="text-xl" />
+                    </Link>
+                  ))}
+                </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => scrollToSection("about")}
+            aria-label="Scroll to about"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-stone-300 hover:text-white transition-colors"
           >
-            <div className="orbit-ring" />
-          </div>
-
-          <div className="particle animate-float" style={{ top: "15%", left: "10%", animationDelay: "-2s" }} />
-          <div className="particle animate-float" style={{ top: "25%", right: "15%", animationDelay: "-4s" }} />
-          <div className="particle animate-float" style={{ bottom: "30%", left: "20%", animationDelay: "-6s" }} />
-          <div className="particle animate-float" style={{ bottom: "20%", right: "25%", animationDelay: "-1s" }} />
-          <div className="particle animate-float" style={{ top: "60%", left: "5%", animationDelay: "-3s" }} />
-          <div className="particle animate-float" style={{ top: "40%", right: "8%", animationDelay: "-5s" }} />
-
-          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto animate-fade-up">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-6">
-              <span className="text-white">Josh</span>
-              <span className="sr-only">ua Balansa — Full Stack Developer</span>
-            </h1>
-
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="h-px w-8 bg-stone-700" />
-              <p className="text-lg md:text-xl text-stone-400 font-light min-h-7">
-                {typedText}
-                <span className="animate-caret text-stone-500">|</span>
-              </p>
-              <div className="h-px w-8 bg-stone-700" />
-            </div>
-
-            <p className="text-stone-500 font-light text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-12">
-              I design and build clean, fast web applications — polished interfaces,
-              reliable back ends. Based in the Philippines, working with clients everywhere.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => scrollToSection("projects")}
-                className="group inline-flex items-center justify-center gap-3 w-52 h-14 rounded-2xl text-sm font-medium text-white bg-gradient-to-r from-stone-600 to-stone-700 hover:from-stone-500 hover:to-stone-600 transition-all duration-500 hover:shadow-lg hover:shadow-stone-800/50"
-              >
-                View My Work
-                <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection("contact")}
-                className="inline-flex items-center justify-center w-52 h-14 rounded-2xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-500"
-              >
-                Get In Touch
-              </button>
-            </div>
-
-            <div className="flex items-center justify-center gap-5 mt-12">
-              {socialLinks.map(({ href, Icon, label }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  target={href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
-                  aria-label={label}
-                  className="w-10 h-10 rounded-xl glass flex items-center justify-center text-stone-500 hover:text-stone-200 transition-all duration-300"
-                >
-                  <Icon className="text-xl" />
-                </Link>
-              ))}
-            </div>
-          </div>
-
+            <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+            <LuChevronDown className="w-4 h-4 animate-scroll-hint" />
+          </button>
         </section>
 
         <section id="about" className="py-32 px-6 relative">
@@ -660,7 +634,6 @@ const Portfolio = () => {
                       alt="Joshua Balansa, full stack developer based in the Philippines"
                       fill
                       sizes="(max-width: 1024px) 24rem, 40vw"
-                      priority
                       className="object-cover object-center"
                     />
                   </div>
@@ -669,8 +642,8 @@ const Portfolio = () => {
                     style={{ animationDuration: "6s" }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-900/40 to-stone-800/40 flex items-center justify-center">
-                        <BsCodeSlash className="text-amber-400 text-xl" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-900/40 to-stone-800/40 flex items-center justify-center">
+                        <BsCodeSlash className="text-[#5b94ff] text-xl" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold text-stone-100">4.5+</p>
@@ -1049,7 +1022,7 @@ const Portfolio = () => {
               {contactDetails.map(({ label, value, href, Icon }) => {
                 const content = (
                   <>
-                    <Icon className="text-[22px] text-stone-400 mx-auto mb-4 group-hover:text-amber-400 transition-colors" />
+                    <Icon className="text-[22px] text-stone-400 mx-auto mb-4 group-hover:text-[#5b94ff] transition-colors" />
                     <p className="text-xs text-stone-600 uppercase tracking-wider mb-1">{label}</p>
                     <p className="text-stone-200 text-sm break-all">{value}</p>
                   </>
