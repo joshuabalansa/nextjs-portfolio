@@ -364,6 +364,10 @@ body {
   scrollbar-width: none;
 }
 
+.skills-pin-track {
+  height: calc(100dvh + (var(--skill-tab-count, 6) - 1) * 80dvh);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -388,5 +392,13 @@ body {
   }
   .hover-lift:hover {
     transform: none;
+  }
+  .skills-pin-track {
+    height: auto;
+  }
+  .skills-pin-inner {
+    position: relative;
+    height: auto;
+    min-height: 100dvh;
   }
 }

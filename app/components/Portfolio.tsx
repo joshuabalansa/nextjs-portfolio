@@ -327,6 +327,18 @@ function animateCount(el: HTMLElement, target: number, display?: string, suffix 
   }, 40);
 }
 
+function getSkillTrackMetrics(track: HTMLElement) {
+  const top = window.scrollY + track.getBoundingClientRect().top;
+  const scrollable = Math.max(1, track.offsetHeight - window.innerHeight);
+  return { top, scrollable };
+}
+
+function getSkillTabIndexFromScroll(track: HTMLElement) {
+  const { top, scrollable } = getSkillTrackMetrics(track);
+  const progress = Math.min(1, Math.max(0, (window.scrollY - top) / scrollable));
+  return Math.min(skillTabs.length - 1, Math.floor(progress * skillTabs.length));
+}
+
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -334,6 +346,8 @@ const Portfolio = () => {
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
   const countedRef = useRef(false);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
+  const skillsTrackRef = useRef<HTMLDivElement>(null);
+  const skillScrollLockRef = useRef(false);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -374,6 +388,8 @@ const Portfolio = () => {
   useEffect(() => {
     const sectionIds = ["hero", ...navItems.map((item) => item.id)];
 
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     const handleScroll = () => {
       setNavCompact(window.scrollY > 50);
 
@@ -387,10 +403,26 @@ const Portfolio = () => {
           break;
         }
       }
+
+      const track = skillsTrackRef.current;
+      if (!track || skillScrollLockRef.current || prefersReducedMotion.matches) return;
+
+      const nextId = skillTabs[getSkillTabIndexFromScroll(track)].id;
+      setActiveSkillTab((current) => (current === nextId ? current : nextId));
+    };
+
+    const unlockSkillScroll = () => {
+      skillScrollLockRef.current = false;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("wheel", unlockSkillScroll, { passive: true });
+    window.addEventListener("touchmove", unlockSkillScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("wheel", unlockSkillScroll);
+      window.removeEventListener("touchmove", unlockSkillScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -404,8 +436,20 @@ const Portfolio = () => {
     skillTabs.find((tab) => tab.id === activeSkillTab) ?? skillTabs[0];
   const visibleSkills = skills.filter((skill) => skill.category === activeSkillTab);
 
-  const focusSkillTab = (tabId: SkillTabId) => {
+  const scrollToSkillTab = (tabId: SkillTabId) => {
     setActiveSkillTab(tabId);
+    const track = skillsTrackRef.current;
+    if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const index = skillTabs.findIndex((tab) => tab.id === tabId);
+    const { top, scrollable } = getSkillTrackMetrics(track);
+    const y = top + ((index + 0.4) / skillTabs.length) * scrollable;
+    skillScrollLockRef.current = true;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
+  const focusSkillTab = (tabId: SkillTabId) => {
+    scrollToSkillTab(tabId);
     skillTabRefs.current[tabId]?.focus();
   };
 
@@ -782,83 +826,91 @@ const Portfolio = () => {
           </div>
         </section>
 
-        <section id="skills" className="py-32 px-6 relative">
-          <div className="absolute inset-0 grid-pattern opacity-50" />
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-14">
-              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
-                Tech Stack
-              </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
-                Tools I <span className="gradient-text">work with</span>
-              </h2>
-              <p className="mt-5 text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
-                The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
-              </p>
-            </div>
-
-            <div className="reveal stagger-3">
-              <div className="flex justify-center mb-8">
-                <div
-                  role="tablist"
-                  aria-label="Skill categories"
-                  onKeyDown={handleSkillTabKeyDown}
-                  className="glass rounded-2xl p-1.5 flex flex-wrap justify-center gap-1 w-full md:w-auto"
-                >
-                  {skillTabs.map((tab) => {
-                    const isActive = activeSkillTab === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        id={`skill-tab-${tab.id}`}
-                        aria-selected={isActive}
-                        aria-controls={`skill-panel-${tab.id}`}
-                        tabIndex={isActive ? 0 : -1}
-                        ref={(node) => {
-                          skillTabRefs.current[tab.id] = node;
-                        }}
-                        onClick={() => setActiveSkillTab(tab.id)}
-                        className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
-                          isActive
-                            ? "bg-white text-neutral-950"
-                            : "text-stone-400 hover:text-stone-200"
-                        }`}
-                      >
-                        {tab.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div
-                id={`skill-panel-${activeSkillGroup.id}`}
-                role="tabpanel"
-                aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
-                className="glass rounded-3xl p-6 sm:p-8 md:p-10 min-h-[280px] card-shine"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
-                  <div>
-                    <h3 className="text-2xl font-semibold text-stone-100 tracking-tight">
-                      {activeSkillGroup.label}
-                    </h3>
-                    <p className="text-stone-500 font-light mt-2 max-w-xl">
-                      {activeSkillGroup.description}
-                    </p>
-                  </div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-stone-600">
-                    {visibleSkills.length} tools
+        <section id="skills" className="relative">
+          <div
+            ref={skillsTrackRef}
+            className="skills-pin-track relative"
+            style={{ "--skill-tab-count": skillTabs.length } as React.CSSProperties}
+          >
+            <div className="skills-pin-inner sticky top-0 z-20 flex h-dvh flex-col bg-[#0a0a0a] px-6 pb-8 pt-24 md:pt-28">
+              <div className="pointer-events-none absolute inset-0 grid-pattern opacity-50" />
+              <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col">
+                <div className="mb-6 shrink-0 text-center md:mb-10">
+                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
+                    Tech Stack
+                  </span>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
+                    Tools I <span className="gradient-text">work with</span>
+                  </h2>
+                  <p className="mt-5 text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                    The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
                   </p>
                 </div>
-                <div
-                  key={activeSkillGroup.id}
-                  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 animate-fade-in"
-                >
-                  {visibleSkills.map((skill) => (
-                    <SkillTile key={skill.name} {...skill} />
-                  ))}
+
+                <div className="flex min-h-0 flex-1 flex-col reveal stagger-3">
+                  <div className="mb-6 flex shrink-0 justify-center md:mb-8">
+                    <div
+                      role="tablist"
+                      aria-label="Skill categories"
+                      onKeyDown={handleSkillTabKeyDown}
+                      className="glass rounded-2xl p-1.5 flex flex-wrap justify-center gap-1 w-full md:w-auto"
+                    >
+                      {skillTabs.map((tab) => {
+                        const isActive = activeSkillTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            type="button"
+                            role="tab"
+                            id={`skill-tab-${tab.id}`}
+                            aria-selected={isActive}
+                            aria-controls={`skill-panel-${tab.id}`}
+                            tabIndex={isActive ? 0 : -1}
+                            ref={(node) => {
+                              skillTabRefs.current[tab.id] = node;
+                            }}
+                            onClick={() => scrollToSkillTab(tab.id)}
+                            className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
+                              isActive
+                                ? "bg-white text-neutral-950"
+                                : "text-stone-400 hover:text-stone-200"
+                            }`}
+                          >
+                            {tab.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div
+                    id={`skill-panel-${activeSkillGroup.id}`}
+                    role="tabpanel"
+                    aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
+                    className="glass card-shine min-h-0 flex-1 overflow-y-auto rounded-3xl p-6 sm:p-8 md:p-10"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+                      <div>
+                        <h3 className="text-2xl font-semibold text-stone-100 tracking-tight">
+                          {activeSkillGroup.label}
+                        </h3>
+                        <p className="text-stone-500 font-light mt-2 max-w-xl">
+                          {activeSkillGroup.description}
+                        </p>
+                      </div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-stone-600">
+                        {visibleSkills.length} tools
+                      </p>
+                    </div>
+                    <div
+                      key={activeSkillGroup.id}
+                      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 animate-fade-in"
+                    >
+                      {visibleSkills.map((skill) => (
+                        <SkillTile key={skill.name} {...skill} />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
