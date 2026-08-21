@@ -1,36 +1,43 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getCalApi } from "@calcom/embed-react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
-import { AiFillInstagram, AiFillLinkedin, AiFillGithub, AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
+import {
+  AiFillGithub,
+  AiFillInstagram,
+  AiFillLinkedin,
+  AiOutlineArrowRight,
+} from "react-icons/ai";
 import {
   FaEnvelope,
-  FaPhp,
-  FaLinux,
-  FaReact,
-  FaLaravel,
   FaJs,
-  FaChevronDown,
+  FaLaravel,
+  FaLinux,
+  FaPhp,
+  FaReact,
 } from "react-icons/fa";
-import { LuMenu, LuX } from "react-icons/lu";
-import Asciify from "./Asciify";
+import { LuArrowUp, LuCalendarCheck, LuMapPin, LuMenu, LuX } from "react-icons/lu";
 import { MdCall, MdEmail } from "react-icons/md";
 import {
-  SiNextdotjs,
-  SiTypescript,
+  SiExpress,
   SiFirebase,
+  SiGnubash,
   SiMongodb,
   SiMysql,
-  SiVuedotjs,
-  SiGnubash,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiExpress,
   SiNestjs,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiTailwindcss,
+  SiTypescript,
+  SiVuedotjs,
 } from "react-icons/si";
+import { HiOutlineServer, HiOutlineSparkles } from "react-icons/hi";
+import { BsCodeSlash } from "react-icons/bs";
+import { FiMonitor } from "react-icons/fi";
+import { siteConfig } from "../site.config";
 
 const roles = [
   "Full Stack Developer",
@@ -39,156 +46,232 @@ const roles = [
   "Front-end Developer",
 ];
 
-/**
- * Progress driven by sticky-pin scroll (content centered while animating).
- * Most of 0→1 plays while the section is fixed to the viewport.
- */
-const getStickyPinProgress = (section: HTMLElement) => {
-  const rect = section.getBoundingClientRect();
-  const vh = window.innerHeight || 1;
-  const pinDistance = Math.max(1, section.offsetHeight - vh);
+const navItems = [
+  { id: "about", label: "About" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "contact", label: "Contact" },
+] as const;
 
-  if (rect.top >= vh) return 0;
+const socialLinks = [
+  { href: siteConfig.social.github, Icon: AiFillGithub, label: "GitHub" },
+  { href: siteConfig.social.linkedin, Icon: AiFillLinkedin, label: "LinkedIn" },
+  { href: siteConfig.social.instagram, Icon: AiFillInstagram, label: "Instagram" },
+  { href: `mailto:${siteConfig.email}`, Icon: FaEnvelope, label: "Email" },
+];
 
-  // Soft pre-roll as section enters (0 → 0.06)
-  if (rect.top > 0) {
-    const approach = 1 - rect.top / vh;
-    return Math.round(approach * 0.06 * 1000) / 1000;
+const techStack = [
+  { name: "React", icon: FaReact, color: "#61DAFB" },
+  { name: "Next.js", icon: SiNextdotjs, color: "#A8A29E" },
+  { name: "TypeScript", icon: SiTypescript, color: "#007ACC" },
+  { name: "JavaScript", icon: FaJs, color: "#F7DF1E" },
+  { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },
+  { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
+  { name: "Express", icon: SiExpress, color: "#A8A29E" },
+  { name: "NestJS", icon: SiNestjs, color: "#E0234E" },
+  { name: "PHP", icon: FaPhp, color: "#8892BF" },
+  { name: "Laravel", icon: FaLaravel, color: "#FF2D20" },
+  { name: "Vue.js", icon: SiVuedotjs, color: "#4FC08D" },
+  { name: "MongoDB", icon: SiMongodb, color: "#47A248" },
+  { name: "MySQL", icon: SiMysql, color: "#4479A1" },
+  { name: "Firebase", icon: SiFirebase, color: "#FFCA28" },
+  { name: "Linux", icon: FaLinux, color: "#FCC624" },
+  { name: "Bash", icon: SiGnubash, color: "#4EAA25" },
+];
+
+const skillGroups = [
+  {
+    title: "Frontend",
+    Icon: FiMonitor,
+    iconClass: "text-blue-400",
+    wrapClass: "from-blue-900/30 to-stone-900/30",
+    items: ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Vue.js"],
+  },
+  {
+    title: "Backend",
+    Icon: HiOutlineServer,
+    iconClass: "text-green-400",
+    wrapClass: "from-green-900/30 to-stone-900/30",
+    items: ["Node.js", "Express", "NestJS", "PHP", "Laravel"],
+  },
+  {
+    title: "Data & Tools",
+    Icon: HiOutlineSparkles,
+    iconClass: "text-amber-400",
+    wrapClass: "from-amber-900/30 to-stone-900/30",
+    items: ["MongoDB", "MySQL", "Firebase", "Linux", "Bash"],
+  },
+];
+
+const projects = [
+  {
+    title: "Maison Lumière",
+    details:
+      "A marketing and operations site for a boutique Airbnb management house in Manila. Investors can explore the method, live portfolio numbers, and book a call; the app also handles unit bookings, guest activity, and an admin dashboard for managed suites.",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase"],
+    githubLink: "",
+    liveLink: "https://maison-lumiere-bice.vercel.app/",
+    category: "Web App",
+    categoryClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    cover: "from-amber-800/70 via-stone-800 to-neutral-950",
+    image: "/projects/maison-lumiere.png",
+    featured: false,
+  },
+  {
+    title: "Centimo - AI Powered POS",
+    details:
+      "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights.",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS"],
+    githubLink: "",
+    liveLink: "https://centimo.app",
+    category: "Featured",
+    categoryClass: "bg-green-500/10 text-green-400 border-green-500/20",
+    cover: "from-emerald-800/60 via-stone-800 to-neutral-950",
+    image: "/projects/centimo.png",
+    featured: true,
+  },
+  {
+    title: "E-Tinda Farmers Marketplace",
+    details:
+      "A comprehensive web-based marketplace that connects local farmers directly with buyers, eliminating middlemen and creating an efficient agricultural supply chain.",
+    techStack: ["Laravel 12", "JavaScript", "Bootstrap"],
+    githubLink: "https://github.com/joshuabalansa/e-tinda-web-marketplace-",
+    liveLink: "",
+    category: "Marketplace",
+    categoryClass: "bg-green-500/10 text-green-400 border-green-500/20",
+    cover: "from-lime-900/50 via-stone-800 to-neutral-950",
+    image: "/projects/e-tinda.png",
+    featured: false,
+  },
+  {
+    title: "Kingdom Development Group Philippines Page",
+    details: "A stunning, modern landing page for Kingdom Development Group Philippines.",
+    techStack: ["Next.js 14", "Tailwind CSS", "DaisyUI"],
+    githubLink: "",
+    liveLink: "https://www.kdgphilippines.org/",
+    category: "Landing",
+    categoryClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    cover: "from-sky-900/50 via-stone-800 to-neutral-950",
+    image: "/projects/kdg-philippines.png",
+    featured: false,
+  },
+  {
+    title: "Talisay Water District",
+    details: "Talisay Water District website.",
+    techStack: ["Laravel", "Bootstrap", "JavaScript"],
+    githubLink: "",
+    liveLink: "https://talisaywaterdistrict.gov.ph/",
+    category: "Web",
+    categoryClass: "bg-stone-500/10 text-stone-300 border-stone-500/20",
+    cover: "from-stone-700/60 via-stone-800 to-neutral-950",
+    image: "/projects/talisay-water-district.png",
+    featured: false,
+  },
+];
+
+const approachSteps = [
+  {
+    step: "01",
+    title: "Understand the goal",
+    body: "I start with the problem, users, and constraints — not a stack preference. Clear scope and outcomes first.",
+  },
+  {
+    step: "02",
+    title: "Design & build in parallel",
+    body: "Interfaces and APIs come together early so we can validate quickly, tighten the UX, and avoid late surprises.",
+  },
+  {
+    step: "03",
+    title: "Ship, measure, refine",
+    body: "Production-ready code with room to iterate: performance, feedback, and small improvements that compound over time.",
+  },
+];
+
+const stats = [
+  { value: projects.length, suffix: "+", label: "Projects" },
+  { value: 4.5, suffix: "+", label: "Years Exp", display: "4.5+" },
+  { value: techStack.length, suffix: "", label: "Tech Stack" },
+  { value: 0, suffix: "", label: "GMT+8", display: "PH" },
+];
+
+const stackHighlights = [
+  { label: "Front-end", value: "React, Next.js, TypeScript, Tailwind" },
+  { label: "Back-end", value: "Laravel, Node.js, Express, REST APIs" },
+  { label: "Data", value: "MySQL, MongoDB, Firebase" },
+  { label: "Mindset", value: "Ship sharp, iterate fast" },
+];
+
+const whatIBring = [
+  "End-to-end ownership — from UI details to database design and deployment.",
+  "Product-minded delivery: prioritise what matters, cut what doesn’t, keep velocity high.",
+  "Clear async communication so remote work stays simple across time zones.",
+  "A bias toward maintainable systems — not just a quick demo that breaks next month.",
+];
+
+const featuredProject = projects.find((project) => project.featured) ?? projects[0];
+const otherProjects = projects.filter((project) => project !== featuredProject);
+
+const contactDetails = [
+  {
+    label: "Email",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
+    Icon: MdEmail,
+  },
+  {
+    label: "Location",
+    value: `${siteConfig.location} · GMT+8`,
+    Icon: LuMapPin,
+  },
+  {
+    label: "Availability",
+    value: "Open to freelance & full-time",
+    Icon: LuCalendarCheck,
+  },
+];
+
+function animateCount(el: HTMLElement, target: number, display?: string, suffix = "") {
+  if (display) {
+    el.textContent = display;
+    return;
   }
-
-  // Main animation across the sticky pin distance (0.06 → 1)
-  const pin = Math.min(1, Math.max(0, -rect.top / pinDistance));
-  return Math.round((0.06 + pin * 0.94) * 1000) / 1000;
-};
-
-const SectionHeading = ({ overline, title, subtitle }: { overline: string; title: string; subtitle?: string }) => (
-  <div className="text-center mb-16 reveal">
-    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">
-      {overline}
-    </p>
-    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
-      {title}
-    </h2>
-    {subtitle && (
-      <p className="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-        {subtitle}
-      </p>
-    )}
-  </div>
-);
+  let current = 0;
+  const step = Math.max(1, Math.ceil(target / 40));
+  const timer = window.setInterval(() => {
+    current += step;
+    if (current >= target) {
+      current = target;
+      window.clearInterval(timer);
+    }
+    el.textContent = `${current}${suffix}`;
+  }, 40);
+}
 
 const Portfolio = () => {
-  const [activeSection, setActiveSection] = useState("home");
-  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [activeSection, setActiveSection] = useState("hero");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const lastScrollY = useRef(0);
-  const navClickScroll = useRef(false);
-  const navClickScrollTimer = useRef(0);
-
-  const navItems = [
-    { id: "home", label: "Home" },
-    { id: "about", label: "About" },
-    { id: "tech", label: "Stack" },
-    { id: "projects", label: "Work" },
-    { id: "contact", label: "Contact" },
-  ] as const;
-
-  // Typewriter state
+  const [navCompact, setNavCompact] = useState(false);
   const [roleIndex, setRoleIndex] = useState(0);
-  const [typedText, setTypedText] = useState("");
+  const [typedText, setTypedText] = useState(roles[0]);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // Projects carousel state
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [activePage, setActivePage] = useState(0);
-  const [pageCount, setPageCount] = useState(1);
-
-  // Philosophy scroll-pin progress (0 → 1)
-  const philosophyRef = useRef<HTMLElement>(null);
-  const [philosophyProgress, setPhilosophyProgress] = useState(0);
+  const countedRef = useRef(false);
+  const blobsRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      navClickScroll.current = true;
-      window.clearTimeout(navClickScrollTimer.current);
-      setIsNavVisible(true);
-      element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
-      setIsMobileMenuOpen(false);
-    }
+    if (!element) return;
+    element.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(sectionId);
+    setIsMobileMenuOpen(false);
   };
 
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-    localStorage.removeItem("theme");
-
-    const endNavClickScroll = () => {
-      window.clearTimeout(navClickScrollTimer.current);
-      navClickScroll.current = false;
-      lastScrollY.current = window.scrollY;
-    };
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const sections = ['home', 'about', 'tech', 'projects', 'contact'];
-      const scrollPosition = currentScrollY + 100;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-
-      if (navClickScroll.current) {
-        lastScrollY.current = currentScrollY;
-        window.clearTimeout(navClickScrollTimer.current);
-        navClickScrollTimer.current = window.setTimeout(endNavClickScroll, 180);
-        return;
-      }
-
-      if (currentScrollY <= 0) {
-        setIsNavVisible(true);
-      } else if (currentScrollY > lastScrollY.current && currentScrollY > 64) {
-        setIsNavVisible(false);
-        setIsMobileMenuOpen(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        setIsNavVisible(true);
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    const handleUserScroll = () => {
-      if (!navClickScroll.current) return;
-      endNavClickScroll();
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("wheel", handleUserScroll, { passive: true });
-    window.addEventListener("touchstart", handleUserScroll, { passive: true });
-
-    return () => {
-      window.clearTimeout(navClickScrollTimer.current);
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("wheel", handleUserScroll);
-      window.removeEventListener("touchstart", handleUserScroll);
-    };
-  }, []);
-
-  // Typewriter effect for hero roles
   useEffect(() => {
     const current = roles[roleIndex];
     let delay = isDeleting ? 40 : 90;
     if (!isDeleting && typedText === current) delay = 2200;
     else if (isDeleting && typedText === "") delay = 400;
 
-    const timeout = setTimeout(() => {
+    const timeout = window.setTimeout(() => {
       if (!isDeleting && typedText === current) {
         setIsDeleting(true);
       } else if (isDeleting && typedText === "") {
@@ -199,86 +282,81 @@ const Portfolio = () => {
       }
     }, delay);
 
-    return () => clearTimeout(timeout);
+    return () => window.clearTimeout(timeout);
   }, [typedText, isDeleting, roleIndex]);
 
-  // Scroll-reveal animations
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("reveal-visible");
-            observer.unobserve(entry.target);
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("active");
+
+          if (!countedRef.current && entry.target.querySelector("[data-count]")) {
+            countedRef.current = true;
+            entry.target.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+              animateCount(
+                el,
+                Number(el.dataset.count),
+                el.dataset.display,
+                el.dataset.suffix ?? ""
+              );
+            });
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
+
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  // Sticky section scroll progress (philosophy)
   useEffect(() => {
-    let frame = 0;
+    const sectionIds = ["hero", ...navItems.map((item) => item.id)];
 
-    const update = () => {
-      frame = 0;
-      if (philosophyRef.current) {
-        const next = getStickyPinProgress(philosophyRef.current);
-        setPhilosophyProgress((prev) => (prev === next ? prev : next));
+    const handleScroll = () => {
+      setNavCompact(window.scrollY > 50);
+
+      const scrollPosition = window.scrollY + 200;
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+        if (!element) continue;
+        const { offsetTop, offsetHeight } = element;
+        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+          setActiveSection(id);
+          break;
+        }
       }
     };
 
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(update);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    update();
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Track carousel pages for the dot indicators
   useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const update = () => {
-      setPageCount(Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth)));
-      setActivePage(Math.min(
-        Math.round(el.scrollLeft / el.clientWidth),
-        Math.ceil(el.scrollWidth / el.clientWidth) - 1
-      ));
+    const handleMove = (event: MouseEvent) => {
+      const blobs = blobsRef.current?.querySelectorAll<HTMLElement>(".animate-morph");
+      if (!blobs?.length) return;
+      const moveX = (event.clientX - window.innerWidth / 2) * 0.01;
+      const moveY = (event.clientY - window.innerHeight / 2) * 0.01;
+      blobs.forEach((blob, index) => {
+        const factor = (index + 1) * 0.5;
+        blob.style.transform = `translate(${moveX * factor}px, ${moveY * factor}px)`;
+      });
     };
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      el.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
+
+    window.addEventListener("mousemove", handleMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
-  const scrollCarousel = (direction: number) => {
-    const el = carouselRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction * el.clientWidth, behavior: "smooth" });
-  };
-
-  const goToPage = (page: number) => {
-    const el = carouselRef.current;
-    if (!el) return;
-    el.scrollTo({ left: page * el.clientWidth, behavior: "smooth" });
-  };
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     (async function () {
@@ -287,1026 +365,640 @@ const Portfolio = () => {
     })();
   }, []);
 
-  const socialLinks = [
-    { href: "https://instagram.com/joo.schwa/", Icon: AiFillInstagram, label: "Instagram" },
-    {
-      href: "https://linkedin.com/in/joshua-balansa-62846a245",
-      Icon: AiFillLinkedin,
-      label: "LinkedIn",
-    },
-    { href: "https://github.com/joshuabalansa", Icon: AiFillGithub, label: "GitHub" },
-    { href: "mailto:jbalansa143@gmail.com", Icon: FaEnvelope, label: "Email" },
-  ];
-
-  const techStack = [
-    { name: "React", icon: <FaReact />, color: "#61DAFB" },
-    { name: "Next.js", icon: <SiNextdotjs />, color: "#888888" },
-    { name: "TypeScript", icon: <SiTypescript />, color: "#007ACC" },
-    { name: "JavaScript", icon: <FaJs />, color: "#F7DF1E" },
-    { name: "Tailwind CSS", icon: <SiTailwindcss />, color: "#06B6D4" },
-    { name: "Node.js", icon: <SiNodedotjs />, color: "#339933" },
-    { name: "Express", icon: <SiExpress />, color: "#888888" },
-    { name: "NestJS", icon: <SiNestjs />, color: "#E0234E" },
-    { name: "PHP", icon: <FaPhp />, color: "#8892BF" },
-    { name: "Laravel", icon: <FaLaravel />, color: "#FF2D20" },
-    { name: "Vue.js", icon: <SiVuedotjs />, color: "#4FC08D" },
-    { name: "MongoDB", icon: <SiMongodb />, color: "#47A248" },
-    { name: "MySQL", icon: <SiMysql />, color: "#4479A1" },
-    { name: "Firebase", icon: <SiFirebase />, color: "#FFCA28" },
-    { name: "Linux", icon: <FaLinux />, color: "#FCC624" },
-    { name: "Bash", icon: <SiGnubash />, color: "#4EAA25" },
-  ];
-
-  const projects = [
-    {
-      title: "Maison Lumière",
-      details:
-        "A marketing and operations site for a boutique Airbnb management house in Manila. Investors can explore the method, live portfolio numbers, and book a call; the app also handles unit bookings, guest activity, and an admin dashboard for managed suites.",
-      techStack: "Next.js, TypeScript, Tailwind CSS, Supabase",
-      githubLink: "",
-      liveLink: "https://maison-lumiere-bice.vercel.app/",
-    },
-    {
-      title: "Centimo - AI Powered POS",
-      details:
-        "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights.",
-      techStack: "Next.js, TypeScript, Tailwind CSS",
-      githubLink: "",
-      liveLink: "https://centimo.app",
-    },
-    {
-      title: "E-Tinda Farmers Marketplace",
-      details: "A comprehensive web-based marketplace that connects local farmers directly with buyers, eliminating middlemen and creating an efficient agricultural supply chain.",
-      techStack: "Laravel 12, JavaScript, Bootstrap",
-      githubLink: "https://github.com/joshuabalansa/e-tinda-web-marketplace-",
-      liveLink: "",
-    },
-    {
-      title: "Kingdom Development Group Philippines Page",
-      details: "A stunning, modern landing page for Kingdom Development Group Philippines.",
-      techStack: "Next.js 14, Tailwind CSS, DaisyUI",
-      githubLink: "",
-      liveLink: "https://www.kdgphilippines.org/",
-    },
-    {
-      title: "Task Management Dashboard with Deployment Tracking",
-      details: "A modern task management dashboard with deployment tracking, team management, and analytics.",
-      techStack: "",
-      githubLink: "https://github.com/joshuabalansa/taskflow",
-      liveLink: "",
-    },
-    {
-      title: "Research Title Generator",
-      details: "A web-based application for generating research titles.",
-      techStack: "Next JS, Google Gemini",
-      githubLink: "https://github.com/joshuabalansa/Research-Title-Generator",
-      liveLink: "https://research-title-generator-alpha.vercel.app/",
-    },
-    {
-      title: "Automated Daily Tech Blog Posts",
-      details:
-        "An AI-powered app that automatically generates tech related blog posts.",
-      techStack: "Next JS, Google Gemini",
-      githubLink: "https://github.com/joshuabalansa/automated-blog-posting",
-      liveLink: "",
-    },
-    {
-      title: "Healthcare Management System",
-      details:
-        "A web-based application for managing patient records, appointments, and billing.",
-      techStack: "PHP, JavaScript, Bootstrap",
-      githubLink:
-        "https://github.com/joshuabalansa/healthcare-information-system.git",
-        liveLink: "",
-    },
-    {
-      title: "Order Management System with Analytics",
-      details:
-        "A web-based system for managing orders, inventory, and shipping with analytics.",
-      techStack: "Laravel, JavaScript, Bootstrap",
-      githubLink: "https://github.com/joshuabalansa/tps-auth.git",
-      liveLink: "",
-    },
-    {
-      title: "Tourism Landing Page",
-      details:
-        "A web-based application for promoting tourism and attracting visitors.",
-      techStack: "HTML, CSS, JavaScript",
-      githubLink: "https://github.com/joshuabalansa/tourism.git",
-      liveLink: "",
-    },
-    {
-      title: "Talisay Water District",
-      details:
-        "Talisay Water District website.",
-      techStack: "Laravel, Bootstrap, JavaScript",
-      githubLink: "",
-      liveLink: "https://talisaywaterdistrict.gov.ph/",
-    },
-  ];
-
-  const heroIcons = [
-    { Icon: FaReact, color: "#61DAFB", label: "React", pos: "top-[6%] left-[38%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-a", delay: "0s", sx: "0px", sy: "-38px", r: "-6deg" },
-    { Icon: SiNextdotjs, color: "#888888", label: "Next.js", pos: "top-[10%] right-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-b", delay: "0.3s", sx: "32px", sy: "-34px", r: "10deg" },
-    { Icon: SiTypescript, color: "#007ACC", label: "TypeScript", pos: "top-[28%] right-[2%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-c", delay: "0.6s", sx: "40px", sy: "-6px", r: "12deg" },
-    { Icon: FaJs, color: "#F7DF1E", label: "JavaScript", pos: "top-[48%] right-[6%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-d", delay: "0.15s", sx: "36px", sy: "18px", r: "8deg" },
-    { Icon: SiTailwindcss, color: "#06B6D4", label: "Tailwind CSS", pos: "bottom-[28%] right-[4%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-a", delay: "0.9s", sx: "38px", sy: "28px", r: "-8deg" },
-    { Icon: SiNodedotjs, color: "#339933", label: "Node.js", pos: "bottom-[12%] right-[18%]", size: "h-14 w-14 text-2xl sm:h-16 sm:w-16 sm:text-3xl", float: "animate-float-b", delay: "0.45s", sx: "24px", sy: "40px", r: "6deg" },
-    { Icon: SiExpress, color: "#888888", label: "Express", pos: "bottom-[4%] left-[40%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-c", delay: "1.1s", sx: "4px", sy: "44px", r: "-4deg" },
-    { Icon: SiNestjs, color: "#E0234E", label: "NestJS", pos: "bottom-[22%] left-[28%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.55s", sx: "-12px", sy: "28px", r: "7deg" },
-    { Icon: FaPhp, color: "#8892BF", label: "PHP", pos: "bottom-[14%] left-[14%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "0.25s", sx: "-28px", sy: "36px", r: "-12deg" },
-    { Icon: FaLaravel, color: "#FF2D20", label: "Laravel", pos: "bottom-[32%] left-[2%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-a", delay: "0.75s", sx: "-40px", sy: "16px", r: "10deg" },
-    { Icon: SiVuedotjs, color: "#4FC08D", label: "Vue.js", pos: "top-[46%] left-[2%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "1.2s", sx: "-42px", sy: "4px", r: "-10deg" },
-    { Icon: SiMongodb, color: "#47A248", label: "MongoDB", pos: "top-[26%] left-[6%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-c", delay: "0.5s", sx: "-38px", sy: "-14px", r: "8deg" },
-    { Icon: SiMysql, color: "#4479A1", label: "MySQL", pos: "top-[12%] left-[16%]", size: "h-12 w-12 text-xl sm:h-14 sm:w-14 sm:text-2xl", float: "animate-float-d", delay: "1s", sx: "-30px", sy: "-32px", r: "-14deg" },
-    { Icon: SiFirebase, color: "#FFCA28", label: "Firebase", pos: "top-[36%] left-[28%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-a", delay: "0.35s", sx: "-16px", sy: "-8px", r: "12deg" },
-    { Icon: FaLinux, color: "#FCC624", label: "Linux", pos: "bottom-[40%] right-[26%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-b", delay: "0.85s", sx: "20px", sy: "12px", r: "-6deg" },
-    { Icon: SiGnubash, color: "#4EAA25", label: "Bash", pos: "top-[56%] right-[24%]", size: "h-11 w-11 text-lg sm:h-12 sm:w-12 sm:text-xl", float: "animate-float-c", delay: "1.35s", sx: "14px", sy: "20px", r: "9deg" },
-  ];
-
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white overflow-x-clip">
-      {/* Navigation */}
+    <div className="min-h-screen bg-neutral-950 text-stone-100 overflow-x-clip">
       <nav
         aria-label="Primary"
-        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-950/80 transition-transform duration-300 ${
-          isNavVisible ? "translate-y-0" : "-translate-y-full"
+        className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-500 ${
+          navCompact ? "py-2" : "py-4"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative flex items-center justify-center h-16">
-            {/* Desktop links */}
-            <div className="hidden md:flex items-center gap-1">
-              {navItems.map(({ id, label }) => (
-                <button
-                  key={id}
-                  onClick={() => scrollToSection(id)}
-                  className={`font-medium px-3 py-1.5 rounded-full transition-all duration-300 ${
-                    activeSection === id
-                      ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Mobile menu toggle */}
+        <div className="max-w-7xl mx-auto">
+          <div className="glass rounded-2xl px-6 py-4 flex items-center justify-between">
             <button
-              onClick={() => setIsMobileMenuOpen((open) => !open)}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
-              className="md:hidden absolute right-0 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+              type="button"
+              onClick={() => scrollToSection("hero")}
+              className="text-stone-100 font-medium text-sm"
             >
-              {isMobileMenuOpen ? <LuX className="w-5 h-5" /> : <LuMenu className="w-5 h-5" />}
+              joshua<span className="text-stone-500">.dev</span>
             </button>
-          </div>
-        </div>
 
-        {/* Mobile menu panel */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
-            isMobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="px-4 pb-4 pt-1 border-t border-gray-200/60 dark:border-gray-800/60 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md">
-            <div className="flex flex-col gap-1">
+            <div className="hidden md:flex items-center gap-8">
               {navItems.map(({ id, label }) => (
                 <button
                   key={id}
+                  type="button"
                   onClick={() => scrollToSection(id)}
-                  className={`w-full text-left font-medium px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`nav-link text-sm transition-colors ${
                     activeSection === id
-                      ? "text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800"
-                      : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900"
+                      ? "is-active text-stone-200"
+                      : "text-stone-400 hover:text-stone-200"
                   }`}
                 >
                   {label}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => scrollToSection("contact")}
+                className="px-5 py-2.5 rounded-xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
+              >
+                Let&apos;s Talk
+              </button>
             </div>
+
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
+              className="md:hidden text-stone-400 hover:text-stone-200 transition-colors"
+            >
+              <LuMenu className="w-6 h-6" />
+            </button>
           </div>
         </div>
       </nav>
 
-      <main>
-      {/* Hero Section */}
-      <section
-        id="home"
-        aria-label="Introduction"
-        className="relative min-h-dvh overflow-x-clip"
+      <div
+        className={`fixed inset-0 z-[60] glass flex flex-col items-center justify-center gap-8 transition-transform duration-500 md:hidden ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <Asciify
-          className="min-h-dvh w-full"
-          radius={0.42}
-          softness={1}
-          scale={2}
-          spacing={1}
-          charset="ascii"
-          background="auto"
-          contrast={1.1}
-          glow={0.7}
-          aberration={0.55}
-          followSpeed={4}
-          strength={1}
-        >
-        <div className="relative min-h-dvh flex items-center justify-center overflow-x-clip">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="hero-mesh absolute inset-0" />
-          <div className="hero-grid absolute inset-0" />
-          <div className="hero-orb hero-orb-a" />
-          <div className="hero-orb hero-orb-b" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-24">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Copy */}
-            <div className="lg:col-span-6 xl:col-span-5 relative z-10 text-center lg:text-left">
-              <div className="animate-fade-up" style={{ animationDelay: "0.08s" }}>
-                <div className="inline-flex items-center gap-2.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                  </span>
-                  Open to new projects
-                </div>
-              </div>
-
-              <div className="animate-fade-up mt-6 sm:mt-8" style={{ animationDelay: "0.18s" }}>
-                <p className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 font-medium mb-2 sm:mb-3">
-                  Hi, I&apos;m
-                </p>
-                <h1 className="text-[clamp(3.75rem,14vw,8.5rem)] font-bold tracking-tighter leading-[0.88] text-gray-900 dark:text-white">
-                  Josh
-                  <span className="sr-only">ua Balansa — Full Stack Developer</span>
-                  <span className="text-gray-300 dark:text-gray-600" aria-hidden>
-                    .
-                  </span>
-                </h1>
-                <div className="hero-line mt-5 h-px w-20 bg-gray-900 dark:bg-white mx-auto lg:mx-0" />
-              </div>
-
-              <div className="animate-fade-up mt-7 sm:mt-8 h-8 sm:h-9" style={{ animationDelay: "0.32s" }}>
-                <p className="text-xl sm:text-2xl font-medium tracking-tight text-gray-500 dark:text-gray-400 font-[family-name:var(--font-geist-mono)]">
-                  {typedText}
-                  <span className="animate-caret text-gray-400 dark:text-gray-500">|</span>
-                </p>
-              </div>
-
-              <p
-                className="animate-fade-up mt-6 sm:mt-8 max-w-md mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed"
-                style={{ animationDelay: "0.45s" }}
-              >
-                I design and build clean, fast web applications — polished
-                interfaces, reliable back ends. Based in the Philippines,
-                working with clients everywhere.
-              </p>
-
-              <div
-                className="animate-fade-up mt-9 sm:mt-10 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start"
-                style={{ animationDelay: "0.58s" }}
-              >
-                <button
-                  onClick={() => scrollToSection("projects")}
-                  className="group inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
-                >
-                  See my work
-                  <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                </button>
-                <button
-                  onClick={() => scrollToSection("contact")}
-                  className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
-                >
-                  Get in touch
-                </button>
-              </div>
-
-              <div
-                className="animate-fade-up mt-10 sm:mt-12 flex items-center justify-center lg:justify-start gap-1"
-                style={{ animationDelay: "0.72s" }}
-              >
-                {socialLinks.map(({ href, Icon, label }, index) => (
-                  <Link
-                    key={index}
-                    href={href}
-                    target={href.startsWith("mailto:") ? undefined : "_blank"}
-                    rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
-                    aria-label={label}
-                    className="p-2.5 text-gray-400 dark:text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
-                  >
-                    <Icon className="text-xl" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Floating language / framework constellation */}
-            <div
-              className="lg:col-span-6 xl:col-span-7 animate-fade-up"
-              style={{ animationDelay: "0.3s" }}
-            >
-              <div className="hero-constellation group/constellation">
-                <div className="absolute inset-[28%] rounded-full bg-gradient-to-br from-gray-200/50 to-transparent dark:from-gray-700/30 dark:to-transparent blur-2xl pointer-events-none" />
-
-                {heroIcons.map(({ Icon, color, label, pos, size, float, delay, sx, sy, r }, index) => (
-                  <div
-                    key={label}
-                    className={`hero-icon-wrap absolute ${pos}`}
-                    style={{
-                      "--sx": sx,
-                      "--sy": sy,
-                      "--r": r,
-                      transitionDelay: `${index * 20}ms`,
-                    } as React.CSSProperties}
-                    title={label}
-                  >
-                    <div className={float} style={{ animationDelay: delay }}>
-                      <div className={`hero-icon ${size}`}>
-                        <Icon style={{ color }} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
         <button
-          onClick={() => scrollToSection("about")}
-          aria-label="Scroll to about section"
-          className="animate-fade-up absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-          style={{ animationDelay: "0.9s" }}
+          type="button"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-label="Close menu"
+          className="absolute top-8 right-8 text-stone-400 hover:text-stone-200"
         >
-          <span className="text-[10px] uppercase tracking-[0.25em] font-medium">Scroll</span>
-          <FaChevronDown className="animate-bounce text-sm" />
+          <LuX className="w-7 h-7" />
         </button>
-        </div>
-        </Asciify>
-      </section>
+        {navItems.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => scrollToSection(id)}
+            className="text-2xl text-stone-300 hover:text-stone-100 transition-colors"
+          >
+            {label}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => scrollToSection("contact")}
+          className="text-2xl text-stone-300 hover:text-stone-100 transition-colors"
+        >
+          Contact
+        </button>
+      </div>
 
-      {/* About Section */}
-      <section
-        id="about"
-        className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
-      >
-        <div className="pointer-events-none absolute inset-0 bg-gray-50 dark:bg-gray-900/40" />
-        <div className="pointer-events-none absolute top-0 right-0 w-[55%] h-full bg-gradient-to-l from-gray-100/80 to-transparent dark:from-gray-800/20" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-gray-200/40 dark:bg-gray-800/30 blur-3xl" />
-
-        <div className="relative max-w-7xl mx-auto">
-          <SectionHeading
-            overline="About"
-            title="A bit about me"
-            subtitle="The person behind the projects."
+      <main>
+        <section
+          id="hero"
+          ref={blobsRef}
+          aria-label="Introduction"
+          className="min-h-dvh flex items-center justify-center relative overflow-hidden grid-pattern"
+        >
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-stone-800/30 to-stone-900/30 blur-3xl animate-morph" />
+          <div
+            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-amber-900/20 to-stone-900/20 blur-3xl animate-morph"
+            style={{ animationDelay: "-5s" }}
           />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 animate-rotate-slow">
+            <div className="orbit-ring" />
+          </div>
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-10 animate-rotate-slow"
+            style={{ animationDirection: "reverse", animationDuration: "20s" }}
+          >
+            <div className="orbit-ring" />
+          </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Portrait — sticky while story scrolls */}
-            <div className="reveal lg:col-span-5 lg:sticky lg:top-28 lg:self-start">
-              <div className="relative mx-auto max-w-sm lg:max-w-none">
-                <div
-                  aria-hidden
-                  className="absolute -inset-px rounded-[1.85rem] bg-gradient-to-br from-gray-300 via-gray-200/40 to-gray-400/50 dark:from-gray-600 dark:via-gray-700/30 dark:to-gray-500/40"
-                />
-                <Asciify
-                  className="relative aspect-[4/5] rounded-[1.75rem] overflow-hidden"
-                  radius={0.55}
-                  softness={0.9}
-                  scale={1.75}
-                  spacing={1}
-                  charset="ascii"
-                  background="auto"
-                  contrast={1.2}
-                  glow={0.85}
-                  aberration={0.4}
-                  followSpeed={4.5}
-                  strength={1}
-                >
-                <div className="relative h-full min-h-full overflow-hidden group bg-gray-200 dark:bg-gray-800">
-                  <Image
-                    src="/img-1.jpeg"
-                    alt="Joshua Balansa, full stack developer based in the Philippines"
-                    fill
-                    sizes="(max-width: 1024px) 24rem, 40vw"
-                    priority
-                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950/85 via-gray-950/15 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-                    <p className="text-white text-2xl font-semibold tracking-tight">
-                      Joshua Balansa
-                    </p>
-                    <p className="mt-1 text-sm text-gray-300">
-                      Full Stack Developer
-                    </p>
-                  </div>
-                </div>
-                </Asciify>
-              </div>
+          <div className="particle animate-float" style={{ top: "15%", left: "10%", animationDelay: "-2s" }} />
+          <div className="particle animate-float" style={{ top: "25%", right: "15%", animationDelay: "-4s" }} />
+          <div className="particle animate-float" style={{ bottom: "30%", left: "20%", animationDelay: "-6s" }} />
+          <div className="particle animate-float" style={{ bottom: "20%", right: "25%", animationDelay: "-1s" }} />
+          <div className="particle animate-float" style={{ top: "60%", left: "5%", animationDelay: "-3s" }} />
+          <div className="particle animate-float" style={{ top: "40%", right: "8%", animationDelay: "-5s" }} />
+
+          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto animate-fade-up pb-24">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-6">
+              <span className="text-white">Josh</span>
+              <span className="sr-only">ua Balansa — Full Stack Developer</span>
+            </h1>
+
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="h-px w-8 bg-stone-700" />
+              <p className="text-lg md:text-xl text-stone-400 font-light min-h-7">
+                {typedText}
+                <span className="animate-caret text-stone-500">|</span>
+              </p>
+              <div className="h-px w-8 bg-stone-700" />
             </div>
 
-            {/* Story */}
-            <div className="lg:col-span-7 space-y-14">
-              <div className="reveal" style={{ transitionDelay: "80ms" }}>
-                <div className="inline-flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 font-medium mb-5">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                  </span>
-                  Open to freelance & full-time
-                </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-[2.15rem] font-bold tracking-tight text-gray-900 dark:text-white leading-[1.2] mb-6">
-                  I take products from idea to launch — clean interfaces, solid backends, real results.
-                </h3>
-                <div className="space-y-4 text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl">
-                  <p>
-                    I&apos;m a full-stack developer who works across the stack —
-                    React and Next.js on the front-end, Laravel and Node.js on
-                    the back-end — with a focus on speed, clarity, and craft.
-                  </p>
-                  <p>
-                    I care about clean code, thoughtful design, and shipping
-                    things people actually use. Based in the Philippines,
-                    collaborating with clients worldwide.
-                  </p>
+            <p className="text-stone-500 font-light text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-12">
+              I design and build clean, fast web applications — polished interfaces,
+              reliable back ends. Based in the Philippines, working with clients everywhere.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => scrollToSection("projects")}
+                className="group px-8 py-4 rounded-2xl text-sm font-medium text-white bg-gradient-to-r from-stone-600 to-stone-700 hover:from-stone-500 hover:to-stone-600 transition-all duration-500 flex items-center gap-3 hover:shadow-lg hover:shadow-stone-800/50"
+              >
+                View My Work
+                <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection("contact")}
+                className="px-8 py-4 rounded-2xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-500"
+              >
+                Get In Touch
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-5 mt-12">
+              {socialLinks.map(({ href, Icon, label }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl glass flex items-center justify-center text-stone-500 hover:text-stone-200 transition-all duration-300"
+                >
+                  <Icon className="text-xl" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+        </section>
+
+        <section id="about" className="py-32 px-6 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-12 gap-16 items-start">
+              <div className="lg:col-span-5 reveal lg:sticky lg:top-28 lg:self-start">
+                <div className="relative max-w-md mx-auto lg:max-w-none">
+                  <div className="relative rounded-3xl overflow-hidden aspect-[3/4]">
+                    <Image
+                      src="/img-about.png"
+                      alt="Joshua Balansa, full stack developer based in the Philippines"
+                      fill
+                      sizes="(max-width: 1024px) 24rem, 40vw"
+                      priority
+                      className="object-cover object-center"
+                    />
+                  </div>
+                  <div
+                    className="absolute -bottom-6 -right-6 glass rounded-2xl p-5 animate-float"
+                    style={{ animationDuration: "6s" }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-900/40 to-stone-800/40 flex items-center justify-center">
+                        <BsCodeSlash className="text-amber-400 text-xl" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-stone-100">4.5+</p>
+                        <p className="text-xs text-stone-500">Years Coding</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute -top-4 -left-4 w-24 h-24 border border-stone-800 rounded-3xl -z-10" />
                 </div>
               </div>
 
-              <div className="reveal" style={{ transitionDelay: "120ms" }}>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500 mb-5">
-                  How I work
-                </p>
-                <div className="space-y-6 max-w-xl">
-                  {[
-                    {
-                      step: "01",
-                      title: "Understand the goal",
-                      body: "I start with the problem, users, and constraints — not a stack preference. Clear scope and outcomes first.",
-                    },
-                    {
-                      step: "02",
-                      title: "Design & build in parallel",
-                      body: "Interfaces and APIs come together early so we can validate quickly, tighten the UX, and avoid late surprises.",
-                    },
-                    {
-                      step: "03",
-                      title: "Ship, measure, refine",
-                      body: "Production-ready code with room to iterate: performance, feedback, and small improvements that compound over time.",
-                    },
-                  ].map(({ step, title, body }) => (
-                    <div key={step} className="flex gap-5">
-                      <span className="shrink-0 text-sm font-bold tabular-nums text-gray-300 dark:text-gray-600 pt-0.5">
-                        {step}
-                      </span>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5">
-                          {title}
-                        </h4>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                          {body}
-                        </p>
+              <div className="lg:col-span-7 space-y-14">
+                <div className="reveal stagger-1">
+                  <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-xs text-stone-400 font-medium uppercase tracking-[0.2em]">
+                      Open to freelance & full-time
+                    </span>
+                  </div>
+                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block">
+                    About Me
+                  </span>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-8">
+                    I take products from
+                    <br />
+                    <span className="gradient-text">idea to launch</span>
+                  </h2>
+                  <p className="text-stone-400 font-light leading-relaxed text-lg mb-6">
+                    I&apos;m a full-stack developer who works across the stack — React and
+                    Next.js on the front-end, Laravel and Node.js on the back-end — with a
+                    focus on speed, clarity, and craft.
+                  </p>
+                  <p className="text-stone-500 font-light leading-relaxed">
+                    I care about clean code, thoughtful design, and shipping things people
+                    actually use. Based in the Philippines, collaborating with clients worldwide.
+                  </p>
+                </div>
+
+                <div className="reveal stagger-2">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-6">
+                    How I work
+                  </p>
+                  <div className="space-y-6">
+                    {approachSteps.map((item) => (
+                      <div key={item.step} className="flex gap-5">
+                        <span className="shrink-0 text-sm font-semibold tabular-nums text-stone-600 pt-0.5">
+                          {item.step}
+                        </span>
+                        <div>
+                          <h3 className="font-semibold text-stone-100 mb-1.5">{item.title}</h3>
+                          <p className="text-stone-400 font-light leading-relaxed">{item.body}</p>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                <dl className="reveal stagger-3 divide-y divide-neutral-800/80 border-y border-neutral-800/80">
+                  {stackHighlights.map(({ label, value }) => (
+                    <div
+                      key={label}
+                      className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 py-4"
+                    >
+                      <dt className="sm:w-28 shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                        {label}
+                      </dt>
+                      <dd className="text-stone-200 font-medium">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="reveal stagger-4">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-6">
+                    What I bring
+                  </p>
+                  <ul className="space-y-4">
+                    {whatIBring.map((item) => (
+                      <li key={item} className="flex gap-3 text-stone-400 font-light leading-relaxed">
+                        <span
+                          aria-hidden
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-stone-100"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 reveal stagger-5">
+                  {stats.map((stat) => (
+                    <div key={stat.label} className="glass rounded-2xl p-5 text-center card-shine">
+                      <p
+                        className="text-3xl font-bold text-stone-100 mb-1"
+                        data-count={stat.value}
+                        data-suffix={stat.suffix}
+                        data-display={stat.display}
+                      >
+                        {stat.display ?? "0"}
+                      </p>
+                      <p className="text-xs text-stone-500 uppercase tracking-wider">{stat.label}</p>
                     </div>
                   ))}
                 </div>
-              </div>
 
-              <dl
-                className="reveal divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 max-w-xl"
-                style={{ transitionDelay: "160ms" }}
-              >
-                {[
-                  { label: "Front-end", value: "React, Next.js, TypeScript, Tailwind" },
-                  { label: "Back-end", value: "Laravel, Node.js, Express, REST APIs" },
-                  { label: "Data", value: "MySQL, MongoDB, Firebase" },
-                  { label: "Mindset", value: "Ship sharp, iterate fast" },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 py-4"
-                  >
-                    <dt className="sm:w-28 shrink-0 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                      {label}
-                    </dt>
-                    <dd className="text-gray-800 dark:text-gray-200 font-medium">
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              <div className="reveal" style={{ transitionDelay: "200ms" }}>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500 mb-5">
-                  What I bring
-                </p>
-                <ul className="space-y-4 max-w-xl">
-                  {[
-                    "End-to-end ownership — from UI details to database design and deployment.",
-                    "Product-minded delivery: prioritise what matters, cut what doesn’t, keep velocity high.",
-                    "Clear async communication so remote work stays simple across time zones.",
-                    "A bias toward maintainable systems — not just a quick demo that breaks next month.",
-                  ].map((item) => (
-                    <li key={item} className="flex gap-3 text-gray-600 dark:text-gray-400 leading-relaxed">
-                      <span
-                        aria-hidden
-                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gray-900 dark:bg-white"
-                      />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div
-                className="reveal grid grid-cols-3 gap-4 sm:gap-8 max-w-xl"
-                style={{ transitionDelay: "240ms" }}
-              >
-                {[
-                  { value: "E2E", label: "Idea to launch" },
-                  { value: "4.5+", label: "Years experience" },
-                  { value: "PH", label: "GMT+8 base" },
-                ].map(({ value, label }) => (
-                  <div key={label}>
-                    <p className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white tabular-nums">
-                      {value}
-                    </p>
-                    <p className="mt-1.5 text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-snug">
-                      {label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="reveal" style={{ transitionDelay: "280ms" }}>
-                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl mb-8">
-                  Whether you need a polished landing experience, a full product
-                  build, or help tightening an existing codebase — I&apos;m
-                  ready to jump in and ship.
-                </p>
-                <button
-                  onClick={() => scrollToSection("contact")}
-                  className="group inline-flex items-center text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
-                >
-                  Let&apos;s work together
-                  <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Philosophy — scroll-pinned statement */}
-      <section
-        ref={philosophyRef}
-        id="philosophy"
-        className="relative h-[180vh] bg-white dark:bg-gray-950"
-        aria-label="Design philosophy"
-      >
-        <div className="sticky top-0 h-dvh overflow-hidden">
-          <Asciify
-            className="h-full w-full"
-            radius={0.38}
-            softness={1}
-            scale={2}
-            spacing={1}
-            charset="ascii"
-            background="auto"
-            contrast={1.15}
-            glow={0.65}
-            aberration={0.4}
-            followSpeed={4}
-            strength={1}
-          >
-            <div className="relative h-dvh flex items-center justify-center px-4 sm:px-6">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 philosophy-grid opacity-40 dark:opacity-30"
-              />
-
-              <div className="relative z-10 w-full max-w-5xl mx-auto text-center">
-                <p
-                  className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-8 sm:mb-12"
-                  style={{
-                    opacity: Math.min(1, philosophyProgress / 0.12),
-                    transform: `translateY(${(1 - Math.min(1, philosophyProgress / 0.12)) * 16}px)`,
-                  }}
-                >
-                  Philosophy
-                </p>
-
-                <h2
-                  className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.75rem,10vw,7.25rem)]"
-                  aria-label="Less noise, more clarity."
-                >
-                  {["Less noise,", "more clarity."].map((line, lineIndex) => {
-                    const start = 0.08 + lineIndex * 0.18;
-                    const t = Math.min(
-                      1,
-                      Math.max(0, (philosophyProgress - start) / 0.22)
-                    );
-                    const ease = 1 - Math.pow(1 - t, 3);
-                    return (
-                      <span
-                        key={line}
-                        className="block will-change-transform"
-                        style={{
-                          opacity: ease,
-                          transform: `translateY(${(1 - ease) * 52}px) scale(${0.92 + ease * 0.08})`,
-                          filter: ease > 0.98 ? "none" : `blur(${(1 - ease) * 8}px)`,
-                        }}
-                      >
-                        {line}
-                      </span>
-                    );
-                  })}
-                </h2>
-
-                <div
-                  className="mx-auto mt-8 sm:mt-12 max-w-2xl"
-                  style={{
-                    opacity: Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22)),
-                    transform: `translateY(${Math.max(0, 1 - Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.22))) * 20}px)`,
-                  }}
-                >
-                  <div
-                    className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-6 sm:mb-8 origin-center"
-                    style={{
-                      transform: `scaleX(${Math.min(1, Math.max(0, (philosophyProgress - 0.48) / 0.16))})`,
-                    }}
-                  />
-                  <p className="text-[clamp(1.15rem,2.6vw,1.85rem)] font-medium tracking-tight text-gray-500 dark:text-gray-400 leading-[1.45]">
-                    Clean layouts, purposeful motion, and only the details that
-                    matter.
+                <div className="reveal">
+                  <p className="text-stone-400 font-light leading-relaxed mb-8">
+                    Whether you need a polished landing experience, a full product build, or
+                    help tightening an existing codebase — I&apos;m ready to jump in and ship.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection("contact")}
+                    className="group inline-flex items-center text-sm font-medium text-stone-100 hover:text-stone-300 transition-colors"
+                  >
+                    Let&apos;s work together
+                    <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </div>
               </div>
             </div>
-          </Asciify>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* Tech Stack Section */}
-      <section
-        id="tech"
-        className="relative overflow-hidden py-24 sm:py-32"
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="philosophy-grid absolute inset-0 opacity-40 dark:opacity-30" />
-          <div className="tech-orb tech-orb-a" />
-          <div className="tech-orb tech-orb-b" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-5">
-              Stack
-            </p>
-            <h2
-              className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.15rem,7vw,5.25rem)]"
-              aria-label="Tools I work with."
-            >
-              <span className="block">Tools I</span>
-              <span className="block">
-                work with
-                <span className="text-gray-300 dark:text-gray-600" aria-hidden>.</span>
+        <section id="skills" className="py-32 px-6 relative">
+          <div className="absolute inset-0 grid-pattern opacity-50" />
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-20">
+              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
+                Tech Stack
               </span>
-            </h2>
-            <div className="mx-auto mt-6 sm:mt-8 max-w-xl">
-              <div className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-4" />
-              <p className="text-sm sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                The technologies behind my day-to-day work.
-              </p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
+                Tools I <span className="gradient-text">work with</span>
+              </h2>
             </div>
-          </div>
 
-          <div className="max-w-5xl mx-auto">
-            <ul className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2.5">
-              {techStack.map((tech) => (
-                <li key={tech.name} className="min-w-0">
-                  <div
-                    className="tech-tile flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl border border-gray-200/90 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
-                    style={{ "--tech-color": tech.color } as React.CSSProperties}
-                  >
-                    <span
-                      className="text-lg sm:text-2xl lg:text-3xl"
-                      style={{ color: tech.color }}
-                    >
-                      {tech.icon}
-                    </span>
-                    <span className="text-[9px] sm:text-[11px] font-medium text-gray-600 dark:text-gray-300 tracking-tight whitespace-nowrap truncate max-w-full px-1">
-                      {tech.name}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400 dark:text-gray-500">
-              Front-end, back-end, data, and the shell — ships on these tools.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section
-        id="projects"
-        className="relative overflow-hidden bg-gray-50 dark:bg-gray-900/40 py-24 sm:py-32"
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="philosophy-grid absolute inset-0 opacity-50 dark:opacity-30" />
-          <div className="tech-orb tech-orb-a opacity-70" />
-          <div className="tech-orb tech-orb-b opacity-60" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-500 mb-5">
-              Work
-            </p>
-            <h2
-              className="font-bold tracking-tighter text-gray-900 dark:text-white leading-[0.92] text-[clamp(2.15rem,7vw,5.25rem)]"
-              aria-label="Selected work."
-            >
-              <span className="block">Selected</span>
-              <span className="block">
-                work
-                <span className="text-gray-300 dark:text-gray-600" aria-hidden>.</span>
-              </span>
-            </h2>
-            <div className="mx-auto mt-6 sm:mt-8 max-w-xl">
-              <div className="h-px w-16 bg-gray-900 dark:bg-white mx-auto mb-4" />
-              <p className="text-sm sm:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                A few projects I&apos;ve designed, built, and shipped.
-              </p>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div
-              ref={carouselRef}
-              className="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
-            >
-              {projects.map((project, index) => (
-                <article
-                  key={project.title}
-                  className="snap-center shrink-0 w-[min(88vw,22rem)] sm:w-[min(70vw,24rem)] lg:w-[calc(33.333%-14px)]"
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {skillGroups.map((group, index) => (
+                <div
+                  key={group.title}
+                  className={`glass rounded-3xl p-8 hover-lift card-shine reveal stagger-${index + 1} ${
+                    index === 2 ? "md:col-span-2 lg:col-span-1" : ""
+                  }`}
                 >
-                  <div className="work-card group relative flex flex-col min-h-[240px] sm:min-h-[300px] p-5 sm:p-7 rounded-[1.35rem] border border-gray-200/90 dark:border-gray-800 bg-white/90 dark:bg-gray-950/80 backdrop-blur-sm h-full">
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute -right-1 -top-3 text-[4rem] sm:text-[5rem] font-bold tracking-tighter leading-none text-gray-100 dark:text-gray-800/70 select-none"
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-
-                    <div className="relative z-10 flex flex-col h-full">
-                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-2 sm:mb-3">
-                        Project {String(index + 1).padStart(2, "0")}
+                  <div
+                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${group.wrapClass} flex items-center justify-center mb-6`}
+                  >
+                    <group.Icon className={`${group.iconClass} text-[28px]`} />
+                  </div>
+                  <h3 className="text-xl font-semibold text-stone-100 tracking-tight mb-5">
+                    {group.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((item) => (
+                      <span
+                        key={item}
+                        className="px-3 py-1.5 rounded-lg text-sm bg-neutral-800/80 text-stone-400"
+                      >
+                        {item}
                       </span>
-                      <h3 className="text-lg sm:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 sm:mb-3 leading-snug">
-                        {project.title}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-3 sm:mb-4 leading-relaxed text-sm line-clamp-3">
-                        {project.details}
-                      </p>
-                      {project.techStack && (
-                        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-4 font-[family-name:var(--font-geist-mono)]">
-                          {project.techStack.split(", ").join(" · ")}
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 reveal stagger-4">
+              <div className="flex flex-wrap items-center justify-center gap-8 opacity-40">
+                {techStack.map(({ name, icon: Icon, color }) => (
+                  <span key={name} title={name} style={{ color }}>
+                    <Icon className="text-4xl" />
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="projects" className="py-32 px-6 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
+                Portfolio
+              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
+                Featured <span className="gradient-text">projects</span>
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="md:col-span-2 reveal stagger-1">
+                <article className="glass rounded-3xl overflow-hidden hover-lift card-shine">
+                  <div className="grid lg:grid-cols-2">
+                    <div className={`project-cover aspect-video lg:aspect-auto min-h-[260px] bg-gradient-to-br ${featuredProject.cover}${featuredProject.image ? " has-image" : ""}`}>
+                      {featuredProject.image ? (
+                        <Image
+                          src={featuredProject.image}
+                          alt={`${featuredProject.title} screenshot`}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                          className="object-cover object-top"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 z-[2] flex items-end p-8">
+                        <p className="relative z-10 text-5xl font-bold tracking-tighter text-white/20">
+                          01
                         </p>
-                      )}
-                      <div className="mt-auto flex flex-wrap items-center gap-4">
-                        {project.liveLink && (
+                      </div>
+                    </div>
+                    <div className="p-8 lg:p-12 flex flex-col justify-center">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium border ${featuredProject.categoryClass}`}
+                        >
+                          {featuredProject.category}
+                        </span>
+                      </div>
+                      <h3 className="text-2xl lg:text-3xl font-bold text-stone-100 tracking-tight mb-4">
+                        {featuredProject.title}
+                      </h3>
+                      <p className="text-stone-400 font-light leading-relaxed mb-6">
+                        {featuredProject.details}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        {featuredProject.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-3 py-1 rounded-lg text-xs bg-neutral-800/80 text-stone-400"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {featuredProject.liveLink ? (
                           <Link
-                            href={project.liveLink}
+                            href={featuredProject.liveLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group/live inline-flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white hover:opacity-70 transition-opacity"
+                            className="group/btn flex items-center gap-2 text-sm text-stone-300 hover:text-stone-100 transition-colors"
                           >
-                            Live site
-                            <AiOutlineArrowRight className="transition-transform group-hover/live:translate-x-0.5 -rotate-45 group-hover/live:rotate-0" />
+                            Live Demo
+                            <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                           </Link>
-                        )}
-                        {project.githubLink && project.githubLink !== "#" && (
-                          <Link
-                            href={project.githubLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                          >
-                            <AiFillGithub className="text-base" />
-                            Code
-                          </Link>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>
                 </article>
-              ))}
-            </div>
-
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-gray-50 dark:from-gray-950 to-transparent z-10" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-gray-50 dark:from-gray-950 to-transparent z-10" />
-          </div>
-
-          <div className="mt-8 sm:mt-10 flex items-center justify-center gap-6">
-            <button
-              onClick={() => scrollCarousel(-1)}
-              aria-label="Previous projects"
-              disabled={activePage === 0}
-              className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
-            >
-              <AiOutlineArrowLeft className="text-xl" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              {Array.from({ length: pageCount }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToPage(index)}
-                  aria-label={`Go to page ${index + 1}`}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    activePage === index
-                      ? "w-8 bg-gray-900 dark:bg-white"
-                      : "w-1.5 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-500"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={() => scrollCarousel(1)}
-              aria-label="Next projects"
-              disabled={activePage === pageCount - 1}
-              className="p-3 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-110 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
-            >
-              <AiOutlineArrowRight className="text-xl" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section
-        id="contact"
-        className="relative overflow-hidden py-24 sm:py-32 px-4 sm:px-6 lg:px-8"
-      >
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="hero-mesh absolute inset-0 opacity-70" />
-          <div className="hero-grid absolute inset-0 opacity-80" />
-          <div className="hero-orb hero-orb-a opacity-40" />
-          <div className="hero-orb hero-orb-b opacity-50" />
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto w-full text-center">
-          <h2 className="text-[clamp(2.75rem,10vw,5.5rem)] font-bold tracking-tighter leading-[0.95] text-gray-900 dark:text-white">
-            Let&apos;s work
-            <span className="block">together<span className="text-gray-300 dark:text-gray-600">.</span></span>
-          </h2>
-
-          <p className="mt-6 sm:mt-8 max-w-lg mx-auto text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-            Have a project in mind? Tell me about it — freelance, product
-            builds, or full-time opportunities.
-          </p>
-
-          <dl className="mt-10 sm:mt-12 max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-800 border-y border-gray-200 dark:border-gray-800 text-left">
-            {[
-              {
-                label: "Email",
-                value: "jbalansa143@gmail.com",
-                href: "mailto:jbalansa143@gmail.com",
-              },
-              {
-                label: "Location",
-                value: "Philippines · GMT+8",
-              },
-              {
-                label: "Status",
-                value: "Freelance & full-time",
-              },
-            ].map(({ label, value, href }) => (
-              <div
-                key={label}
-                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-8 py-4"
-              >
-                <dt className="sm:w-24 shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500">
-                  {label}
-                </dt>
-                <dd className="text-gray-900 dark:text-white font-medium">
-                  {href ? (
-                    <Link
-                      href={href}
-                      className="hover:opacity-70 transition-opacity break-all"
-                    >
-                      {value}
-                    </Link>
-                  ) : (
-                    value
-                  )}
-                </dd>
               </div>
-            ))}
-          </dl>
 
-          <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              type="button"
-              data-cal-namespace="1h"
-              data-cal-link="joshua-balansa-iulx9o/1h"
-              data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-              className="inline-flex items-center justify-center px-7 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full transition-all duration-300 hover:opacity-90 hover:scale-[1.03] active:scale-95 shadow-sm"
-            >
-              <MdCall className="mr-2" />
-              Schedule a call
-            </button>
-            <Link
-              href="mailto:jbalansa143@gmail.com"
-              className="inline-flex items-center justify-center px-7 py-3.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full transition-all duration-300 hover:border-gray-900 hover:text-gray-900 dark:hover:border-white dark:hover:text-white hover:scale-[1.03] active:scale-95"
-            >
-              <MdEmail className="mr-2" />
-              Send an email
-            </Link>
-          </div>
-        </div>
-      </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="relative overflow-hidden border-t border-gray-200/60 dark:border-gray-800/60">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="philosophy-grid absolute inset-0 opacity-40 dark:opacity-25" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
-                Explore
-              </p>
-              <nav aria-label="Footer" className="flex flex-col gap-2.5">
-                {navItems.map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => scrollToSection(id)}
-                    className="w-fit text-left text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
+              {otherProjects.map((project, index) => (
+                <div key={project.title} className={`reveal stagger-${Math.min(index + 2, 5)}`}>
+                  <article className="glass rounded-3xl overflow-hidden hover-lift card-shine h-full flex flex-col">
+                    <div className={`project-cover aspect-video bg-gradient-to-br ${project.cover}${project.image ? " has-image" : ""}`}>
+                      {project.image ? (
+                        <Image
+                          src={project.image}
+                          alt={`${project.title} screenshot`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover object-top"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 z-[2] flex items-end p-6">
+                        <p className="relative z-10 text-4xl font-bold tracking-tighter text-white/20">
+                          {String(index + 2).padStart(2, "0")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="p-8 flex flex-col flex-1">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium border ${project.categoryClass}`}
+                        >
+                          {project.category}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold text-stone-100 tracking-tight mb-3">
+                        {project.title}
+                      </h3>
+                      <p className="text-stone-400 font-light text-sm leading-relaxed mb-6 flex-1">
+                        {project.details}
+                      </p>
+                      {project.techStack.length > 0 ? (
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {project.techStack.map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-3 py-1 rounded-lg text-xs bg-neutral-800/80 text-stone-400"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                      <div className="flex items-center gap-4">
+                        {project.liveLink ? (
+                          <Link
+                            href={project.liveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/btn flex items-center gap-2 text-sm text-stone-300 hover:text-stone-100 transition-colors"
+                          >
+                            Live Demo
+                            <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 transition-transform" />
+                          </Link>
+                        ) : null}
+                        {project.githubLink ? (
+                          <Link
+                            href={project.githubLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/btn flex items-center gap-2 text-sm text-stone-500 hover:text-stone-300 transition-colors"
+                          >
+                            {project.liveLink ? "Code" : "Source Code"}
+                            <AiFillGithub />
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              ))}
             </div>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
-                Connect
-              </p>
-              <ul className="flex flex-col gap-2.5">
-                {socialLinks.map(({ href, Icon, label }) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      target={href.startsWith("mailto:") ? undefined : "_blank"}
-                      rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
-                      className="inline-flex items-center gap-2.5 w-fit text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    >
-                      <Icon className="text-base" aria-hidden />
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">
-                Location
-              </p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                Philippines · GMT+8
-              </p>
+            <div className="mt-12 flex justify-center reveal">
               <Link
-                href="mailto:jbalansa143@gmail.com"
-                className="mt-2 inline-block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors break-all"
+                href={siteConfig.social.github}
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="group glass hover-lift rounded-2xl px-8 py-5 flex items-center gap-4 text-stone-300 hover:text-stone-100 transition-colors"
               >
-                jbalansa143@gmail.com
+                <span className="w-12 h-12 rounded-xl bg-neutral-800/80 flex items-center justify-center text-stone-200 group-hover:text-white transition-colors">
+                  <AiFillGithub className="text-2xl" />
+                </span>
+                <span className="text-left">
+                  <span className="block text-sm font-medium text-stone-100">
+                    Check GitHub for more projects
+                  </span>
+                  <span className="block text-xs text-stone-500 mt-0.5">
+                    github.com/joshuabalansa
+                  </span>
+                </span>
+                <AiOutlineArrowRight className="-rotate-45 text-stone-500 group-hover:text-stone-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </Link>
             </div>
           </div>
+        </section>
 
-          <div className="mt-12 pt-6 border-t border-gray-200/60 dark:border-gray-800/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-400 dark:text-gray-500">
-              © {new Date().getFullYear()} Joshua Balansa
-            </p>
+        <section id="contact" className="py-32 px-6 relative">
+          <div className="absolute inset-0 grid-pattern opacity-50" />
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
+            <div className="reveal">
+              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block">
+                Contact
+              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6">
+                Let&apos;s build
+                <br />
+                <span className="gradient-text">something great</span>
+              </h2>
+              <p className="text-stone-400 font-light leading-relaxed max-w-xl mx-auto mb-14">
+                Have a project in mind? Tell me about it — freelance, product builds, or
+                full-time opportunities.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-8 mb-12 reveal stagger-1">
+              {contactDetails.map(({ label, value, href, Icon }) => {
+                const content = (
+                  <>
+                    <Icon className="text-[22px] text-stone-400 mx-auto mb-4 group-hover:text-amber-400 transition-colors" />
+                    <p className="text-xs text-stone-600 uppercase tracking-wider mb-1">{label}</p>
+                    <p className="text-stone-200 text-sm break-all">{value}</p>
+                  </>
+                );
+
+                return href ? (
+                  <Link key={label} href={href} className="group">
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={label}>{content}</div>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 reveal stagger-2">
+              <button
+                type="button"
+                data-cal-namespace="1h"
+                data-cal-link="joshua-balansa-iulx9o/1h"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
+              >
+                <MdCall />
+                Schedule a call
+              </button>
+              <Link
+                href={`mailto:${siteConfig.email}`}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-300"
+              >
+                <MdEmail />
+                Send an email
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="py-16 px-6 border-t border-neutral-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <span className="text-stone-400 text-sm">
+                © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {socialLinks.map(({ href, Icon, label }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target={href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
+                  aria-label={label}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-600 hover:text-stone-300 transition-colors"
+                >
+                  <Icon className="text-xl" />
+                </Link>
+              ))}
+            </div>
+
             <button
               type="button"
-              onClick={() => scrollToSection("home")}
-              className="group inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              onClick={() => scrollToSection("hero")}
+              aria-label="Back to top"
+              className="w-10 h-10 rounded-xl glass flex items-center justify-center text-stone-500 hover:text-stone-200 transition-all duration-300 hover:-translate-y-1"
             >
-              Back to top
-              <AiOutlineArrowRight className="-rotate-90 transition-transform group-hover:-translate-y-0.5" />
+              <LuArrowUp className="w-5 h-5" />
             </button>
           </div>
         </div>
