@@ -11,32 +11,61 @@ import {
   AiFillLinkedin,
   AiOutlineArrowRight,
 } from "react-icons/ai";
+import type { IconType } from "react-icons";
 import {
   FaEnvelope,
-  FaJs,
   FaLaravel,
-  FaLinux,
   FaPhp,
   FaReact,
 } from "react-icons/fa";
-import { LuArrowUp, LuCalendarCheck, LuMapPin, LuMenu, LuX } from "react-icons/lu";
-import { MdCall, MdEmail } from "react-icons/md";
 import {
+  LuArrowUp,
+  LuCalendarCheck,
+  LuFlaskConical,
+  LuMapPin,
+  LuMenu,
+  LuTestTube,
+  LuX,
+} from "react-icons/lu";
+import { MdCall, MdEmail, MdOutlineApi } from "react-icons/md";
+import {
+  SiBootstrap,
+  SiCss3,
+  SiCypress,
+  SiDocker,
   SiExpress,
   SiFirebase,
+  SiGit,
+  SiGithub,
+  SiGithubactions,
   SiGnubash,
+  SiGraphql,
+  SiHtml5,
+  SiJavascript,
+  SiJest,
+  SiJsonwebtokens,
+  SiLinux,
   SiMongodb,
   SiMysql,
+  SiPostgresql,
+  SiSqlite,
   SiNestjs,
   SiNextdotjs,
+  SiNginx,
   SiNodedotjs,
+  SiPostman,
+  SiRedis,
+  SiSocketdotio,
+  SiSupabase,
+  SiSwagger,
   SiTailwindcss,
+  SiTestinglibrary,
   SiTypescript,
+  SiVercel,
+  SiVitest,
   SiVuedotjs,
 } from "react-icons/si";
-import { HiOutlineServer, HiOutlineSparkles } from "react-icons/hi";
 import { BsCodeSlash } from "react-icons/bs";
-import { FiMonitor } from "react-icons/fi";
 import { siteConfig } from "../site.config";
 
 const roles = [
@@ -60,55 +89,112 @@ const socialLinks = [
   { href: `mailto:${siteConfig.email}`, Icon: FaEnvelope, label: "Email" },
 ];
 
-const techStack = [
-  { name: "React", icon: FaReact, color: "#61DAFB" },
-  { name: "Next.js", icon: SiNextdotjs, color: "#A8A29E" },
-  { name: "TypeScript", icon: SiTypescript, color: "#007ACC" },
-  { name: "JavaScript", icon: FaJs, color: "#F7DF1E" },
-  { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },
-  { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
-  { name: "Express", icon: SiExpress, color: "#A8A29E" },
-  { name: "NestJS", icon: SiNestjs, color: "#E0234E" },
-  { name: "PHP", icon: FaPhp, color: "#8892BF" },
-  { name: "Laravel", icon: FaLaravel, color: "#FF2D20" },
-  { name: "Vue.js", icon: SiVuedotjs, color: "#4FC08D" },
-  { name: "MongoDB", icon: SiMongodb, color: "#47A248" },
-  { name: "MySQL", icon: SiMysql, color: "#4479A1" },
-  { name: "Firebase", icon: SiFirebase, color: "#FFCA28" },
-  { name: "Linux", icon: FaLinux, color: "#FCC624" },
-  { name: "Bash", icon: SiGnubash, color: "#4EAA25" },
+const skillTabs = [
+  {
+    id: "frontend",
+    label: "Frontend",
+    description: "Interfaces, component systems, and client-side architecture.",
+  },
+  {
+    id: "backend",
+    label: "Backend",
+    description: "Servers, application logic, and the service layer.",
+  },
+  {
+    id: "apis",
+    label: "APIs",
+    description: "Contracts, auth, and how services talk to each other.",
+  },
+  {
+    id: "data",
+    label: "Data",
+    description: "Persistence, realtime, and the stores behind the product.",
+  },
+  {
+    id: "devops",
+    label: "DevOps",
+    description: "Shipping, hosting, and keeping environments healthy.",
+  },
+  {
+    id: "testing",
+    label: "Testing",
+    description: "Unit, integration, and end-to-end confidence before production.",
+  },
+] as const;
+
+type SkillTabId = (typeof skillTabs)[number]["id"];
+
+type Skill = {
+  name: string;
+  icon: IconType;
+  color: string;
+  category: SkillTabId;
+};
+
+const skills: Skill[] = [
+  { name: "React", icon: FaReact, color: "#61DAFB", category: "frontend" },
+  { name: "Next.js", icon: SiNextdotjs, color: "#A8A29E", category: "frontend" },
+  { name: "Vue.js", icon: SiVuedotjs, color: "#4FC08D", category: "frontend" },
+  { name: "TypeScript", icon: SiTypescript, color: "#3178C6", category: "frontend" },
+  { name: "JavaScript", icon: SiJavascript, color: "#F7DF1E", category: "frontend" },
+  { name: "HTML5", icon: SiHtml5, color: "#E34F26", category: "frontend" },
+  { name: "CSS3", icon: SiCss3, color: "#1572B6", category: "frontend" },
+  { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4", category: "frontend" },
+  { name: "Bootstrap", icon: SiBootstrap, color: "#7952B3", category: "frontend" },
+  { name: "Node.js", icon: SiNodedotjs, color: "#339933", category: "backend" },
+  { name: "Express", icon: SiExpress, color: "#A8A29E", category: "backend" },
+  { name: "NestJS", icon: SiNestjs, color: "#E0234E", category: "backend" },
+  { name: "PHP", icon: FaPhp, color: "#777BB4", category: "backend" },
+  { name: "Laravel", icon: FaLaravel, color: "#FF2D20", category: "backend" },
+  { name: "REST", icon: MdOutlineApi, color: "#F59E0B", category: "apis" },
+  { name: "GraphQL", icon: SiGraphql, color: "#E10098", category: "apis" },
+  { name: "WebSockets", icon: SiSocketdotio, color: "#A8A29E", category: "apis" },
+  { name: "JWT", icon: SiJsonwebtokens, color: "#FB015B", category: "apis" },
+  { name: "Postman", icon: SiPostman, color: "#FF6C37", category: "apis" },
+  { name: "OpenAPI", icon: SiSwagger, color: "#85EA2D", category: "apis" },
+  { name: "MongoDB", icon: SiMongodb, color: "#47A248", category: "data" },
+  { name: "MySQL", icon: SiMysql, color: "#4479A1", category: "data" },
+  { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1", category: "data" },
+  { name: "SQLite", icon: SiSqlite, color: "#003B57", category: "data" },
+  { name: "Firebase", icon: SiFirebase, color: "#FFCA28", category: "data" },
+  { name: "Supabase", icon: SiSupabase, color: "#3ECF8E", category: "data" },
+  { name: "Redis", icon: SiRedis, color: "#DC382D", category: "data" },
+  { name: "Git", icon: SiGit, color: "#F05032", category: "devops" },
+  { name: "GitHub", icon: SiGithub, color: "#A8A29E", category: "devops" },
+  { name: "Linux", icon: SiLinux, color: "#FCC624", category: "devops" },
+  { name: "Bash", icon: SiGnubash, color: "#4EAA25", category: "devops" },
+  { name: "Docker", icon: SiDocker, color: "#2496ED", category: "devops" },
+  { name: "Vercel", icon: SiVercel, color: "#A8A29E", category: "devops" },
+  { name: "GitHub Actions", icon: SiGithubactions, color: "#2088FF", category: "devops" },
+  { name: "Nginx", icon: SiNginx, color: "#009639", category: "devops" },
+  { name: "Jest", icon: SiJest, color: "#C21325", category: "testing" },
+  { name: "Vitest", icon: SiVitest, color: "#729B1B", category: "testing" },
+  { name: "Playwright", icon: LuTestTube, color: "#2EAD33", category: "testing" },
+  { name: "Cypress", icon: SiCypress, color: "#69D3A7", category: "testing" },
+  { name: "PHPUnit", icon: LuFlaskConical, color: "#3B82F6", category: "testing" },
+  { name: "Testing Library", icon: SiTestinglibrary, color: "#E33332", category: "testing" },
 ];
 
-const skillGroups = [
-  {
-    title: "Frontend",
-    Icon: FiMonitor,
-    iconClass: "text-blue-400",
-    wrapClass: "from-blue-900/30 to-stone-900/30",
-    items: ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Vue.js"],
-  },
-  {
-    title: "Backend",
-    Icon: HiOutlineServer,
-    iconClass: "text-green-400",
-    wrapClass: "from-green-900/30 to-stone-900/30",
-    items: ["Node.js", "Express", "NestJS", "PHP", "Laravel"],
-  },
-  {
-    title: "Data & Tools",
-    Icon: HiOutlineSparkles,
-    iconClass: "text-amber-400",
-    wrapClass: "from-amber-900/30 to-stone-900/30",
-    items: ["MongoDB", "MySQL", "Firebase", "Linux", "Bash"],
-  },
-];
+function SkillTile({ name, icon: Icon, color }: Skill) {
+  return (
+    <div className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-neutral-900/40 px-4 py-3.5 transition-colors duration-300 hover:border-white/10 hover:bg-neutral-800/50">
+      <Icon
+        className="text-2xl shrink-0 transition-transform duration-300 group-hover:scale-110"
+        style={{ color }}
+        aria-hidden
+      />
+      <span className="text-sm text-stone-300 transition-colors group-hover:text-stone-100">
+        {name}
+      </span>
+    </div>
+  );
+}
 
 const projects = [
   {
     title: "Maison Lumière",
     details:
       "A marketing and operations site for a boutique Airbnb management house in Manila. Investors can explore the method, live portfolio numbers, and book a call; the app also handles unit bookings, guest activity, and an admin dashboard for managed suites.",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase"],
     githubLink: "",
     liveLink: "https://maison-lumiere-bice.vercel.app/",
     category: "Web App",
@@ -121,7 +207,6 @@ const projects = [
     title: "Centimo - AI Powered POS",
     details:
       "CENTIMO is a multi-tenant SaaS application that helps retailers run sales, manage inventory, and understand performance. Merchants subscribe monthly to access a touch-friendly POS terminal, product catalog, order history, stock management, and AI-assisted sales insights.",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS"],
     githubLink: "",
     liveLink: "https://centimo.app",
     category: "Featured",
@@ -134,7 +219,6 @@ const projects = [
     title: "E-Tinda Farmers Marketplace",
     details:
       "A comprehensive web-based marketplace that connects local farmers directly with buyers, eliminating middlemen and creating an efficient agricultural supply chain.",
-    techStack: ["Laravel 12", "JavaScript", "Bootstrap"],
     githubLink: "https://github.com/joshuabalansa/e-tinda-web-marketplace-",
     liveLink: "",
     category: "Marketplace",
@@ -146,7 +230,6 @@ const projects = [
   {
     title: "Kingdom Development Group Philippines Page",
     details: "A stunning, modern landing page for Kingdom Development Group Philippines.",
-    techStack: ["Next.js 14", "Tailwind CSS", "DaisyUI"],
     githubLink: "",
     liveLink: "https://www.kdgphilippines.org/",
     category: "Landing",
@@ -158,7 +241,6 @@ const projects = [
   {
     title: "Talisay Water District",
     details: "Talisay Water District website.",
-    techStack: ["Laravel", "Bootstrap", "JavaScript"],
     githubLink: "",
     liveLink: "https://talisaywaterdistrict.gov.ph/",
     category: "Web",
@@ -190,7 +272,7 @@ const approachSteps = [
 const stats = [
   { value: projects.length, suffix: "+", label: "Projects" },
   { value: 4.5, suffix: "+", label: "Years Exp", display: "4.5+" },
-  { value: techStack.length, suffix: "", label: "Tech Stack" },
+  { value: skills.length, suffix: "", label: "Tech Stack" },
   { value: 0, suffix: "", label: "GMT+8", display: "PH" },
 ];
 
@@ -254,8 +336,10 @@ const Portfolio = () => {
   const [roleIndex, setRoleIndex] = useState(0);
   const [typedText, setTypedText] = useState(roles[0]);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
   const countedRef = useRef(false);
   const blobsRef = useRef<HTMLDivElement>(null);
+  const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -364,6 +448,35 @@ const Portfolio = () => {
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
     })();
   }, []);
+
+  const activeSkillGroup =
+    skillTabs.find((tab) => tab.id === activeSkillTab) ?? skillTabs[0];
+  const visibleSkills = skills.filter((skill) => skill.category === activeSkillTab);
+
+  const focusSkillTab = (tabId: SkillTabId) => {
+    setActiveSkillTab(tabId);
+    skillTabRefs.current[tabId]?.focus();
+  };
+
+  const handleSkillTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = skillTabs.findIndex((tab) => tab.id === activeSkillTab);
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextIndex = (currentIndex + 1) % skillTabs.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextIndex = (currentIndex - 1 + skillTabs.length) % skillTabs.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = skillTabs.length - 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    focusSkillTab(skillTabs[nextIndex].id);
+  };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-stone-100 overflow-x-clip">
@@ -480,7 +593,7 @@ const Portfolio = () => {
           <div className="particle animate-float" style={{ top: "60%", left: "5%", animationDelay: "-3s" }} />
           <div className="particle animate-float" style={{ top: "40%", right: "8%", animationDelay: "-5s" }} />
 
-          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto animate-fade-up pb-24">
+          <div className="relative z-10 text-center px-6 max-w-5xl mx-auto animate-fade-up">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight mb-6">
               <span className="text-white">Josh</span>
               <span className="sr-only">ua Balansa — Full Stack Developer</span>
@@ -504,7 +617,7 @@ const Portfolio = () => {
               <button
                 type="button"
                 onClick={() => scrollToSection("projects")}
-                className="group px-8 py-4 rounded-2xl text-sm font-medium text-white bg-gradient-to-r from-stone-600 to-stone-700 hover:from-stone-500 hover:to-stone-600 transition-all duration-500 flex items-center gap-3 hover:shadow-lg hover:shadow-stone-800/50"
+                className="group inline-flex items-center justify-center gap-3 w-52 h-14 rounded-2xl text-sm font-medium text-white bg-gradient-to-r from-stone-600 to-stone-700 hover:from-stone-500 hover:to-stone-600 transition-all duration-500 hover:shadow-lg hover:shadow-stone-800/50"
               >
                 View My Work
                 <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -512,7 +625,7 @@ const Portfolio = () => {
               <button
                 type="button"
                 onClick={() => scrollToSection("contact")}
-                className="px-8 py-4 rounded-2xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-500"
+                className="inline-flex items-center justify-center w-52 h-14 rounded-2xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-500"
               >
                 Get In Touch
               </button>
@@ -684,52 +797,81 @@ const Portfolio = () => {
         <section id="skills" className="py-32 px-6 relative">
           <div className="absolute inset-0 grid-pattern opacity-50" />
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-20">
+            <div className="text-center mb-14">
               <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
                 Tech Stack
               </span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                 Tools I <span className="gradient-text">work with</span>
               </h2>
+              <p className="mt-5 text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
+              </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {skillGroups.map((group, index) => (
+            <div className="reveal stagger-3">
+              <div className="flex justify-center mb-8">
                 <div
-                  key={group.title}
-                  className={`glass rounded-3xl p-8 hover-lift card-shine reveal stagger-${index + 1} ${
-                    index === 2 ? "md:col-span-2 lg:col-span-1" : ""
-                  }`}
+                  role="tablist"
+                  aria-label="Skill categories"
+                  onKeyDown={handleSkillTabKeyDown}
+                  className="glass rounded-2xl p-1.5 flex flex-wrap justify-center gap-1 w-full md:w-auto"
                 >
-                  <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${group.wrapClass} flex items-center justify-center mb-6`}
-                  >
-                    <group.Icon className={`${group.iconClass} text-[28px]`} />
-                  </div>
-                  <h3 className="text-xl font-semibold text-stone-100 tracking-tight mb-5">
-                    {group.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.map((item) => (
-                      <span
-                        key={item}
-                        className="px-3 py-1.5 rounded-lg text-sm bg-neutral-800/80 text-stone-400"
+                  {skillTabs.map((tab) => {
+                    const isActive = activeSkillTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        role="tab"
+                        id={`skill-tab-${tab.id}`}
+                        aria-selected={isActive}
+                        aria-controls={`skill-panel-${tab.id}`}
+                        tabIndex={isActive ? 0 : -1}
+                        ref={(node) => {
+                          skillTabRefs.current[tab.id] = node;
+                        }}
+                        onClick={() => setActiveSkillTab(tab.id)}
+                        className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
+                          isActive
+                            ? "bg-white text-neutral-950"
+                            : "text-stone-400 hover:text-stone-200"
+                        }`}
                       >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+                        {tab.label}
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <div className="mt-16 reveal stagger-4">
-              <div className="flex flex-wrap items-center justify-center gap-8 opacity-40">
-                {techStack.map(({ name, icon: Icon, color }) => (
-                  <span key={name} title={name} style={{ color }}>
-                    <Icon className="text-4xl" />
-                  </span>
-                ))}
+              <div
+                id={`skill-panel-${activeSkillGroup.id}`}
+                role="tabpanel"
+                aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
+                className="glass rounded-3xl p-6 sm:p-8 md:p-10 min-h-[280px] card-shine"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-stone-100 tracking-tight">
+                      {activeSkillGroup.label}
+                    </h3>
+                    <p className="text-stone-500 font-light mt-2 max-w-xl">
+                      {activeSkillGroup.description}
+                    </p>
+                  </div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-600">
+                    {visibleSkills.length} tools
+                  </p>
+                </div>
+                <div
+                  key={activeSkillGroup.id}
+                  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 animate-fade-in"
+                >
+                  {visibleSkills.map((skill) => (
+                    <SkillTile key={skill.name} {...skill} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -780,16 +922,6 @@ const Portfolio = () => {
                       <p className="text-stone-400 font-light leading-relaxed mb-6">
                         {featuredProject.details}
                       </p>
-                      <div className="flex flex-wrap gap-2 mb-8">
-                        {featuredProject.techStack.map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-1 rounded-lg text-xs bg-neutral-800/80 text-stone-400"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
                       <div className="flex items-center gap-4">
                         {featuredProject.liveLink ? (
                           <Link
@@ -841,18 +973,6 @@ const Portfolio = () => {
                       <p className="text-stone-400 font-light text-sm leading-relaxed mb-6 flex-1">
                         {project.details}
                       </p>
-                      {project.techStack.length > 0 ? (
-                        <div className="flex flex-wrap gap-2 mb-6">
-                          {project.techStack.map((tech) => (
-                            <span
-                              key={tech}
-                              className="px-3 py-1 rounded-lg text-xs bg-neutral-800/80 text-stone-400"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
                       <div className="flex items-center gap-4">
                         {project.liveLink ? (
                           <Link

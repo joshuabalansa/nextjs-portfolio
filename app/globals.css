@@ -95,6 +95,17 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes caret-blink {
   0%,
   100% {
@@ -133,6 +144,9 @@ body {
 }
 .animate-fade-up {
   animation: fade-up 1s ease both;
+}
+.animate-fade-in {
+  animation: fade-in 0.35s ease both;
 }
 .animate-caret {
   animation: caret-blink 1s step-end infinite;
@@ -303,6 +317,7 @@ body {
   .animate-pulse-glow,
   .animate-rotate-slow,
   .animate-fade-up,
+  .animate-fade-in,
   .animate-caret {
     animation: none;
   }
