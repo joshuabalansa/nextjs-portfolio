@@ -19,7 +19,7 @@ import {
   FaPhp,
   FaReact,
 } from "react-icons/fa";
-import { LuArrowUp, LuCalendarCheck, LuChevronDown, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
+import { LuArrowUp, LuCalendarCheck, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdOutlineApi } from "react-icons/md";
 import {
   SiBootstrap,
@@ -58,7 +58,6 @@ import {
   SiVitest,
   SiVuedotjs,
 } from "react-icons/si";
-import { BsCodeSlash } from "react-icons/bs";
 import { siteConfig } from "../site.config";
 
 const ShaderBackground = dynamic(
@@ -602,8 +601,8 @@ const Portfolio = () => {
             <div className="w-full mx-auto text-center">
                 <div className="animate-fade-up inline-flex items-center gap-3 glass rounded-full px-4 py-2 mb-8">
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
                   </span>
                   <span className="text-xs text-stone-200 font-medium tracking-wide">
                     Open to freelance & full-time
@@ -676,16 +675,6 @@ const Portfolio = () => {
                 </div>
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={() => scrollToSection("about")}
-            aria-label="Scroll to about"
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-stone-300 hover:text-white transition-colors"
-          >
-            <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-            <LuChevronDown className="w-4 h-4 animate-scroll-hint" />
-          </button>
         </section>
 
         <div className="relative bg-[#0a0a0a]">
@@ -703,20 +692,6 @@ const Portfolio = () => {
                       className="object-cover object-center"
                     />
                   </div>
-                  <div
-                    className="absolute -bottom-6 -right-6 glass rounded-2xl p-5 animate-float"
-                    style={{ animationDuration: "6s" }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-900/40 to-stone-800/40 flex items-center justify-center">
-                        <BsCodeSlash className="text-[#5b94ff] text-xl" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold text-stone-100">5+</p>
-                        <p className="text-xs text-stone-500">Years Coding</p>
-                      </div>
-                    </div>
-                  </div>
                   <div className="absolute -top-4 -left-4 w-24 h-24 border border-stone-800 rounded-3xl -z-10" />
                 </div>
               </div>
@@ -724,7 +699,7 @@ const Portfolio = () => {
               <div className="lg:col-span-7 space-y-14">
                 <div className="reveal stagger-1">
                   <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                     <span className="text-xs text-stone-400 font-medium uppercase tracking-[0.2em]">
                       Open to freelance & full-time
                     </span>
@@ -737,14 +712,10 @@ const Portfolio = () => {
                     <br />
                     <span className="gradient-text">idea to launch</span>
                   </h2>
-                  <p className="text-stone-400 font-light leading-relaxed text-lg mb-6">
+                  <p className="text-stone-400 font-light leading-relaxed text-lg">
                     I&apos;m a full-stack developer who works across the stack — React and
                     Next.js on the front-end, Laravel and Node.js on the back-end — with a
                     focus on speed, clarity, and craft.
-                  </p>
-                  <p className="text-stone-500 font-light leading-relaxed">
-                    I care about clean code, thoughtful design, and shipping things people
-                    actually use. Based in the Philippines, collaborating with clients worldwide.
                   </p>
                 </div>
 
@@ -842,20 +813,17 @@ const Portfolio = () => {
             <div className="skills-pin-inner relative z-20 flex h-auto flex-col bg-[#0a0a0a] px-4 pb-10 pt-20 md:sticky md:top-0 md:h-dvh md:px-6 md:pb-8 md:pt-28">
               <div className="pointer-events-none absolute inset-0 grid-pattern opacity-50" />
               <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col">
-                <div className="mb-4 shrink-0 text-center md:mb-10">
-                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-3 md:mb-4 block reveal">
-                    Tech Stack
-                  </span>
+                <div className="mb-4 shrink-0 text-center md:mb-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                     Tools I <span className="gradient-text">work with</span>
                   </h2>
-                  <p className="mt-3 md:mt-5 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                  <p className="mt-3 md:mt-4 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
                     The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
                   </p>
                 </div>
 
-                <div className="flex min-h-0 flex-1 flex-col reveal stagger-3">
-                  <div className="mb-4 flex shrink-0 justify-center md:mb-8">
+                <div className="flex min-h-0 flex-1 flex-col md:justify-center reveal stagger-3">
+                  <div className="mb-4 flex shrink-0 justify-center md:mb-6">
                     <div
                       role="tablist"
                       aria-label="Skill categories"
@@ -894,9 +862,9 @@ const Portfolio = () => {
                     id={`skill-panel-${activeSkillGroup.id}`}
                     role="tabpanel"
                     aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
-                    className="glass card-shine min-h-0 flex-1 overflow-visible rounded-2xl p-4 sm:rounded-3xl sm:p-8 md:overflow-y-auto md:p-10"
+                    className="glass card-shine shrink-0 overflow-visible rounded-2xl p-4 sm:rounded-3xl sm:p-8 md:p-8 lg:p-10"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3 mb-5 md:mb-8">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3 mb-5 md:mb-6">
                       <div>
                         <h3 className="text-xl md:text-2xl font-semibold text-stone-100 tracking-tight">
                           {activeSkillGroup.label}
@@ -927,9 +895,6 @@ const Portfolio = () => {
         <section id="projects" className="py-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block reveal">
-                Portfolio
-              </span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                 Featured <span className="gradient-text">projects</span>
               </h2>
@@ -1076,9 +1041,6 @@ const Portfolio = () => {
           <div className="absolute inset-0 grid-pattern opacity-50" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <div className="reveal">
-              <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block">
-                Contact
-              </span>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6">
                 Let&apos;s build
                 <br />
