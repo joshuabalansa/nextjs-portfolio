@@ -915,21 +915,23 @@ const Portfolio = () => {
                         className="object-contain object-top"
                       />
                     ) : null}
-                    <div className="absolute inset-0 z-[2] flex items-end p-3">
-                      <p className="relative z-10 text-2xl font-bold tracking-tighter text-white/20">
+                    <div className="absolute inset-0 z-[2] flex items-end justify-between gap-3 p-3 sm:p-5">
+                      <div className="min-w-0">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${featuredProject.categoryClass}`}
+                        >
+                          {featuredProject.category}
+                        </span>
+                        <h3 className="text-lg sm:text-2xl font-bold text-stone-100 tracking-tight">
+                          {featuredProject.title}
+                        </h3>
+                      </div>
+                      <p className="shrink-0 text-2xl sm:text-3xl font-bold tracking-tighter text-white/20">
                         01
                       </p>
                     </div>
                   </div>
                   <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <span
-                      className={`self-start px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${featuredProject.categoryClass}`}
-                    >
-                      {featuredProject.category}
-                    </span>
-                    <h3 className="text-lg sm:text-xl font-bold text-stone-100 tracking-tight mb-2">
-                      {featuredProject.title}
-                    </h3>
                     <p className="text-stone-400 font-light text-sm leading-relaxed line-clamp-3 mb-4">
                       {featuredProject.details}
                     </p>
@@ -965,21 +967,23 @@ const Portfolio = () => {
                           className="object-contain object-top"
                         />
                       ) : null}
-                      <div className="absolute inset-0 z-[2] flex items-end p-3">
-                        <p className="relative z-10 text-2xl font-bold tracking-tighter text-white/20">
+                      <div className="absolute inset-0 z-[2] flex items-end justify-between gap-2 p-3">
+                        <div className="min-w-0">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-1.5 ${project.categoryClass}`}
+                          >
+                            {project.category}
+                          </span>
+                          <h3 className="text-sm font-bold text-stone-100 tracking-tight line-clamp-2">
+                            {project.title}
+                          </h3>
+                        </div>
+                        <p className="shrink-0 text-2xl font-bold tracking-tighter text-white/20">
                           {String(index + 2).padStart(2, "0")}
                         </p>
                       </div>
                     </div>
                     <div className="p-4 flex flex-col flex-1">
-                      <span
-                        className={`self-start px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${project.categoryClass}`}
-                      >
-                        {project.category}
-                      </span>
-                      <h3 className="text-sm font-bold text-stone-100 tracking-tight mb-1.5 line-clamp-2">
-                        {project.title}
-                      </h3>
                       <p className="text-stone-400 font-light text-xs leading-relaxed line-clamp-2 mb-3 flex-1">
                         {project.details}
                       </p>

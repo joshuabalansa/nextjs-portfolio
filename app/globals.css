@@ -326,7 +326,7 @@ body {
   object-position: center top;
 }
 .project-cover.has-image::after {
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.35) 0%, transparent 45%);
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.35) 45%, transparent 70%);
 }
 
 .orbit-ring {
