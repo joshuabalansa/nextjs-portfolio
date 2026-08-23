@@ -15,11 +15,12 @@ import {
 import type { IconType } from "react-icons";
 import {
   FaEnvelope,
+  FaHeart,
   FaLaravel,
   FaPhp,
   FaReact,
 } from "react-icons/fa";
-import { LuArrowUp, LuCalendarCheck, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
+import { LuArrowLeft, LuArrowRight, LuCalendarCheck, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdOutlineApi } from "react-icons/md";
 import {
   SiBootstrap,
@@ -287,9 +288,6 @@ const whatIBring = [
   "A bias toward maintainable systems — not just a quick demo that breaks next month.",
 ];
 
-const featuredProject = projects.find((project) => project.featured) ?? projects[0];
-const otherProjects = projects.filter((project) => project !== featuredProject);
-
 const contactDetails = [
   {
     label: "Email",
@@ -343,10 +341,14 @@ const Portfolio = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [navCompact, setNavCompact] = useState(false);
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
+  const [activeProjectIndex, setActiveProjectIndex] = useState(1);
+  const [projectHover, setProjectHover] = useState(false);
+  const [projectRevealed, setProjectRevealed] = useState(false);
   const countedRef = useRef(false);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
   const skillsTrackRef = useRef<HTMLDivElement>(null);
   const skillScrollLockRef = useRef(false);
+  const projectTouchStartX = useRef<number | null>(null);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -431,6 +433,21 @@ const Portfolio = () => {
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
     })();
   }, []);
+
+  useEffect(() => {
+    if (projectHover || projectRevealed) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setActiveProjectIndex((current) => (current + 1) % projects.length);
+    }, 5500);
+    return () => window.clearInterval(timer);
+  }, [projectHover, projectRevealed]);
+
+  const goToProject = (index: number) => {
+    const next = ((index % projects.length) + projects.length) % projects.length;
+    setActiveProjectIndex(next);
+    setProjectRevealed(false);
+  };
 
   const activeSkillGroup =
     skillTabs.find((tab) => tab.id === activeSkillTab) ?? skillTabs[0];
@@ -898,123 +915,165 @@ const Portfolio = () => {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                 Featured <span className="gradient-text">projects</span>
               </h2>
+              <p className="mt-3 md:mt-4 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                A selection of products and sites I&apos;ve built — hover a card for details,
+                or swipe through to explore more.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4">
-              <div className="md:col-span-2 lg:row-span-2 reveal stagger-1">
-                <article className="glass rounded-2xl overflow-hidden hover-lift card-shine h-full flex flex-col">
-                  <div
-                    className={`project-cover relative aspect-[16/10] shrink-0 bg-gradient-to-br ${featuredProject.cover}${featuredProject.image ? " has-image" : ""}`}
-                  >
-                    {featuredProject.image ? (
-                      <Image
-                        src={featuredProject.image}
-                        alt={`${featuredProject.title} screenshot`}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="object-contain object-top"
-                      />
-                    ) : null}
-                    <div className="absolute inset-0 z-[2] flex items-end justify-between gap-3 p-3 sm:p-5">
-                      <div className="min-w-0">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-2 ${featuredProject.categoryClass}`}
-                        >
-                          {featuredProject.category}
-                        </span>
-                        <h3 className="text-lg sm:text-2xl font-bold text-stone-100 tracking-tight">
-                          {featuredProject.title}
-                        </h3>
-                      </div>
-                      <p className="shrink-0 text-2xl sm:text-3xl font-bold tracking-tighter text-white/20">
-                        01
-                      </p>
-                    </div>
-                  </div>
-                  <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <p className="text-stone-400 font-light text-sm leading-relaxed line-clamp-3 mb-4">
-                      {featuredProject.details}
-                    </p>
-                    <div className="flex items-center gap-4 mt-auto">
-                      {featuredProject.liveLink ? (
-                        <Link
-                          href={featuredProject.liveLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group/btn flex items-center gap-2 text-xs text-stone-300 hover:text-stone-100 transition-colors"
-                        >
-                          Live Demo
-                          <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                        </Link>
-                      ) : null}
-                    </div>
-                  </div>
-                </article>
-              </div>
+            <div
+              className="reveal relative"
+              onMouseEnter={() => setProjectHover(true)}
+              onMouseLeave={() => setProjectHover(false)}
+              onTouchStart={(event) => {
+                projectTouchStartX.current = event.touches[0]?.clientX ?? null;
+              }}
+              onTouchEnd={(event) => {
+                const startX = projectTouchStartX.current;
+                const endX = event.changedTouches[0]?.clientX;
+                projectTouchStartX.current = null;
+                if (startX == null || endX == null) return;
+                const delta = endX - startX;
+                if (Math.abs(delta) < 48) return;
+                goToProject(activeProjectIndex + (delta < 0 ? 1 : -1));
+              }}
+            >
+              <div className="relative mx-auto flex h-[16rem] items-center justify-center sm:h-[20rem] lg:h-[24rem]">
+                {projects.map((project, index) => {
+                  let offset = index - activeProjectIndex;
+                  const half = Math.floor(projects.length / 2);
+                  if (offset > half) offset -= projects.length;
+                  if (offset < -half) offset += projects.length;
 
-              {otherProjects.map((project, index) => (
-                <div key={project.title} className={`reveal stagger-${Math.min(index + 2, 5)}`}>
-                  <article className="glass rounded-2xl overflow-hidden hover-lift card-shine h-full flex flex-col">
-                    <div
-                      className={`project-cover aspect-[16/10] bg-gradient-to-br ${project.cover}${project.image ? " has-image" : ""}`}
+                  const isCenter = offset === 0;
+                  const isSide = Math.abs(offset) === 1;
+                  const isVisible = isCenter || isSide;
+                  const isOpen = projectRevealed && isCenter;
+
+                  return (
+                    <article
+                      key={project.title}
+                      aria-hidden={!isVisible}
+                      className={`absolute w-[78%] max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-neutral-950 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:w-[55%] lg:w-[34%]${
+                        isCenter ? " group" : ""
+                      }${isOpen ? " is-open" : ""} ${
+                        isVisible
+                          ? "pointer-events-auto opacity-100"
+                          : "pointer-events-none opacity-0"
+                      }`}
+                      style={{
+                        zIndex: isCenter ? 20 : isSide ? 10 : 0,
+                        transform: isCenter
+                          ? "translateX(0)"
+                          : `translateX(${offset * 104}%)`,
+                        filter: isCenter ? "none" : "brightness(0.55)",
+                      }}
+                      onClick={(event) => {
+                        if ((event.target as HTMLElement).closest("a,button")) return;
+                        if (!isCenter) {
+                          goToProject(index);
+                          return;
+                        }
+                        setProjectRevealed((open) => !open);
+                      }}
                     >
-                      {project.image ? (
-                        <Image
-                          src={project.image}
-                          alt={`${project.title} screenshot`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 25vw"
-                          className="object-contain object-top"
+                      <div className="relative aspect-[16/10] w-full">
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-br ${project.cover}`}
+                          aria-hidden
                         />
-                      ) : null}
-                      <div className="absolute inset-0 z-[2] flex items-end justify-between gap-2 p-3">
-                        <div className="min-w-0">
+                        {project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={`${project.title} screenshot`}
+                            fill
+                            sizes="(max-width: 1024px) 70vw, 34vw"
+                            className="object-contain object-center"
+                            priority={index === 0}
+                          />
+                        ) : null}
+
+                        <div className="absolute inset-0 bg-[#0a0a0a]/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-within:opacity-100 group-[.is-open]:opacity-100" />
+
+                        <div className="absolute inset-0 z-20 flex translate-y-3 flex-col justify-end overflow-y-auto p-4 opacity-0 pointer-events-none transition-all duration-500 sm:p-5 group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto group-[.is-open]:translate-y-0 group-[.is-open]:opacity-100 group-[.is-open]:pointer-events-auto">
                           <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium border mb-1.5 ${project.categoryClass}`}
+                            className={`mb-2 inline-flex w-fit shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${project.categoryClass}`}
                           >
                             {project.category}
                           </span>
-                          <h3 className="text-sm font-bold text-stone-100 tracking-tight line-clamp-2">
+                          <h3 className="shrink-0 text-lg font-bold tracking-tight text-stone-50 sm:text-xl">
                             {project.title}
                           </h3>
+                          <p className="mt-2 text-xs font-light leading-relaxed text-stone-200 sm:text-sm">
+                            {project.details}
+                          </p>
+                          <div className="mt-4 flex shrink-0 flex-wrap items-center gap-3">
+                            {project.liveLink ? (
+                              <Link
+                                href={project.liveLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group/btn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-medium text-stone-100 transition-colors hover:bg-white/20"
+                              >
+                                Live Demo
+                                <AiOutlineArrowRight className="-rotate-45 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                              </Link>
+                            ) : null}
+                            {project.githubLink ? (
+                              <Link
+                                href={project.githubLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group/btn inline-flex items-center gap-2 text-xs text-stone-300 transition-colors hover:text-stone-100"
+                              >
+                                {project.liveLink ? "Code" : "Source"}
+                                <AiFillGithub className="text-base" />
+                              </Link>
+                            ) : null}
+                          </div>
                         </div>
-                        <p className="shrink-0 text-2xl font-bold tracking-tighter text-white/20">
-                          {String(index + 2).padStart(2, "0")}
-                        </p>
                       </div>
-                    </div>
-                    <div className="p-4 flex flex-col flex-1">
-                      <p className="text-stone-400 font-light text-xs leading-relaxed line-clamp-2 mb-3 flex-1">
-                        {project.details}
-                      </p>
-                      <div className="flex items-center gap-3 mt-auto">
-                        {project.liveLink ? (
-                          <Link
-                            href={project.liveLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group/btn flex items-center gap-1.5 text-xs text-stone-300 hover:text-stone-100 transition-colors"
-                          >
-                            Live Demo
-                            <AiOutlineArrowRight className="-rotate-45 group-hover/btn:translate-x-0.5 transition-transform" />
-                          </Link>
-                        ) : null}
-                        {project.githubLink ? (
-                          <Link
-                            href={project.githubLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group/btn flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-300 transition-colors"
-                          >
-                            {project.liveLink ? "Code" : "Source"}
-                            <AiFillGithub />
-                          </Link>
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
-                </div>
-              ))}
+                    </article>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  aria-label="Previous project"
+                  onClick={() => goToProject(activeProjectIndex - 1)}
+                  className="absolute left-0 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#0a0a0a]/80 text-stone-200 transition-colors hover:bg-[#0a0a0a] hover:text-white sm:left-2 sm:h-12 sm:w-12 lg:-left-2"
+                >
+                  <LuArrowLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next project"
+                  onClick={() => goToProject(activeProjectIndex + 1)}
+                  className="absolute right-0 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#0a0a0a]/80 text-stone-200 transition-colors hover:bg-[#0a0a0a] hover:text-white sm:right-2 sm:h-12 sm:w-12 lg:-right-2"
+                >
+                  <LuArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                {projects.map((project, index) => {
+                  const isActive = index === activeProjectIndex;
+                  return (
+                    <button
+                      key={project.title}
+                      type="button"
+                      aria-label={`Show ${project.title}`}
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={() => goToProject(index)}
+                      className={`h-2 rounded-full transition-all ${
+                        isActive
+                          ? "w-8 bg-blue-400"
+                          : "w-2 bg-stone-700 hover:bg-stone-500"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mt-12 flex justify-center reveal">
@@ -1100,39 +1159,11 @@ const Portfolio = () => {
         </div>
       </main>
 
-      <footer className="py-16 px-6 border-t border-white/5 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div>
-              <span className="text-stone-400 text-sm">
-                © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
-              </span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              {socialLinks.map(({ href, Icon, label }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  target={href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
-                  aria-label={label}
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-stone-600 hover:text-stone-300 transition-colors"
-                >
-                  <Icon className="text-xl" />
-                </Link>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => scrollToSection("hero")}
-              aria-label="Back to top"
-              className="w-10 h-10 rounded-xl glass flex items-center justify-center text-stone-500 hover:text-stone-200 transition-all duration-300 hover:-translate-y-1"
-            >
-              <LuArrowUp className="w-5 h-5" />
-            </button>
-          </div>
+      <footer className="py-16 px-6 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto text-center">
+          <span className="inline-flex items-center gap-1.5 text-stone-400 text-sm">
+            Built with <FaHeart className="text-blue-500" aria-hidden /> by Josh
+          </span>
         </div>
       </footer>
 
