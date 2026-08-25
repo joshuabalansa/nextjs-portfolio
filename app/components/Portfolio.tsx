@@ -20,7 +20,7 @@ import {
   FaPhp,
   FaReact,
 } from "react-icons/fa";
-import { LuArrowLeft, LuArrowRight, LuCalendarCheck, LuFlaskConical, LuMapPin, LuMenu, LuTestTube, LuX } from "react-icons/lu";
+import { LuArrowLeft, LuArrowRight, LuFlaskConical, LuMenu, LuTestTube, LuX } from "react-icons/lu";
 import { MdCall, MdEmail, MdOutlineApi } from "react-icons/md";
 import {
   SiBootstrap,
@@ -286,25 +286,6 @@ const whatIBring = [
   "Product-minded delivery: prioritise what matters, cut what doesn’t, keep velocity high.",
   "Clear async communication so remote work stays simple across time zones.",
   "A bias toward maintainable systems — not just a quick demo that breaks next month.",
-];
-
-const contactDetails = [
-  {
-    label: "Email",
-    value: siteConfig.email,
-    href: `mailto:${siteConfig.email}`,
-    Icon: MdEmail,
-  },
-  {
-    label: "Location",
-    value: `${siteConfig.location} · GMT+8`,
-    Icon: LuMapPin,
-  },
-  {
-    label: "Availability",
-    value: "Open to freelance & full-time",
-    Icon: LuCalendarCheck,
-  },
 ];
 
 function animateCount(el: HTMLElement, target: number, display?: string, suffix = "") {
@@ -1161,27 +1142,7 @@ const Portfolio = () => {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-8 mb-12 reveal stagger-1">
-              {contactDetails.map(({ label, value, href, Icon }) => {
-                const content = (
-                  <>
-                    <Icon className="text-[22px] text-stone-400 mx-auto mb-4 group-hover:text-[#5b94ff] transition-colors" />
-                    <p className="text-xs text-stone-600 uppercase tracking-wider mb-1">{label}</p>
-                    <p className="text-stone-200 text-sm break-all">{value}</p>
-                  </>
-                );
-
-                return href ? (
-                  <Link key={label} href={href} className="group">
-                    {content}
-                  </Link>
-                ) : (
-                  <div key={label}>{content}</div>
-                );
-              })}
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 reveal stagger-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 reveal stagger-1">
               <button
                 type="button"
                 data-cal-namespace="1h"
