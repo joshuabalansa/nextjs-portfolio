@@ -419,8 +419,6 @@ export function ShaderBackground({ className }: { className?: string }) {
     let visible = document.visibilityState === "visible"
     let inView = true
     let disposed = false
-    let scrollLocked = false
-    let scrollTimer = 0
     const start = performance.now()
     const timeAnimated =
       !profile.reduceMotion && Math.abs(UNIFORMS.timeScale) > 0.0001
@@ -443,7 +441,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     }
 
     function requestRender() {
-      if (!disposed && visible && inView && !scrollLocked && raf === 0) {
+      if (!disposed && visible && inView && raf === 0) {
         raf = requestAnimationFrame(render)
       }
     }
@@ -490,21 +488,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       updatePointerTarget()
       requestRender()
     }
-    const onScroll = () => {
-      if (raf !== 0) {
-        cancelAnimationFrame(raf)
-        raf = 0
-        lastNow = null
-      }
-      scrollLocked = true
-      window.clearTimeout(scrollTimer)
-      scrollTimer = window.setTimeout(() => {
-        scrollLocked = false
-        requestRender()
-      }, 140)
-    }
     window.addEventListener("resize", updateLayout, { passive: true })
-    window.addEventListener("scroll", onScroll, { passive: true })
     if (UNIFORMS.cursorEnabled) {
       window.addEventListener("pointermove", onPointerMove, { passive: true })
       window.addEventListener("pointercancel", onPointerLeave)
@@ -538,7 +522,7 @@ export function ShaderBackground({ className }: { className?: string }) {
 
     function render(now: number) {
       raf = 0
-      if (disposed || !visible || !inView || scrollLocked) return
+      if (disposed || !visible || !inView) return
       const dt = lastNow === null ? 0 : Math.min((now - lastNow) / 1000, 0.1)
       lastNow = now
       const follow = 1 - Math.exp(-12 * dt)
@@ -581,12 +565,10 @@ export function ShaderBackground({ className }: { className?: string }) {
     return () => {
       disposed = true
       cancelAnimationFrame(raf)
-      window.clearTimeout(scrollTimer)
       resizeObserver.disconnect()
       intersectionObserver.disconnect()
       document.removeEventListener("visibilitychange", onVisibilityChange)
       window.removeEventListener("resize", updateLayout)
-      window.removeEventListener("scroll", onScroll)
       if (UNIFORMS.cursorEnabled) {
         window.removeEventListener("pointermove", onPointerMove)
         window.removeEventListener("pointercancel", onPointerLeave)

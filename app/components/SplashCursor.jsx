@@ -680,8 +680,6 @@ function SplashCursorCanvas({
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
     let lastInputTime = 0;
-    let scrollLocked = false;
-    let scrollTimer = 0;
     const IDLE_MS = 1800;
 
     function resumeFrame() {
@@ -700,7 +698,6 @@ function SplashCursorCanvas({
       animationFrameId.current = null;
       if (document.hidden) return;
       const idleFor = performance.now() - lastInputTime;
-      if (scrollLocked && idleFor > 80) return;
       if (idleFor > IDLE_MS) return;
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
@@ -1047,15 +1044,6 @@ function SplashCursorCanvas({
       updatePointerUpData(pointer);
     }
 
-    const onScroll = () => {
-      scrollLocked = true;
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => {
-        scrollLocked = false;
-        if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
-      }, 140);
-    };
-
     const onVisibility = () => {
       if (document.hidden) {
         if (animationFrameId.current) {
@@ -1079,7 +1067,6 @@ function SplashCursorCanvas({
 
     window.addEventListener('mousedown', handleMouseDownAndResume, { passive: true });
     window.addEventListener('mousemove', handleMouseMoveAndResume, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
@@ -1089,11 +1076,9 @@ function SplashCursorCanvas({
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
-      window.clearTimeout(scrollTimer);
 
       window.removeEventListener('mousedown', handleMouseDownAndResume);
       window.removeEventListener('mousemove', handleMouseMoveAndResume);
-      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
