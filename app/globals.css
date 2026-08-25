@@ -277,6 +277,10 @@ body {
   transform: translate3d(0, 0, 0);
 }
 
+.about-sticker {
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
 .stagger-1 {
   transition-delay: 0.1s;
 }

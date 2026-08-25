@@ -671,20 +671,6 @@ const Portfolio = () => {
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
             <div className="w-full mx-auto text-center">
-                <div className="animate-fade-up inline-flex items-center gap-3 glass-light rounded-full px-4 py-2 mb-8">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
-                  </span>
-                  <span className="text-xs text-neutral-900 font-medium tracking-wide">
-                    Open to freelance & full-time
-                  </span>
-                  <span className="hidden sm:inline text-neutral-900/35">·</span>
-                  <span className="hidden sm:inline text-xs text-neutral-800/75">
-                    Philippines · GMT+8
-                  </span>
-                </div>
-
                 <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
                   Joshua <span className="gradient-text">Balansa</span>
                 </h1>
@@ -755,16 +741,16 @@ const Portfolio = () => {
             <div className="grid lg:grid-cols-12 gap-16 items-start">
               <div className="lg:col-span-5 reveal lg:sticky lg:top-28 lg:self-start">
                 <div className="relative max-w-md mx-auto lg:max-w-none">
-                  <div className="relative rounded-3xl overflow-hidden aspect-[3/4]">
+                  <div className="relative aspect-[3/4]">
                     <Image
-                      src="/img-about.png"
+                      src="/josh-about-sticker.png"
                       alt="Joshua Balansa, full stack developer based in the Philippines"
                       fill
                       sizes="(max-width: 1024px) 24rem, 40vw"
-                      className="object-cover object-center"
+                      className="object-contain object-center about-sticker"
+                      unoptimized
                     />
                   </div>
-                  <div className="absolute -top-4 -left-4 w-24 h-24 border border-stone-800 rounded-3xl -z-10" />
                 </div>
               </div>
 
