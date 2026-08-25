@@ -31,6 +31,6 @@ export function getEffectProfile() {
     cursor: hasFinePointer && !reduceMotion && !saveData,
     shaderBlur: !constrained,
     dpr: Math.min(window.devicePixelRatio || 1, constrained ? 1 : 1.5),
-    shaderPixels: constrained ? 900_000 : 1_600_000,
+    shaderPixels: constrained ? 480_000 : 1_600_000,
   };
 }

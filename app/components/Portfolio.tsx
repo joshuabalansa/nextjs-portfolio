@@ -379,7 +379,6 @@ const Portfolio = () => {
 
     const update = () => {
       ticking = false;
-      cacheSkillMetrics();
       const y = window.scrollY;
       const nextCompact = y > 50;
       if (nextCompact !== compact) {

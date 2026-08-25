@@ -419,9 +419,15 @@ export function ShaderBackground({ className }: { className?: string }) {
     let visible = document.visibilityState === "visible"
     let inView = true
     let disposed = false
+    // Pause drawing during scroll on phones/low-power devices so touch scrolling stays smooth.
+    // Desktop keeps continuous smoke (user preference).
+    let scrollLocked = false
+    let scrollTimer = 0
+    const pauseOnScroll = profile.constrained
     const start = performance.now()
     const timeAnimated =
       !profile.reduceMotion && Math.abs(UNIFORMS.timeScale) > 0.0001
+    const minFrameMs = profile.constrained ? 33 : 0
 
     const resizeCanvas = () => {
       const dpr = profile.dpr
@@ -441,7 +447,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     }
 
     function requestRender() {
-      if (!disposed && visible && inView && raf === 0) {
+      if (!disposed && visible && inView && !scrollLocked && raf === 0) {
         raf = requestAnimationFrame(render)
       }
     }
@@ -488,7 +494,24 @@ export function ShaderBackground({ className }: { className?: string }) {
       updatePointerTarget()
       requestRender()
     }
+    const onScroll = () => {
+      if (!pauseOnScroll) return
+      if (raf !== 0) {
+        cancelAnimationFrame(raf)
+        raf = 0
+        lastNow = null
+      }
+      scrollLocked = true
+      window.clearTimeout(scrollTimer)
+      scrollTimer = window.setTimeout(() => {
+        scrollLocked = false
+        requestRender()
+      }, 120)
+    }
     window.addEventListener("resize", updateLayout, { passive: true })
+    if (pauseOnScroll) {
+      window.addEventListener("scroll", onScroll, { passive: true })
+    }
     if (UNIFORMS.cursorEnabled) {
       window.addEventListener("pointermove", onPointerMove, { passive: true })
       window.addEventListener("pointercancel", onPointerLeave)
@@ -522,14 +545,17 @@ export function ShaderBackground({ className }: { className?: string }) {
 
     function render(now: number) {
       raf = 0
-      if (disposed || !visible || !inView) return
+      if (disposed || !visible || !inView || scrollLocked) return
+      if (minFrameMs > 0 && lastNow !== null && now - lastNow < minFrameMs) {
+        requestRender()
+        return
+      }
       const dt = lastNow === null ? 0 : Math.min((now - lastNow) / 1000, 0.1)
       lastNow = now
       const follow = 1 - Math.exp(-12 * dt)
       mouseX += (targetX - mouseX) * follow
       mouseY += (targetY - mouseY) * follow
       cursorPresence += (targetPresence - cursorPresence) * follow
-      resizeCanvas()
       const width = canvas.width
       const height = canvas.height
       gl.uniform4f(
@@ -565,10 +591,14 @@ export function ShaderBackground({ className }: { className?: string }) {
     return () => {
       disposed = true
       cancelAnimationFrame(raf)
+      window.clearTimeout(scrollTimer)
       resizeObserver.disconnect()
       intersectionObserver.disconnect()
       document.removeEventListener("visibilitychange", onVisibilityChange)
       window.removeEventListener("resize", updateLayout)
+      if (pauseOnScroll) {
+        window.removeEventListener("scroll", onScroll)
+      }
       if (UNIFORMS.cursorEnabled) {
         window.removeEventListener("pointermove", onPointerMove)
         window.removeEventListener("pointercancel", onPointerLeave)
