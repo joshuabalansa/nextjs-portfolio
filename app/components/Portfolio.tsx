@@ -330,12 +330,6 @@ function getSkillTrackMetrics(track: HTMLElement) {
   return { top, scrollable };
 }
 
-function getSkillTabIndexFromScroll(track: HTMLElement) {
-  const { top, scrollable } = getSkillTrackMetrics(track);
-  const progress = Math.min(1, Math.max(0, (window.scrollY - top) / scrollable));
-  return Math.min(skillTabs.length - 1, Math.floor(progress * skillTabs.length));
-}
-
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -388,50 +382,95 @@ const Portfolio = () => {
 
   useEffect(() => {
     const sectionIds = ["hero", ...navItems.map((item) => item.id)];
-
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+    let ticking = false;
+    let compact = false;
+    let skillTop = 0;
+    let skillScrollable = 1;
 
-    const handleScroll = () => {
-      setNavCompact(window.scrollY > 50);
+    const cacheSkillMetrics = () => {
+      const track = skillsTrackRef.current;
+      if (!track) return;
+      skillTop = window.scrollY + track.getBoundingClientRect().top;
+      skillScrollable = Math.max(1, track.offsetHeight - window.innerHeight);
+    };
 
-      const scrollPosition = window.scrollY + 200;
+    const update = () => {
+      ticking = false;
+      cacheSkillMetrics();
+      const y = window.scrollY;
+      const nextCompact = y > 50;
+      if (nextCompact !== compact) {
+        compact = nextCompact;
+        setNavCompact(nextCompact);
+      }
+
+      const scrollPosition = y + 200;
       for (const id of sectionIds) {
         const element = document.getElementById(id);
         if (!element) continue;
         const { offsetTop, offsetHeight } = element;
         if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-          setActiveSection(id);
+          setActiveSection((current) => (current === id ? current : id));
           break;
         }
       }
 
       const track = skillsTrackRef.current;
       if (!track || skillScrollLockRef.current || prefersReducedMotion.matches) return;
-      if (window.matchMedia("(max-width: 767px)").matches) return;
+      if (mobileQuery.matches) return;
+      if (y + window.innerHeight < skillTop || y > skillTop + track.offsetHeight) return;
 
-      const nextId = skillTabs[getSkillTabIndexFromScroll(track)].id;
+      const progress = Math.min(1, Math.max(0, (y - skillTop) / skillScrollable));
+      const nextId = skillTabs[Math.min(skillTabs.length - 1, Math.floor(progress * skillTabs.length))].id;
       setActiveSkillTab((current) => (current === nextId ? current : nextId));
+    };
+
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
     };
 
     const unlockSkillScroll = () => {
       skillScrollLockRef.current = false;
     };
 
+    cacheSkillMetrics();
+    update();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", cacheSkillMetrics, { passive: true });
     window.addEventListener("wheel", unlockSkillScroll, { passive: true });
     window.addEventListener("touchmove", unlockSkillScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", cacheSkillMetrics);
       window.removeEventListener("wheel", unlockSkillScroll);
       window.removeEventListener("touchmove", unlockSkillScroll);
     };
   }, []);
 
   useEffect(() => {
-    (async function () {
+    let cancelled = false;
+    const loadCal = async () => {
+      if (cancelled) return;
       const cal = await getCalApi({ namespace: "1h" });
+      if (cancelled) return;
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" });
-    })();
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(loadCal, { timeout: 2500 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(id);
+      };
+    }
+    const timer = window.setTimeout(loadCal, 800);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -506,19 +545,27 @@ const Portfolio = () => {
       />
       <nav
         aria-label="Primary"
-        className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 px-6 transform-gpu transition-[padding] duration-500 ${
           navCompact ? "py-2" : "py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="glass rounded-2xl overflow-hidden">
+          <div
+            className={`rounded-2xl overflow-hidden transform-gpu transition-[background,backdrop-filter,border-color,color] duration-500 ${
+              navCompact || isMobileMenuOpen ? "glass" : "border border-transparent bg-transparent"
+            }`}
+          >
             <div className="px-6 py-4 flex items-center justify-between">
             <button
               type="button"
               onClick={() => scrollToSection("hero")}
-              className="text-stone-100 font-medium text-sm"
+              className={`font-medium text-sm transition-colors duration-500 ${
+                navCompact || isMobileMenuOpen ? "text-stone-100" : "text-neutral-950"
+              }`}
             >
-              joshua<span className="text-stone-500">.dev</span>
+              joshua<span className={navCompact || isMobileMenuOpen ? "text-stone-500" : "text-black"}>
+                .dev
+              </span>
             </button>
 
             <div className="hidden md:flex items-center gap-8">
@@ -527,10 +574,14 @@ const Portfolio = () => {
                   key={id}
                   type="button"
                   onClick={() => scrollToSection(id)}
-                  className={`nav-link text-sm transition-colors ${
-                    activeSection === id
-                      ? "is-active text-stone-200"
-                      : "text-stone-400 hover:text-stone-200"
+                  className={`nav-link text-sm transition-colors duration-500 ${
+                    navCompact || isMobileMenuOpen
+                      ? activeSection === id
+                        ? "is-active text-stone-200"
+                        : "text-stone-400 hover:text-stone-200"
+                      : activeSection === id
+                        ? "is-active text-neutral-950"
+                        : "text-neutral-950/70 hover:text-neutral-950"
                   }`}
                 >
                   {label}
@@ -553,7 +604,11 @@ const Portfolio = () => {
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-nav"
-              className="md:hidden text-stone-400 hover:text-stone-200 transition-colors"
+              className={`md:hidden transition-colors duration-500 ${
+                navCompact || isMobileMenuOpen
+                  ? "text-stone-400 hover:text-stone-200"
+                  : "text-neutral-950/70 hover:text-neutral-950"
+              }`}
             >
               {isMobileMenuOpen ? (
                 <LuX className="w-6 h-6" />
@@ -606,7 +661,7 @@ const Portfolio = () => {
         <section
           id="hero"
           aria-label="Introduction"
-          className="min-h-dvh flex items-center relative overflow-hidden bg-neutral-950"
+          className="min-h-dvh flex items-center relative overflow-hidden bg-neutral-950 contain-paint"
         >
           <div className="absolute inset-0 z-0" aria-hidden="true">
             <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
@@ -616,16 +671,16 @@ const Portfolio = () => {
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
             <div className="w-full mx-auto text-center">
-                <div className="animate-fade-up inline-flex items-center gap-3 glass rounded-full px-4 py-2 mb-8">
+                <div className="animate-fade-up inline-flex items-center gap-3 glass-light rounded-full px-4 py-2 mb-8">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
                   </span>
-                  <span className="text-xs text-stone-200 font-medium tracking-wide">
+                  <span className="text-xs text-neutral-900 font-medium tracking-wide">
                     Open to freelance & full-time
                   </span>
-                  <span className="hidden sm:inline text-white/40">·</span>
-                  <span className="hidden sm:inline text-xs text-stone-300">
+                  <span className="hidden sm:inline text-neutral-900/35">·</span>
+                  <span className="hidden sm:inline text-xs text-neutral-800/75">
                     Philippines · GMT+8
                   </span>
                 </div>
@@ -909,7 +964,7 @@ const Portfolio = () => {
           </div>
         </section>
 
-        <section id="projects" className="py-32 px-6 relative">
+        <section id="projects" className="section-cv py-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
@@ -954,7 +1009,7 @@ const Portfolio = () => {
                     <article
                       key={project.title}
                       aria-hidden={!isVisible}
-                      className={`absolute w-[78%] max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-neutral-950 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:w-[55%] lg:w-[34%]${
+                      className={`absolute w-[78%] max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-neutral-950 transform-gpu transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:w-[55%] lg:w-[34%]${
                         isCenter ? " group" : ""
                       }${isOpen ? " is-open" : ""} ${
                         isVisible
@@ -964,9 +1019,8 @@ const Portfolio = () => {
                       style={{
                         zIndex: isCenter ? 20 : isSide ? 10 : 0,
                         transform: isCenter
-                          ? "translateX(0)"
-                          : `translateX(${offset * 104}%)`,
-                        filter: isCenter ? "none" : "brightness(0.55)",
+                          ? "translate3d(0,0,0)"
+                          : `translate3d(${offset * 104}%, 0, 0)`,
                       }}
                       onClick={(event) => {
                         if ((event.target as HTMLElement).closest("a,button")) return;
@@ -989,9 +1043,15 @@ const Portfolio = () => {
                             fill
                             sizes="(max-width: 1024px) 70vw, 34vw"
                             className="object-contain object-center"
-                            priority={index === 0}
                           />
                         ) : null}
+
+                        <div
+                          aria-hidden
+                          className={`pointer-events-none absolute inset-0 z-[15] bg-black transition-opacity duration-700 ${
+                            isCenter ? "opacity-0" : "opacity-[0.45]"
+                          }`}
+                        />
 
                         <div className="absolute inset-0 bg-[#0a0a0a]/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-within:opacity-100 group-[.is-open]:opacity-100" />
 
@@ -1100,7 +1160,7 @@ const Portfolio = () => {
           </div>
         </section>
 
-        <section id="contact" className="py-32 px-6 relative">
+        <section id="contact" className="section-cv py-32 px-6 relative">
           <div className="absolute inset-0 grid-pattern opacity-50" />
           <div className="relative z-10 max-w-4xl mx-auto text-center">
             <div className="reveal">
@@ -1159,7 +1219,7 @@ const Portfolio = () => {
         </div>
       </main>
 
-      <footer className="py-16 px-6 bg-[#0a0a0a]">
+      <footer className="section-cv py-16 px-6 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-flex items-center gap-1.5 text-stone-400 text-sm">
             Built with <FaHeart className="text-blue-500" aria-hidden /> by Josh
@@ -1167,7 +1227,7 @@ const Portfolio = () => {
         </div>
       </footer>
 
-      <Script id="chatbase-script" strategy="afterInteractive">
+      <Script id="chatbase-script" strategy="lazyOnload">
         {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="${process.env.NEXT_PUBLIC_CHATBOT_ID}";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
       </Script>
     </div>

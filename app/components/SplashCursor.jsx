@@ -1,14 +1,15 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getEffectProfile } from '../lib/effect-profile';
 
-function SplashCursor({
-  SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 1440,
+function SplashCursorCanvas({
+  SIM_RESOLUTION = 96,
+  DYE_RESOLUTION = 512,
   CAPTURE_RESOLUTION = 512,
   DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
   PRESSURE = 0.1,
-  PRESSURE_ITERATIONS = 20,
+  PRESSURE_ITERATIONS = 10,
   CURL = 3,
   SPLAT_RADIUS = 0.2,
   SPLAT_FORCE = 6000,
@@ -678,9 +679,29 @@ function SplashCursor({
     initFramebuffers();
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
+    let lastInputTime = 0;
+    let scrollLocked = false;
+    let scrollTimer = 0;
+    const IDLE_MS = 1800;
+
+    function resumeFrame() {
+      if (!isActive || animationFrameId.current) return;
+      lastUpdateTime = Date.now();
+      animationFrameId.current = requestAnimationFrame(updateFrame);
+    }
+
+    function markInput() {
+      lastInputTime = performance.now();
+      resumeFrame();
+    }
 
     function updateFrame() {
       if (!isActive) return;
+      animationFrameId.current = null;
+      if (document.hidden) return;
+      const idleFor = performance.now() - lastInputTime;
+      if (scrollLocked && idleFor > 80) return;
+      if (idleFor > IDLE_MS) return;
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -965,7 +986,7 @@ function SplashCursor({
     }
 
     function scaleByPixelRatio(input) {
-      const pixelRatio = window.devicePixelRatio || 1;
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
       return Math.floor(input * pixelRatio);
     }
 
@@ -1026,13 +1047,40 @@ function SplashCursor({
       updatePointerUpData(pointer);
     }
 
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchmove', handleTouchMove, false);
-    window.addEventListener('touchend', handleTouchEnd);
+    const onScroll = () => {
+      scrollLocked = true;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        scrollLocked = false;
+        if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
+      }, 140);
+    };
 
-    updateFrame();
+    const onVisibility = () => {
+      if (document.hidden) {
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+          animationFrameId.current = null;
+        }
+        return;
+      }
+      if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
+    };
+
+    function handleMouseDownAndResume(e) {
+      markInput();
+      handleMouseDown(e);
+    }
+
+    function handleMouseMoveAndResume(e) {
+      markInput();
+      handleMouseMove(e);
+    }
+
+    window.addEventListener('mousedown', handleMouseDownAndResume, { passive: true });
+    window.addEventListener('mousemove', handleMouseMoveAndResume, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
       isActive = false;
@@ -1041,12 +1089,12 @@ function SplashCursor({
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
+      window.clearTimeout(scrollTimer);
 
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('mousedown', handleMouseDownAndResume);
+      window.removeEventListener('mousemove', handleMouseMoveAndResume);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1060,7 +1108,9 @@ function SplashCursor({
         zIndex: 40,
         pointerEvents: 'none',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        contain: 'strict',
+        transform: 'translateZ(0)'
       }}
     >
       <canvas
@@ -1076,4 +1126,21 @@ function SplashCursor({
   );
 }
 
-export default SplashCursor;
+export default function SplashCursor(props) {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!getEffectProfile().cursor) return undefined;
+
+    const enable = () => setEnabled(true);
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(enable, { timeout: 1800 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const timer = window.setTimeout(enable, 500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (!enabled) return null;
+  return <SplashCursorCanvas {...props} />;
+}

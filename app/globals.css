@@ -14,6 +14,12 @@ html {
   background: var(--background);
 }
 
+@media (hover: none) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -42,16 +48,16 @@ body {
 @keyframes float {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   25% {
-    transform: translateY(-20px) rotate(2deg);
+    transform: translate3d(0, -20px, 0) rotate(2deg);
   }
   50% {
-    transform: translateY(-10px) rotate(0deg);
+    transform: translate3d(0, -10px, 0) rotate(0deg);
   }
   75% {
-    transform: translateY(-25px) rotate(-2deg);
+    transform: translate3d(0, -25px, 0) rotate(-2deg);
   }
 }
 
@@ -89,33 +95,33 @@ body {
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translate3d(0, 40px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes scroll-hint {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 0.4;
   }
   50% {
-    transform: translateY(8px);
+    transform: translate3d(0, 8px, 0);
     opacity: 1;
   }
 }
@@ -217,6 +223,34 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.glass-light {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.28) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 10, 10, 0.88);
+  }
+
+  .glass-light {
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    background: rgba(255, 255, 255, 0.62);
+  }
+}
+
 .gradient-text {
   background: linear-gradient(135deg, #e0e2ff 0%, #7eb0ff 45%, #4487ff 100%);
   -webkit-background-clip: text;
@@ -233,12 +267,14 @@ body {
 
 .reveal {
   opacity: 0;
-  transform: translateY(60px);
-  transition: all 1s cubic-bezier(0.17, 0.55, 0.55, 1);
+  transform: translate3d(0, 60px, 0);
+  transition:
+    opacity 1s cubic-bezier(0.17, 0.55, 0.55, 1),
+    transform 1s cubic-bezier(0.17, 0.55, 0.55, 1);
 }
 .reveal.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .stagger-1 {
@@ -258,10 +294,12 @@ body {
 }
 
 .hover-lift {
-  transition: all 0.5s cubic-bezier(0.17, 0.55, 0.55, 1);
+  transition:
+    transform 0.5s cubic-bezier(0.17, 0.55, 0.55, 1),
+    box-shadow 0.5s cubic-bezier(0.17, 0.55, 0.55, 1);
 }
 .hover-lift:hover {
-  transform: translateY(-12px);
+  transform: translate3d(0, -12px, 0);
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.45);
 }
 
@@ -345,13 +383,15 @@ body {
 }
 
 .toast {
-  transform: translateY(100px);
+  transform: translate3d(0, 100px, 0);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.4s cubic-bezier(0.17, 0.55, 0.55, 1);
+  transition:
+    opacity 0.4s cubic-bezier(0.17, 0.55, 0.55, 1),
+    transform 0.4s cubic-bezier(0.17, 0.55, 0.55, 1);
 }
 .toast.show {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
   opacity: 1;
   pointer-events: auto;
 }
@@ -362,6 +402,11 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.section-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 .skills-pin-track {

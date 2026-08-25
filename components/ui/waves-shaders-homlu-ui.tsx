@@ -6,6 +6,7 @@
 // <div className="relative"><ShaderBackground className="absolute inset-0" />…
 
 import { useEffect, useRef } from "react"
+import { getEffectProfile } from "@/app/lib/effect-profile"
 
 const VERT = `attribute vec2 a_position;
 void main() {
@@ -314,7 +315,17 @@ export function ShaderBackground({ className }: { className?: string }) {
     const pendingRelease = pendingContextReleases.get(canvas)
     if (pendingRelease !== undefined) window.clearTimeout(pendingRelease)
     pendingContextReleases.delete(canvas)
-    const gl = canvas.getContext("webgl", { antialias: false })
+    const profile = getEffectProfile()
+    const gl =
+      canvas.getContext("webgl", {
+        antialias: false,
+        alpha: false,
+        depth: false,
+        stencil: false,
+        desynchronized: true,
+        preserveDrawingBuffer: false,
+        powerPreference: profile.constrained ? "low-power" : "high-performance",
+      }) || canvas.getContext("webgl", { antialias: false })
     if (!gl) return
 
     const compile = (type: number, src: string) => {
@@ -369,12 +380,14 @@ export function ShaderBackground({ className }: { className?: string }) {
       UNIFORMS.brightness,
       UNIFORMS.saturation,
     )
+    const shaderBlur = profile.shaderBlur ? UNIFORMS.blur : 0
+    const shaderGrain = profile.constrained ? UNIFORMS.grain * 0.45 : UNIFORMS.grain
     gl.uniform4f(
       uni.finish,
       UNIFORMS.hue,
       UNIFORMS.vignette,
-      UNIFORMS.blur,
-      UNIFORMS.grain,
+      shaderBlur,
+      shaderGrain,
     )
     gl.uniform4f(
       uni.transform,
@@ -406,16 +419,19 @@ export function ShaderBackground({ className }: { className?: string }) {
     let visible = document.visibilityState === "visible"
     let inView = true
     let disposed = false
+    let scrollLocked = false
+    let scrollTimer = 0
     const start = performance.now()
-    const timeAnimated = Math.abs(UNIFORMS.timeScale) > 0.0001
+    const timeAnimated =
+      !profile.reduceMotion && Math.abs(UNIFORMS.timeScale) > 0.0001
 
     const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = profile.dpr
       const rawWidth = Math.max(1, Math.round(bounds.width * dpr))
       const rawHeight = Math.max(1, Math.round(bounds.height * dpr))
       const pixelScale = Math.min(
         1,
-        Math.sqrt(2_000_000 / Math.max(1, rawWidth * rawHeight)),
+        Math.sqrt(profile.shaderPixels / Math.max(1, rawWidth * rawHeight)),
       )
       const width = Math.max(1, Math.round(rawWidth * pixelScale))
       const height = Math.max(1, Math.round(rawHeight * pixelScale))
@@ -427,7 +443,7 @@ export function ShaderBackground({ className }: { className?: string }) {
     }
 
     function requestRender() {
-      if (!disposed && visible && inView && raf === 0) {
+      if (!disposed && visible && inView && !scrollLocked && raf === 0) {
         raf = requestAnimationFrame(render)
       }
     }
@@ -474,7 +490,21 @@ export function ShaderBackground({ className }: { className?: string }) {
       updatePointerTarget()
       requestRender()
     }
-    window.addEventListener("resize", updateLayout)
+    const onScroll = () => {
+      if (raf !== 0) {
+        cancelAnimationFrame(raf)
+        raf = 0
+        lastNow = null
+      }
+      scrollLocked = true
+      window.clearTimeout(scrollTimer)
+      scrollTimer = window.setTimeout(() => {
+        scrollLocked = false
+        requestRender()
+      }, 140)
+    }
+    window.addEventListener("resize", updateLayout, { passive: true })
+    window.addEventListener("scroll", onScroll, { passive: true })
     if (UNIFORMS.cursorEnabled) {
       window.addEventListener("pointermove", onPointerMove, { passive: true })
       window.addEventListener("pointercancel", onPointerLeave)
@@ -508,7 +538,7 @@ export function ShaderBackground({ className }: { className?: string }) {
 
     function render(now: number) {
       raf = 0
-      if (disposed || !visible || !inView) return
+      if (disposed || !visible || !inView || scrollLocked) return
       const dt = lastNow === null ? 0 : Math.min((now - lastNow) / 1000, 0.1)
       lastNow = now
       const follow = 1 - Math.exp(-12 * dt)
@@ -551,10 +581,12 @@ export function ShaderBackground({ className }: { className?: string }) {
     return () => {
       disposed = true
       cancelAnimationFrame(raf)
+      window.clearTimeout(scrollTimer)
       resizeObserver.disconnect()
       intersectionObserver.disconnect()
       document.removeEventListener("visibilitychange", onVisibilityChange)
       window.removeEventListener("resize", updateLayout)
+      window.removeEventListener("scroll", onScroll)
       if (UNIFORMS.cursorEnabled) {
         window.removeEventListener("pointermove", onPointerMove)
         window.removeEventListener("pointercancel", onPointerLeave)
@@ -579,6 +611,16 @@ export function ShaderBackground({ className }: { className?: string }) {
   }, [])
 
   return (
-    <canvas ref={canvasRef} className={className} style={{ display: "block", width: "100%", height: "100%" }} />
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        contain: "strict",
+        transform: "translateZ(0)",
+      }}
+    />
   )
 }
