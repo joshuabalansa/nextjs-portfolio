@@ -652,7 +652,7 @@ const Portfolio = () => {
           <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
             <div className="w-full mx-auto text-center">
                 <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
-                  Joshua <span className="gradient-text">Balansa</span>
+                  Joshua Balansa
                 </h1>
 
                 <div className="flex items-center justify-center gap-4 mb-8 animate-fade-up hero-delay-2">
