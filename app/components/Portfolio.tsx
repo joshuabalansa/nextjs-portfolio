@@ -508,26 +508,26 @@ const Portfolio = () => {
       />
       <nav
         aria-label="Primary"
-        className={`fixed top-0 left-0 right-0 z-50 px-6 transform-gpu transition-[padding] duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 px-4 transform-gpu transition-[padding] duration-500 ${
           navCompact ? "py-3" : "py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto w-fit max-w-full">
           <div
             className={`rounded-2xl overflow-hidden transform-gpu transition-[background,backdrop-filter,border-color,color] duration-500 ${
               navCompact ? "glass" : "border border-transparent bg-transparent"
             }`}
           >
-            <div className="flex items-center justify-center gap-5 px-5 py-3.5 sm:gap-7 sm:px-6 sm:py-4 md:gap-10">
+            <div className="flex items-center justify-center gap-6 px-6 py-3 sm:gap-8 sm:px-8 sm:py-3.5 md:gap-10">
               {navItems.map(({ id, label }) => (
                 <button
                   key={id}
                   type="button"
                   onClick={() => scrollToSection(id)}
-                  className={`nav-link text-sm font-medium sm:text-base transition-colors duration-500 ${
+                  className={`nav-link text-base font-medium sm:text-lg transition-colors duration-500 ${
                     navCompact
                       ? activeSection === id
-                        ? "is-active text-stone-200"
+                        ? "is-active text-stone-100"
                         : "text-stone-400 hover:text-stone-200"
                       : activeSection === id
                         ? "is-active text-neutral-950"
