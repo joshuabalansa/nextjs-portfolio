@@ -64,6 +64,7 @@ import StackingCards, {
 } from "@/components/fancy/blocks/stacking-cards";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "../site.config";
+import { ThemeToggle } from "./ThemeToggle";
 
 const ShaderBackground = dynamic(
   () =>
@@ -78,6 +79,7 @@ const SplashCursor = dynamic(() => import("./SplashCursor"), { ssr: false });
 const heroStack = ["React", "Next.js", "Laravel", "Node.js"];
 
 const navItems = [
+  { id: "hero", label: "Home" },
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
@@ -179,13 +181,13 @@ const skills: Skill[] = [
 
 function SkillTile({ name, icon: Icon, color }: Skill) {
   return (
-    <div className="group flex min-w-0 items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-white/5 bg-neutral-900/40 px-2.5 py-2.5 sm:px-4 sm:py-3.5 transition-colors duration-300 hover:border-white/10 hover:bg-neutral-800/50">
+    <div className="group flex min-w-0 items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-neutral-200 bg-white px-2.5 py-2.5 shadow-sm transition-colors duration-300 hover:border-neutral-300 hover:bg-neutral-50 sm:px-4 sm:py-3.5 dark:border-white/5 dark:bg-neutral-900/40 dark:shadow-none dark:hover:border-white/10 dark:hover:bg-neutral-800/50">
       <Icon
         className="text-xl sm:text-2xl shrink-0 transition-transform duration-300 group-hover:scale-110"
         style={{ color }}
         aria-hidden
       />
-      <span className="truncate text-xs sm:text-sm text-stone-300 transition-colors group-hover:text-stone-100">
+      <span className="truncate text-xs sm:text-sm text-neutral-700 transition-colors group-hover:text-neutral-900 dark:text-stone-300 dark:group-hover:text-stone-100">
         {name}
       </span>
     </div>
@@ -317,7 +319,6 @@ function getSkillTrackMetrics(track: HTMLElement) {
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
-  const [navCompact, setNavCompact] = useState(false);
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
   const countedRef = useRef(false);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
@@ -364,7 +365,6 @@ const Portfolio = () => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const mobileQuery = window.matchMedia("(max-width: 767px)");
     let ticking = false;
-    let compact = false;
     let skillTop = 0;
     let skillScrollable = 1;
 
@@ -378,11 +378,6 @@ const Portfolio = () => {
     const update = () => {
       ticking = false;
       const y = window.scrollY;
-      const nextCompact = y > 50;
-      if (nextCompact !== compact) {
-        compact = nextCompact;
-        setNavCompact(nextCompact);
-      }
 
       const scrollPosition = y + 200;
       for (const id of sectionIds) {
@@ -499,7 +494,7 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-stone-100 overflow-x-clip">
+    <div className="min-h-screen bg-background text-foreground overflow-x-clip">
       <SplashCursor
         RAINBOW_MODE={false}
         COLOR="#4487ff"
@@ -508,36 +503,26 @@ const Portfolio = () => {
       />
       <nav
         aria-label="Primary"
-        className={`fixed top-0 left-0 right-0 z-50 px-4 transform-gpu transition-[padding] duration-500 ${
-          navCompact ? "py-3" : "py-5"
-        }`}
+        className="sticky top-4 z-50 flex justify-center px-4 pt-4"
       >
-        <div className="mx-auto w-fit max-w-full">
-          <div
-            className={`rounded-2xl overflow-hidden transform-gpu transition-[background,backdrop-filter,border-color,color] duration-500 ${
-              navCompact ? "glass" : "border border-transparent bg-transparent"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-6 px-6 py-3 sm:gap-8 sm:px-8 sm:py-3.5 md:gap-10">
-              {navItems.map(({ id, label }) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => scrollToSection(id)}
-                  className={`nav-link text-base font-medium sm:text-lg transition-colors duration-500 ${
-                    navCompact
-                      ? activeSection === id
-                        ? "is-active text-stone-100"
-                        : "text-stone-400 hover:text-stone-200"
-                      : activeSection === id
-                        ? "is-active text-neutral-950"
-                        : "text-neutral-950/70 hover:text-neutral-950"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+        <div className="flex max-w-full items-center gap-1 rounded-full border border-neutral-200 bg-white px-2 py-2 shadow-[0_2px_16px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-[0_2px_16px_rgba(0,0,0,0.35)]">
+          {navItems.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => scrollToSection(id)}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4",
+                activeSection === id
+                  ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                  : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+          <div className="ml-0.5 border-l border-neutral-200 pl-1.5 dark:border-neutral-700">
+            <ThemeToggle />
           </div>
         </div>
       </nav>
@@ -546,16 +531,17 @@ const Portfolio = () => {
         <section
           id="hero"
           aria-label="Introduction"
-          className="min-h-dvh flex items-center relative overflow-hidden bg-neutral-950 contain-paint"
+          className="min-h-dvh flex items-center relative px-4 py-4 md:px-6 md:py-6"
         >
-          <div className="absolute inset-0 z-0" aria-hidden="true">
-            <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
-          </div>
-          <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-950/25" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent z-[3]" />
+          <div className="relative z-10 w-full max-w-7xl mx-auto min-h-[calc(100dvh-2rem)] md:min-h-[calc(100dvh-3rem)] flex items-center rounded-3xl overflow-hidden bg-neutral-950 contain-paint">
+            <div className="absolute inset-0 z-0" aria-hidden="true">
+              <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
+            </div>
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-950/25" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent z-[3]" />
 
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-28 pb-24">
-            <div className="w-full mx-auto text-center">
+            <div className="relative z-10 w-full px-6 pt-16 pb-24">
+              <div className="w-full mx-auto text-center">
                 <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
                   Joshua Balansa
                 </h1>
@@ -588,7 +574,7 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => scrollToSection("projects")}
-                    className="group inline-flex items-center justify-center gap-3 w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
+                    className="group inline-flex items-center justify-center gap-3 w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-neutral-950 bg-white shadow-lg shadow-black/20 hover:bg-stone-100 transition-all duration-300"
                   >
                     View My Work
                     <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -596,7 +582,7 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => scrollToSection("contact")}
-                    className="inline-flex items-center justify-center w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-stone-100 glass hover:text-white transition-all duration-500"
+                    className="inline-flex items-center justify-center w-full sm:w-52 h-14 rounded-2xl border border-white/25 bg-white/10 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/20"
                   >
                     Get In Touch
                   </button>
@@ -610,7 +596,7 @@ const Portfolio = () => {
                       target={href.startsWith("mailto:") ? undefined : "_blank"}
                       rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
                       aria-label={label}
-                      className="w-11 h-11 rounded-xl glass flex items-center justify-center text-stone-200 hover:text-white hover:border-white/20 transition-all duration-300"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white/80 backdrop-blur-sm transition-all duration-300 hover:border-white/35 hover:bg-white/20 hover:text-white"
                     >
                       <Icon className="text-xl" />
                     </Link>
@@ -618,9 +604,10 @@ const Portfolio = () => {
                 </div>
             </div>
           </div>
+          </div>
         </section>
 
-        <div className="relative bg-[#0a0a0a]">
+        <div className="relative bg-background">
         <section id="about" className="py-32 px-6 relative">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-12 gap-16 items-start">
@@ -643,11 +630,11 @@ const Portfolio = () => {
                 <div className="reveal stagger-1">
                   <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
                     <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-xs text-stone-400 font-medium uppercase tracking-[0.2em]">
+                    <span className="text-xs text-muted font-medium uppercase tracking-[0.2em]">
                       Open to freelance & full-time
                     </span>
                   </div>
-                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-4 block">
+                  <span className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-4 block">
                     About Me
                   </span>
                   <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-8">
@@ -655,7 +642,7 @@ const Portfolio = () => {
                     <br />
                     <span className="gradient-text">idea to launch</span>
                   </h2>
-                  <p className="text-stone-400 font-light leading-relaxed text-lg">
+                  <p className="text-muted font-light leading-relaxed text-lg">
                     I&apos;m a full-stack developer who works across the stack — React and
                     Next.js on the front-end, Laravel and Node.js on the back-end — with a
                     focus on speed, clarity, and craft.
@@ -663,48 +650,48 @@ const Portfolio = () => {
                 </div>
 
                 <div className="reveal stagger-2">
-                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-6">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-6">
                     How I work
                   </p>
                   <div className="space-y-6">
                     {approachSteps.map((item) => (
                       <div key={item.step} className="flex gap-5">
-                        <span className="shrink-0 text-sm font-semibold tabular-nums text-stone-600 pt-0.5">
+                        <span className="shrink-0 text-sm font-semibold tabular-nums text-neutral-500 dark:text-stone-600 pt-0.5">
                           {item.step}
                         </span>
                         <div>
-                          <h3 className="font-semibold text-stone-100 mb-1.5">{item.title}</h3>
-                          <p className="text-stone-400 font-light leading-relaxed">{item.body}</p>
+                          <h3 className="font-semibold text-foreground mb-1.5">{item.title}</h3>
+                          <p className="text-muted font-light leading-relaxed">{item.body}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <dl className="reveal stagger-3 divide-y divide-neutral-800/80 border-y border-neutral-800/80">
+                <dl className="reveal stagger-3 divide-y divide-border border-y border-border">
                   {stackHighlights.map(({ label, value }) => (
                     <div
                       key={label}
                       className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 py-4"
                     >
-                      <dt className="sm:w-28 shrink-0 text-xs font-semibold uppercase tracking-wider text-stone-500">
+                      <dt className="sm:w-28 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
                         {label}
                       </dt>
-                      <dd className="text-stone-200 font-medium">{value}</dd>
+                      <dd className="text-foreground/90 font-medium">{value}</dd>
                     </div>
                   ))}
                 </dl>
 
                 <div className="reveal stagger-4">
-                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-stone-500 mb-6">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-6">
                     What I bring
                   </p>
                   <ul className="space-y-4">
                     {whatIBring.map((item) => (
-                      <li key={item} className="flex gap-3 text-stone-400 font-light leading-relaxed">
+                      <li key={item} className="flex gap-3 text-muted font-light leading-relaxed">
                         <span
                           aria-hidden
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-stone-100"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground"
                         />
                         <span>{item}</span>
                       </li>
@@ -716,27 +703,27 @@ const Portfolio = () => {
                   {stats.map((stat) => (
                     <div key={stat.label} className="glass rounded-2xl p-5 text-center card-shine">
                       <p
-                        className="text-3xl font-bold text-stone-100 mb-1"
+                        className="text-3xl font-bold text-foreground mb-1"
                         data-count={stat.value}
                         data-suffix={stat.suffix}
                         data-display={stat.display}
                       >
                         {stat.display ?? "0"}
                       </p>
-                      <p className="text-xs text-stone-500 uppercase tracking-wider">{stat.label}</p>
+                      <p className="text-xs text-muted uppercase tracking-wider">{stat.label}</p>
                     </div>
                   ))}
                 </div>
 
                 <div className="reveal">
-                  <p className="text-stone-400 font-light leading-relaxed mb-8">
+                  <p className="text-muted font-light leading-relaxed mb-8">
                     Whether you need a polished landing experience, a full product build, or
                     help tightening an existing codebase — I&apos;m ready to jump in and ship.
                   </p>
                   <button
                     type="button"
                     onClick={() => scrollToSection("contact")}
-                    className="group inline-flex items-center text-sm font-medium text-stone-100 hover:text-stone-300 transition-colors"
+                    className="group inline-flex items-center text-sm font-medium text-foreground hover:text-muted transition-colors"
                   >
                     Let&apos;s work together
                     <AiOutlineArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
@@ -753,14 +740,14 @@ const Portfolio = () => {
             className="skills-pin-track relative"
             style={{ "--skill-tab-count": skillTabs.length } as React.CSSProperties}
           >
-            <div className="skills-pin-inner relative z-20 flex h-auto flex-col bg-[#0a0a0a] px-4 pb-10 pt-20 md:sticky md:top-0 md:h-dvh md:px-6 md:pb-8 md:pt-28">
+            <div className="skills-pin-inner relative z-20 flex h-auto flex-col bg-background px-4 pb-10 pt-20 md:sticky md:top-0 md:h-dvh md:px-6 md:pb-8 md:pt-28">
               <div className="pointer-events-none absolute inset-0 grid-pattern opacity-50" />
               <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-7xl flex-col">
                 <div className="mb-4 shrink-0 text-center md:mb-6">
                   <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                     Tools I <span className="gradient-text">work with</span>
                   </h2>
-                  <p className="mt-3 md:mt-4 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+                  <p className="mt-3 md:mt-4 text-sm md:text-base text-muted font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
                     The web engineering toolkit — from the interface to APIs, data, testing, and deploy.
                   </p>
                 </div>
@@ -790,8 +777,8 @@ const Portfolio = () => {
                             onClick={() => scrollToSkillTab(tab.id)}
                             className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 ${
                               isActive
-                                ? "bg-white text-neutral-950"
-                                : "text-stone-400 hover:text-stone-200"
+                                ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950"
+                                : "text-muted hover:text-foreground"
                             }`}
                           >
                             {tab.label}
@@ -805,18 +792,18 @@ const Portfolio = () => {
                     id={`skill-panel-${activeSkillGroup.id}`}
                     role="tabpanel"
                     aria-labelledby={`skill-tab-${activeSkillGroup.id}`}
-                    className="glass card-shine shrink-0 overflow-visible rounded-2xl p-4 sm:rounded-3xl sm:p-8 md:p-8 lg:p-10"
+                    className="glass card-shine shrink-0 overflow-visible rounded-2xl border border-neutral-200/80 p-4 shadow-md sm:rounded-3xl sm:p-8 md:p-8 lg:p-10 dark:border-transparent dark:shadow-none"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-3 mb-5 md:mb-6">
                       <div>
-                        <h3 className="text-xl md:text-2xl font-semibold text-stone-100 tracking-tight">
+                        <h3 className="text-xl md:text-2xl font-semibold text-foreground tracking-tight">
                           {activeSkillGroup.label}
                         </h3>
-                        <p className="text-sm md:text-base text-stone-500 font-light mt-1.5 md:mt-2 max-w-xl">
+                        <p className="text-sm md:text-base text-muted font-light mt-1.5 md:mt-2 max-w-xl">
                           {activeSkillGroup.description}
                         </p>
                       </div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-stone-600">
+                      <p className="text-xs uppercase tracking-[0.2em] text-neutral-500 dark:text-stone-600">
                         {visibleSkills.length} tools
                       </p>
                     </div>
@@ -841,7 +828,7 @@ const Portfolio = () => {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                 Featured <span className="gradient-text">projects</span>
               </h2>
-              <p className="mt-3 md:mt-4 text-sm md:text-base text-stone-500 font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
+              <p className="mt-3 md:mt-4 text-sm md:text-base text-muted font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
                 A selection of products and sites I&apos;ve built — scroll to stack
                 through each one.
               </p>
@@ -849,7 +836,7 @@ const Portfolio = () => {
 
             <StackingCards totalCards={projects.length} className="reveal">
               <div className="relative z-10 flex h-[40vh] min-h-[240px] items-end justify-center pb-6">
-                <p className="text-xs font-medium uppercase tracking-[0.35em] text-stone-600">
+                <p className="text-xs font-medium uppercase tracking-[0.35em] text-neutral-500 dark:text-stone-600">
                   Scroll to explore ↓
                 </p>
               </div>
@@ -935,20 +922,20 @@ const Portfolio = () => {
                 href={siteConfig.social.github}
                 target="_blank"
                 rel="me noopener noreferrer"
-                className="group glass hover-lift rounded-2xl px-8 py-5 flex items-center gap-4 text-stone-300 hover:text-stone-100 transition-colors"
+                className="group glass hover-lift rounded-2xl px-8 py-5 flex items-center gap-4 text-muted hover:text-foreground transition-colors"
               >
-                <span className="w-12 h-12 rounded-xl bg-neutral-800/80 flex items-center justify-center text-stone-200 group-hover:text-white transition-colors">
+                <span className="w-12 h-12 rounded-xl bg-neutral-200 dark:bg-neutral-800/80 flex items-center justify-center text-neutral-700 dark:text-stone-200 group-hover:text-foreground dark:group-hover:text-white transition-colors">
                   <AiFillGithub className="text-2xl" />
                 </span>
                 <span className="text-left">
-                  <span className="block text-sm font-medium text-stone-100">
+                  <span className="block text-sm font-medium text-foreground">
                     Check GitHub for more projects
                   </span>
-                  <span className="block text-xs text-stone-500 mt-0.5">
+                  <span className="block text-xs text-muted mt-0.5">
                     github.com/joshuabalansa
                   </span>
                 </span>
-                <AiOutlineArrowRight className="-rotate-45 text-stone-500 group-hover:text-stone-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                <AiOutlineArrowRight className="-rotate-45 text-muted group-hover:text-foreground dark:group-hover:text-stone-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </Link>
             </div>
           </div>
@@ -963,7 +950,7 @@ const Portfolio = () => {
                 <br />
                 <span className="gradient-text">something great</span>
               </h2>
-              <p className="text-stone-400 font-light leading-relaxed max-w-xl mx-auto mb-14">
+              <p className="text-muted font-light leading-relaxed max-w-xl mx-auto mb-14">
                 Have a project in mind? Tell me about it — freelance, product builds, or
                 full-time opportunities.
               </p>
@@ -975,14 +962,14 @@ const Portfolio = () => {
                 data-cal-namespace="1h"
                 data-cal-link="joshua-balansa-iulx9o/1h"
                 data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-neutral-950 bg-white hover:bg-stone-100 transition-all duration-300"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium bg-neutral-900 text-white shadow-md hover:bg-neutral-800 transition-all duration-300 dark:bg-white dark:text-neutral-950 dark:shadow-none dark:hover:bg-stone-100"
               >
                 <MdCall />
                 Schedule a call
               </button>
               <Link
                 href={`mailto:${siteConfig.email}`}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-stone-400 glass hover:text-stone-200 transition-all duration-300"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-muted border border-neutral-200 bg-white shadow-sm hover:border-neutral-300 hover:text-foreground transition-all duration-300 dark:border-transparent dark:bg-transparent dark:shadow-none dark:glass dark:hover:text-foreground"
               >
                 <MdEmail />
                 Send an email
@@ -993,9 +980,9 @@ const Portfolio = () => {
         </div>
       </main>
 
-      <footer className="section-cv py-16 px-6 bg-[#0a0a0a]">
+      <footer className="section-cv py-16 px-6 bg-background">
         <div className="max-w-7xl mx-auto text-center">
-          <span className="inline-flex items-center gap-1.5 text-stone-400 text-sm">
+          <span className="inline-flex items-center gap-1.5 text-muted text-sm">
             Built with <FaHeart className="text-blue-500" aria-hidden /> by Josh
           </span>
         </div>

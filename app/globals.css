@@ -3,8 +3,19 @@
 @tailwind utilities;
 
 :root {
+  --background: #fafafa;
+  --foreground: #171717;
+  --muted: #737373;
+  --border: #e5e5e5;
+  --accent: #4487ff;
+  --accent-soft: #2563eb;
+}
+
+.dark {
   --background: #0a0a0a;
   --foreground: #f5f5f4;
+  --muted: #a8a29e;
+  --border: rgba(255, 255, 255, 0.08);
   --accent: #4487ff;
   --accent-soft: #e0e2ff;
 }
@@ -31,11 +42,14 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3f3f46, #171717);
+  background: linear-gradient(180deg, #d4d4d4, #a3a3a3);
   border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3f3f46, #171717);
 }
 
 @font-face {
@@ -217,10 +231,18 @@ body {
 }
 
 .glass {
-  background: rgba(10, 10, 10, 0.82);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+}
+.dark .glass {
+  background: rgba(10, 10, 10, 0.82);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
 }
 
 .glass-light {
@@ -241,7 +263,15 @@ body {
   .glass {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    background: #ffffff;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .dark .glass {
     background: rgba(10, 10, 10, 0.94);
+    box-shadow: none;
   }
 
   .glass-light {
@@ -256,6 +286,12 @@ body {
 }
 
 .gradient-text {
+  background: linear-gradient(135deg, #2563eb 0%, #4487ff 45%, #7eb0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text {
   background: linear-gradient(135deg, #e0e2ff 0%, #7eb0ff 45%, #4487ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -264,9 +300,14 @@ body {
 
 .grid-pattern {
   background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.dark .grid-pattern {
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
 }
 
 .reveal {
@@ -325,7 +366,7 @@ body {
   background: linear-gradient(
     45deg,
     transparent 40%,
-    rgba(255, 255, 255, 0.03) 50%,
+    rgba(0, 0, 0, 0.03) 50%,
     transparent 60%
   );
   transform: translate(-50%, -50%);
@@ -333,26 +374,16 @@ body {
   pointer-events: none;
   z-index: 1;
 }
+.dark .card-shine::before {
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 60%
+  );
+}
 .card-shine:hover::before {
   transform: translate(50%, 50%);
-}
-
-.nav-link {
-  position: relative;
-}
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: #4487ff;
-  transition: width 0.4s ease;
-}
-.nav-link:hover::after,
-.nav-link.is-active::after {
-  width: 100%;
 }
 
 .project-cover {
