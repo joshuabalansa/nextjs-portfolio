@@ -6,6 +6,7 @@
 // <div className="relative"><ShaderBackground className="absolute inset-0" />…
 
 import { useEffect, useRef } from "react"
+import { useTheme } from "next-themes"
 import { getEffectProfile } from "@/app/lib/effect-profile"
 
 const VERT = `attribute vec2 a_position;
@@ -276,9 +277,7 @@ void main() {
 }
 `
 
-const UNIFORMS = {
-  colors: [[0.10196078431372549,0.0784313725490196,0.13725490196078433],[0.7176470588235294,0.36470588235294116,0.4117647058823529],[0.9176470588235294,0.803921568627451,0.7607843137254902],[1,0.9607843137254902,0.9215686274509803],[1,0.9607843137254902,0.9215686274509803],[1,0.9607843137254902,0.9215686274509803],[1,0.9607843137254902,0.9215686274509803],[1,0.9607843137254902,0.9215686274509803]] as [number, number, number][],
-  colorCount: 4,
+const BASE_UNIFORMS = {
   scale: 1.320,
   intensity: 0.490,
   paramA: 0.840,
@@ -286,8 +285,6 @@ const UNIFORMS = {
   detail: 1.728,
   contrast: 1.077,
   brightness: 0.070,
-  saturation: 2.000,
-  hue: 2.2689,
   vignette: 0.000,
   blur: 0.0400,
   grain: 0.350,
@@ -302,14 +299,58 @@ const UNIFORMS = {
   cursorRadius: 0.555,
   oklab: 1.0,
   timeScale: -0.670,
+} as const
+
+const SMOKE_PALETTES = {
+  light: {
+    colors: [
+      [0.96, 0.96, 0.96],
+      [0.92, 0.92, 0.92],
+      [0.84, 0.84, 0.84],
+      [0.72, 0.72, 0.72],
+      [0.56, 0.56, 0.56],
+      [0.38, 0.38, 0.38],
+      [0.2, 0.2, 0.2],
+      [0.04, 0.04, 0.04],
+    ] as [number, number, number][],
+    colorCount: 4,
+    saturation: 0,
+    hue: 0,
+    intensity: 0.58,
+    brightness: 0,
+  },
+  dark: {
+    colors: [
+      [0.04, 0.04, 0.04],
+      [0.08, 0.08, 0.08],
+      [0.16, 0.16, 0.16],
+      [0.28, 0.28, 0.28],
+      [0.44, 0.44, 0.44],
+      [0.62, 0.62, 0.62],
+      [0.8, 0.8, 0.8],
+      [0.96, 0.96, 0.96],
+    ] as [number, number, number][],
+    colorCount: 4,
+    saturation: 0,
+    hue: 0,
+    intensity: 0.58,
+    brightness: 0,
+  },
+} as const
+
+function getSmokeUniforms(theme: "light" | "dark") {
+  return { ...BASE_UNIFORMS, ...SMOKE_PALETTES[theme] }
 }
 
 const pendingContextReleases = new WeakMap<HTMLCanvasElement, number>()
 
 export function ShaderBackground({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { resolvedTheme } = useTheme()
+  const smokeTheme = resolvedTheme === "light" ? "light" : "dark"
 
   useEffect(() => {
+    const UNIFORMS = getSmokeUniforms(smokeTheme)
     const canvas = canvasRef.current
     if (!canvas) return
     const pendingRelease = pendingContextReleases.get(canvas)
@@ -620,7 +661,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       }, 0)
       pendingContextReleases.set(canvas, releaseTimer)
     }
-  }, [])
+  }, [smokeTheme])
 
   return (
     <canvas

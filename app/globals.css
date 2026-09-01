@@ -7,8 +7,8 @@
   --foreground: #171717;
   --muted: #737373;
   --border: #e5e5e5;
-  --accent: #4487ff;
-  --accent-soft: #2563eb;
+  --accent: #171717;
+  --accent-soft: #525252;
 }
 
 .dark {
@@ -16,8 +16,8 @@
   --foreground: #f5f5f4;
   --muted: #a8a29e;
   --border: rgba(255, 255, 255, 0.08);
-  --accent: #4487ff;
-  --accent-soft: #e0e2ff;
+  --accent: #f5f5f4;
+  --accent-soft: #a3a3a3;
 }
 
 html {
@@ -286,13 +286,13 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #2563eb 0%, #4487ff 45%, #7eb0ff 100%);
+  background: linear-gradient(135deg, #525252 0%, #171717 45%, #737373 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .dark .gradient-text {
-  background: linear-gradient(135deg, #e0e2ff 0%, #7eb0ff 45%, #4487ff 100%);
+  background: linear-gradient(135deg, #fafafa 0%, #d4d4d4 45%, #a3a3a3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -407,18 +407,24 @@ body {
 }
 
 .orbit-ring {
-  border: 1px solid rgba(68, 135, 255, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 50%;
   position: absolute;
   inset: 0;
+}
+.dark .orbit-ring {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .particle {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(68, 135, 255, 0.4);
+  background: rgba(0, 0, 0, 0.35);
   position: absolute;
+}
+.dark .particle {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .toast {

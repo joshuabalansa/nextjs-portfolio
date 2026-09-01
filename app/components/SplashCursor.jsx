@@ -18,7 +18,8 @@ function SplashCursorCanvas({
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
   TRANSPARENT = true,
   RAINBOW_MODE = true,
-  COLOR = '#ff0000'
+  COLOR = '#ff0000',
+  INVERT_DISPLAY = false
 }) {
   const canvasRef = useRef(null);
   const animationFrameId = useRef(null);
@@ -59,7 +60,8 @@ function SplashCursorCanvas({
       BACK_COLOR,
       TRANSPARENT,
       RAINBOW_MODE,
-      COLOR
+      COLOR,
+      INVERT_DISPLAY
     };
 
     let pointers = [new pointerPrototype()];
@@ -314,7 +316,12 @@ function SplashCursorCanvas({
           #endif
 
           float a = max(c.r, max(c.g, c.b));
-          gl_FragColor = vec4(c, a);
+          #ifdef INVERT_DISPLAY
+              a = min(a * 2.8, 1.0);
+              gl_FragColor = vec4(vec3(0.0), a);
+          #else
+              gl_FragColor = vec4(c, a);
+          #endif
       }
     `;
 
@@ -672,6 +679,7 @@ function SplashCursorCanvas({
     function updateKeywords() {
       let displayKeywords = [];
       if (config.SHADING) displayKeywords.push('SHADING');
+      if (config.INVERT_DISPLAY) displayKeywords.push('INVERT_DISPLAY');
       displayMaterial.setKeywords(displayKeywords);
     }
 

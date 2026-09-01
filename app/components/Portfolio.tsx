@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { getCalApi } from "@calcom/embed-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
@@ -202,8 +203,8 @@ const projects = [
     githubLink: "",
     liveLink: "https://maison-lumiere-bice.vercel.app/",
     category: "Web App",
-    categoryClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    cover: "from-blue-900/70 via-stone-800 to-neutral-950",
+    categoryClass: "bg-neutral-500/10 text-neutral-600 border-neutral-500/20 dark:text-neutral-300",
+    cover: "from-neutral-800/70 via-stone-800 to-neutral-950",
     image: "/projects/maison-lumiere.png",
     featured: false,
   },
@@ -214,8 +215,8 @@ const projects = [
     githubLink: "",
     liveLink: "https://centimo.app",
     category: "Featured",
-    categoryClass: "bg-green-500/10 text-green-400 border-green-500/20",
-    cover: "from-emerald-800/60 via-stone-800 to-neutral-950",
+    categoryClass: "bg-neutral-500/10 text-neutral-700 border-neutral-500/25 dark:text-neutral-200",
+    cover: "from-neutral-700/60 via-stone-800 to-neutral-950",
     image: "/projects/centimo.png",
     featured: true,
   },
@@ -226,8 +227,8 @@ const projects = [
     githubLink: "https://github.com/joshuabalansa/e-tinda-web-marketplace-",
     liveLink: "",
     category: "Marketplace",
-    categoryClass: "bg-green-500/10 text-green-400 border-green-500/20",
-    cover: "from-lime-900/50 via-stone-800 to-neutral-950",
+    categoryClass: "bg-neutral-500/10 text-neutral-600 border-neutral-500/20 dark:text-neutral-300",
+    cover: "from-neutral-800/50 via-stone-800 to-neutral-950",
     image: "/projects/e-tinda.png",
     featured: false,
   },
@@ -237,8 +238,8 @@ const projects = [
     githubLink: "",
     liveLink: "https://www.kdgphilippines.org/",
     category: "Landing",
-    categoryClass: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    cover: "from-sky-900/50 via-stone-800 to-neutral-950",
+    categoryClass: "bg-neutral-500/10 text-neutral-600 border-neutral-500/20 dark:text-neutral-300",
+    cover: "from-neutral-800/50 via-stone-800 to-neutral-950",
     image: "/projects/kdg-philippines.png",
     featured: false,
   },
@@ -320,6 +321,8 @@ function getSkillTrackMetrics(track: HTMLElement) {
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
+  const [themeMounted, setThemeMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
   const countedRef = useRef(false);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
   const skillsTrackRef = useRef<HTMLDivElement>(null);
@@ -331,6 +334,12 @@ const Portfolio = () => {
     element.scrollIntoView({ behavior: "smooth" });
     setActiveSection(sectionId);
   };
+
+  const splashInvert = themeMounted && resolvedTheme === "light";
+
+  useEffect(() => {
+    setThemeMounted(true);
+  }, []);
 
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal");
@@ -496,8 +505,10 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-clip">
       <SplashCursor
+        key={splashInvert ? "light" : "dark"}
         RAINBOW_MODE={false}
-        COLOR="#4487ff"
+        COLOR="#ffffff"
+        INVERT_DISPLAY={splashInvert}
         BACK_COLOR={{ r: 0.04, g: 0.04, b: 0.04 }}
         TRANSPARENT
       />
@@ -533,28 +544,28 @@ const Portfolio = () => {
           aria-label="Introduction"
           className="min-h-dvh flex items-center relative px-4 py-4 md:px-6 md:py-6"
         >
-          <div className="relative z-10 w-full max-w-7xl mx-auto min-h-[calc(100dvh-2rem)] md:min-h-[calc(100dvh-3rem)] flex items-center rounded-3xl overflow-hidden bg-neutral-950 contain-paint">
+          <div className="relative z-10 w-full max-w-7xl mx-auto min-h-[calc(100dvh-2rem)] md:min-h-[calc(100dvh-3rem)] flex items-center rounded-3xl overflow-hidden bg-neutral-50 contain-paint dark:bg-neutral-950">
             <div className="absolute inset-0 z-0" aria-hidden="true">
               <ShaderBackground className="absolute inset-0 h-full w-full pointer-events-none" />
             </div>
-            <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-950/25" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent z-[3]" />
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-neutral-50/25 dark:bg-neutral-950/25" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-neutral-50 to-transparent z-[3] dark:from-[#0a0a0a]" />
 
             <div className="relative z-10 w-full px-6 pt-16 pb-24">
               <div className="w-full mx-auto text-center">
-                <h1 className="hero-name font-bold text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
+                <h1 className="hero-name font-bold text-neutral-950 dark:text-white animate-fade-up hero-delay-1 mb-8 whitespace-nowrap">
                   Joshua Balansa
                 </h1>
 
                 <div className="flex items-center justify-center gap-4 mb-8 animate-fade-up hero-delay-2">
-                  <div className="h-px w-10 bg-white/40" />
-                  <p className="font-mono text-sm md:text-base text-stone-100 tracking-wide">
+                  <div className="h-px w-10 bg-neutral-900/40 dark:bg-white/40" />
+                  <p className="font-mono text-sm md:text-base text-neutral-900 dark:text-stone-100 tracking-wide">
                     Full-stack developer
                   </p>
-                  <div className="h-px w-10 bg-white/40" />
+                  <div className="h-px w-10 bg-neutral-900/40 dark:bg-white/40" />
                 </div>
 
-                <p className="text-stone-200 font-normal text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-8 animate-fade-up hero-delay-3">
+                <p className="text-neutral-700 dark:text-stone-200 font-normal text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-8 animate-fade-up hero-delay-3">
                   I design and ship clean, fast web products — interfaces with craft,
                   backends that hold up. Based in the Philippines, working with clients worldwide.
                 </p>
@@ -563,7 +574,7 @@ const Portfolio = () => {
                   {heroStack.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1 rounded-full text-xs tracking-wide border border-white/15 bg-neutral-950/40 text-stone-100"
+                      className="px-3 py-1 rounded-full text-xs tracking-wide border border-neutral-900/15 bg-white/40 text-neutral-900 dark:border-white/15 dark:bg-neutral-950/40 dark:text-stone-100"
                     >
                       {item}
                     </span>
@@ -574,7 +585,7 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => scrollToSection("projects")}
-                    className="group inline-flex items-center justify-center gap-3 w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-neutral-950 bg-white shadow-lg shadow-black/20 hover:bg-stone-100 transition-all duration-300"
+                    className="group inline-flex items-center justify-center gap-3 w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-white bg-neutral-950 hover:bg-neutral-900 transition-all duration-300 dark:text-neutral-950 dark:bg-white dark:hover:bg-stone-100"
                   >
                     View My Work
                     <AiOutlineArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -582,7 +593,7 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => scrollToSection("contact")}
-                    className="inline-flex items-center justify-center w-full sm:w-52 h-14 rounded-2xl border border-white/25 bg-white/10 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/20"
+                    className="inline-flex items-center justify-center w-full sm:w-52 h-14 rounded-2xl text-sm font-medium text-neutral-950 border border-neutral-900/25 bg-neutral-900/10 hover:text-neutral-950 hover:border-neutral-900/40 hover:bg-neutral-900/20 transition-all duration-500 dark:text-stone-100 dark:glass dark:border-transparent dark:hover:text-white"
                   >
                     Get In Touch
                   </button>
@@ -596,14 +607,14 @@ const Portfolio = () => {
                       target={href.startsWith("mailto:") ? undefined : "_blank"}
                       rel={href.startsWith("mailto:") ? undefined : "me noopener noreferrer"}
                       aria-label={label}
-                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white/80 backdrop-blur-sm transition-all duration-300 hover:border-white/35 hover:bg-white/20 hover:text-white"
+                      className="w-11 h-11 rounded-xl flex items-center justify-center text-neutral-800 border border-neutral-900/20 bg-neutral-900/10 hover:text-neutral-950 hover:border-neutral-900/35 hover:bg-neutral-900/20 transition-all duration-300 dark:glass dark:border-transparent dark:text-stone-200 dark:hover:text-white"
                     >
                       <Icon className="text-xl" />
                     </Link>
                   ))}
                 </div>
+              </div>
             </div>
-          </div>
           </div>
         </section>
 
@@ -629,7 +640,7 @@ const Portfolio = () => {
               <div className="lg:col-span-7 space-y-14">
                 <div className="reveal stagger-1">
                   <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
-                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-neutral-900 dark:bg-neutral-100 animate-pulse" />
                     <span className="text-xs text-muted font-medium uppercase tracking-[0.2em]">
                       Open to freelance & full-time
                     </span>
@@ -850,7 +861,7 @@ const Portfolio = () => {
                   <article
                     className={cn(
                       "mx-auto flex h-[75%] w-11/12 max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-neutral-950/90 shadow-2xl shadow-black/40 backdrop-blur-sm lg:flex-row",
-                      project.featured && "ring-1 ring-blue-500/20"
+                      project.featured && "ring-1 ring-neutral-400/30 dark:ring-neutral-500/20"
                     )}
                   >
                     <div className="relative flex flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:max-w-[46%]">
@@ -969,7 +980,7 @@ const Portfolio = () => {
               </button>
               <Link
                 href={`mailto:${siteConfig.email}`}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-muted border border-neutral-200 bg-white shadow-sm hover:border-neutral-300 hover:text-foreground transition-all duration-300 dark:border-transparent dark:bg-transparent dark:shadow-none dark:glass dark:hover:text-foreground"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-medium text-neutral-700 border border-neutral-900/25 bg-neutral-900/10 hover:border-neutral-900/40 hover:text-neutral-950 hover:bg-neutral-900/20 transition-all duration-300 dark:text-muted dark:border-transparent dark:bg-transparent dark:glass dark:hover:text-foreground"
               >
                 <MdEmail />
                 Send an email
@@ -983,7 +994,7 @@ const Portfolio = () => {
       <footer className="section-cv py-16 px-6 bg-background">
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-flex items-center gap-1.5 text-muted text-sm">
-            Built with <FaHeart className="text-blue-500" aria-hidden /> by Josh
+            Built with <FaHeart className="text-neutral-900 dark:text-neutral-100" aria-hidden /> by Josh
           </span>
         </div>
       </footer>
