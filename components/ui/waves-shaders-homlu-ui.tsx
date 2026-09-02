@@ -464,11 +464,11 @@ export function ShaderBackground({ className }: { className?: string }) {
     // Desktop keeps continuous smoke (user preference).
     let scrollLocked = false
     let scrollTimer = 0
-    const pauseOnScroll = profile.constrained
+    const pauseOnScroll = true
     const start = performance.now()
     const timeAnimated =
       !profile.reduceMotion && Math.abs(UNIFORMS.timeScale) > 0.0001
-    const minFrameMs = profile.constrained ? 33 : 0
+    const minFrameMs = profile.frameMs
 
     const resizeCanvas = () => {
       const dpr = profile.dpr

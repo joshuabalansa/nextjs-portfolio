@@ -232,8 +232,8 @@ body {
 
 .glass {
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.04),
@@ -282,6 +282,10 @@ body {
 
   .about-sticker {
     filter: none;
+  }
+
+  .card-shine::before {
+    display: none;
   }
 }
 

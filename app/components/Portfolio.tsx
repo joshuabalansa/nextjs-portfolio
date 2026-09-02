@@ -13,6 +13,7 @@ import {
   AiFillLinkedin,
   AiOutlineArrowRight,
 } from "react-icons/ai";
+import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import type { IconType } from "react-icons";
 import {
   FaEnvelope,
@@ -197,6 +198,18 @@ function SkillTile({ name, icon: Icon, color }: Skill) {
 
 const projects = [
   {
+    title: "Adams & Co.",
+    details:
+      "A wholesale e-commerce site for a premium home décor brand — quality craftsmanship meets fresh, modern design across wall, seasonal, tabletop, and DIY décor, stocked in specialty boutiques nationwide.",
+    githubLink: "",
+    liveLink: "https://www.adamsandco.net/",
+    category: "E-commerce",
+    categoryClass: "bg-neutral-500/10 text-neutral-600 border-neutral-500/20 dark:text-neutral-300",
+    cover: "from-neutral-800/50 via-stone-800 to-neutral-950",
+    image: "/projects/adams-co.png",
+    featured: false,
+  },
+  {
     title: "Maison Lumière",
     details:
       "A marketing and operations site for a boutique Airbnb management house in Manila. Investors can explore the method, live portfolio numbers, and book a call; the app also handles unit bookings, guest activity, and an admin dashboard for managed suites.",
@@ -321,9 +334,12 @@ function getSkillTrackMetrics(track: HTMLElement) {
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("hero");
   const [activeSkillTab, setActiveSkillTab] = useState<SkillTabId>("frontend");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [themeMounted, setThemeMounted] = useState(false);
+  const [effectsPaused, setEffectsPaused] = useState(false);
   const { resolvedTheme } = useTheme();
   const countedRef = useRef(false);
+  const navRef = useRef<HTMLDivElement>(null);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
   const skillsTrackRef = useRef<HTMLDivElement>(null);
   const skillScrollLockRef = useRef(false);
@@ -333,12 +349,42 @@ const Portfolio = () => {
     if (!element) return;
     element.scrollIntoView({ behavior: "smooth" });
     setActiveSection(sectionId);
+    setMobileNavOpen(false);
   };
 
   const splashInvert = themeMounted && resolvedTheme === "light";
 
   useEffect(() => {
     setThemeMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileNavOpen(false);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileNavOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const handleChange = () => {
+      if (mediaQuery.matches) setMobileNavOpen(false);
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   useEffect(() => {
@@ -371,6 +417,38 @@ const Portfolio = () => {
 
   useEffect(() => {
     const sectionIds = ["hero", ...navItems.map((item) => item.id)];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection((current) => (current === id ? current : id));
+          }
+        },
+        { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+      );
+      observer.observe(element);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((observer) => observer.disconnect());
+  }, []);
+
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setEffectsPaused(!entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const mobileQuery = window.matchMedia("(max-width: 767px)");
     let ticking = false;
@@ -384,24 +462,12 @@ const Portfolio = () => {
       skillScrollable = Math.max(1, track.offsetHeight - window.innerHeight);
     };
 
-    const update = () => {
+    const updateSkillTab = () => {
       ticking = false;
-      const y = window.scrollY;
-
-      const scrollPosition = y + 200;
-      for (const id of sectionIds) {
-        const element = document.getElementById(id);
-        if (!element) continue;
-        const { offsetTop, offsetHeight } = element;
-        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-          setActiveSection((current) => (current === id ? current : id));
-          break;
-        }
-      }
-
       const track = skillsTrackRef.current;
       if (!track || skillScrollLockRef.current || prefersReducedMotion.matches) return;
       if (mobileQuery.matches) return;
+      const y = window.scrollY;
       if (y + window.innerHeight < skillTop || y > skillTop + track.offsetHeight) return;
 
       const progress = Math.min(1, Math.max(0, (y - skillTop) / skillScrollable));
@@ -412,7 +478,7 @@ const Portfolio = () => {
     const handleScroll = () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(update);
+      requestAnimationFrame(updateSkillTab);
     };
 
     const unlockSkillScroll = () => {
@@ -420,7 +486,7 @@ const Portfolio = () => {
     };
 
     cacheSkillMetrics();
-    update();
+    updateSkillTab();
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", cacheSkillMetrics, { passive: true });
     window.addEventListener("wheel", unlockSkillScroll, { passive: true });
@@ -458,6 +524,8 @@ const Portfolio = () => {
   const activeSkillGroup =
     skillTabs.find((tab) => tab.id === activeSkillTab) ?? skillTabs[0];
   const visibleSkills = skills.filter((skill) => skill.category === activeSkillTab);
+  const activeNavLabel =
+    navItems.find((item) => item.id === activeSection)?.label ?? "Home";
 
   const scrollToSkillTab = (tabId: SkillTabId) => {
     setActiveSkillTab(tabId);
@@ -505,36 +573,84 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-clip">
       <SplashCursor
-        key={splashInvert ? "light" : "dark"}
         RAINBOW_MODE={false}
         COLOR="#ffffff"
         INVERT_DISPLAY={splashInvert}
         BACK_COLOR={{ r: 0.04, g: 0.04, b: 0.04 }}
         TRANSPARENT
+        paused={effectsPaused}
       />
       <nav
         aria-label="Primary"
         className="sticky top-4 z-50 flex justify-center px-4 pt-4"
       >
-        <div className="flex max-w-full items-center gap-1 rounded-full border border-neutral-200 bg-white px-2 py-2 shadow-[0_2px_16px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-[0_2px_16px_rgba(0,0,0,0.35)]">
-          {navItems.map(({ id, label }) => (
+        <div ref={navRef} className="relative w-full max-w-md md:w-auto md:max-w-none">
+          <div className="hidden md:flex max-w-full items-center gap-1 rounded-full border border-neutral-200 bg-white px-2 py-2 shadow-[0_2px_16px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-[0_2px_16px_rgba(0,0,0,0.35)]">
+            {navItems.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => scrollToSection(id)}
+                className={cn(
+                  "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                  activeSection === id
+                    ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                    : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+            <div className="ml-0.5 border-l border-neutral-200 pl-1.5 dark:border-neutral-700">
+              <ThemeToggle />
+            </div>
+          </div>
+
+          <div className="flex md:hidden items-center justify-between gap-3 rounded-full border border-neutral-200 bg-white px-2 py-2 shadow-[0_2px_16px_rgba(0,0,0,0.08)] dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-[0_2px_16px_rgba(0,0,0,0.35)]">
             <button
-              key={id}
               type="button"
-              onClick={() => scrollToSection(id)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4",
-                activeSection === id
-                  ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
-                  : "text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-              )}
+              onClick={() => setMobileNavOpen((open) => !open)}
+              aria-expanded={mobileNavOpen}
+              aria-controls="mobile-nav-menu"
+              aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
             >
-              {label}
+              {mobileNavOpen ? (
+                <HiOutlineX className="h-5 w-5" aria-hidden />
+              ) : (
+                <HiOutlineMenu className="h-5 w-5" aria-hidden />
+              )}
             </button>
-          ))}
-          <div className="ml-0.5 border-l border-neutral-200 pl-1.5 dark:border-neutral-700">
+            <span className="min-w-0 flex-1 truncate text-center text-sm font-medium text-neutral-900 dark:text-neutral-100">
+              {activeNavLabel}
+            </span>
             <ThemeToggle />
           </div>
+
+          {mobileNavOpen ? (
+            <div
+              id="mobile-nav-menu"
+              role="menu"
+              className="absolute left-0 right-0 top-[calc(100%+0.5rem)] rounded-2xl border border-neutral-200 bg-white p-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-[0_8px_32px_rgba(0,0,0,0.45)] md:hidden"
+            >
+              {navItems.map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => scrollToSection(id)}
+                  className={cn(
+                    "flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors",
+                    activeSection === id
+                      ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100"
+                      : "text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800/60 dark:hover:text-neutral-200"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
       </nav>
 
@@ -834,9 +950,9 @@ const Portfolio = () => {
         </section>
 
         <section id="projects" className="section-cv relative">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="pt-32 pb-8 text-center">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="pt-24 pb-6 text-center md:pt-32 md:pb-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight reveal stagger-1">
                 Featured <span className="gradient-text">projects</span>
               </h2>
               <p className="mt-3 md:mt-4 text-sm md:text-base text-muted font-light leading-relaxed max-w-xl mx-auto reveal stagger-2">
@@ -846,7 +962,7 @@ const Portfolio = () => {
             </div>
 
             <StackingCards totalCards={projects.length} className="reveal">
-              <div className="relative z-10 flex h-[40vh] min-h-[240px] items-end justify-center pb-6">
+              <div className="relative z-10 flex h-[30vh] min-h-[160px] items-end justify-center pb-4 md:h-[40vh] md:min-h-[240px] md:pb-6">
                 <p className="text-xs font-medium uppercase tracking-[0.35em] text-neutral-500 dark:text-stone-600">
                   Scroll to explore ↓
                 </p>
@@ -856,30 +972,30 @@ const Portfolio = () => {
                 <StackingCardItem
                   key={project.title}
                   index={index}
-                  className="h-[85vh] min-h-[620px]"
+                  className="h-[88dvh] min-h-[520px] md:h-[85vh] md:min-h-[620px]"
                 >
                   <article
                     className={cn(
-                      "mx-auto flex h-[75%] w-11/12 max-w-5xl flex-col overflow-hidden rounded-3xl border border-white/10 bg-neutral-950/90 shadow-2xl shadow-black/40 backdrop-blur-sm lg:flex-row",
+                      "mx-auto flex h-[75%] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-950/90 shadow-2xl shadow-black/40 md:w-11/12 md:rounded-3xl lg:flex-row",
                       project.featured && "ring-1 ring-neutral-400/30 dark:ring-neutral-500/20"
                     )}
                   >
-                    <div className="relative flex flex-1 flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:max-w-[46%]">
+                    <div className="relative flex min-h-0 flex-1 flex-col justify-center px-4 py-5 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:max-w-[46%]">
                       <span
                         className={cn(
-                          "mb-4 inline-flex w-fit rounded-full border px-3 py-1 text-[11px] font-medium",
+                          "mb-3 inline-flex w-fit rounded-full border px-3 py-1 text-[11px] font-medium sm:mb-4",
                           project.categoryClass
                         )}
                       >
                         {project.category}
                       </span>
-                      <h3 className="text-2xl font-bold tracking-tight text-stone-50 sm:text-3xl">
+                      <h3 className="text-xl font-bold tracking-tight text-stone-50 sm:text-2xl md:text-3xl">
                         {project.title}
                       </h3>
-                      <p className="mt-4 text-sm font-light leading-relaxed text-stone-400 sm:text-base">
+                      <p className="mt-3 line-clamp-4 text-sm font-light leading-relaxed text-stone-400 sm:mt-4 sm:line-clamp-none sm:text-base">
                         {project.details}
                       </p>
-                      <div className="mt-6 flex flex-wrap items-center gap-3">
+                      <div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-6">
                         {project.liveLink ? (
                           <Link
                             href={project.liveLink}
@@ -905,7 +1021,7 @@ const Portfolio = () => {
                       </div>
                     </div>
 
-                    <div className="relative min-h-[220px] flex-1 overflow-hidden border-t border-white/5 lg:min-h-0 lg:border-l lg:border-t-0">
+                    <div className="relative min-h-[140px] flex-1 overflow-hidden border-t border-white/5 sm:min-h-[180px] lg:min-h-0 lg:flex-1 lg:border-l lg:border-t-0">
                       <div
                         className={cn(
                           "absolute inset-0 bg-gradient-to-br",

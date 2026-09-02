@@ -3,28 +3,48 @@ import { useEffect, useRef, useState } from 'react';
 import { getEffectProfile } from '../lib/effect-profile';
 
 function SplashCursorCanvas({
-  SIM_RESOLUTION = 96,
-  DYE_RESOLUTION = 512,
+  SIM_RESOLUTION,
+  DYE_RESOLUTION,
   CAPTURE_RESOLUTION = 512,
   DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
   PRESSURE = 0.1,
-  PRESSURE_ITERATIONS = 10,
+  PRESSURE_ITERATIONS,
   CURL = 3,
   SPLAT_RADIUS = 0.2,
   SPLAT_FORCE = 6000,
-  SHADING = true,
+  SHADING,
   COLOR_UPDATE_SPEED = 10,
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
   TRANSPARENT = true,
   RAINBOW_MODE = true,
   COLOR = '#ff0000',
-  INVERT_DISPLAY = false
+  INVERT_DISPLAY = false,
+  paused = false,
 }) {
   const canvasRef = useRef(null);
   const animationFrameId = useRef(null);
+  const invertRef = useRef(INVERT_DISPLAY);
+  const pausedRef = useRef(paused);
 
   useEffect(() => {
+    invertRef.current = INVERT_DISPLAY;
+  }, [INVERT_DISPLAY]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    if (paused && animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = null;
+    }
+  }, [paused]);
+
+  useEffect(() => {
+    const profile = getEffectProfile();
+    const resolvedSimRes = SIM_RESOLUTION ?? profile.cursorSimRes;
+    const resolvedDyeRes = DYE_RESOLUTION ?? profile.cursorDyeRes;
+    const resolvedPressureIter = PRESSURE_ITERATIONS ?? profile.cursorPressureIter;
+    const resolvedShading = SHADING ?? profile.cursorShading;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -44,17 +64,17 @@ function SplashCursorCanvas({
     }
 
     let config = {
-      SIM_RESOLUTION,
-      DYE_RESOLUTION,
+      SIM_RESOLUTION: resolvedSimRes,
+      DYE_RESOLUTION: resolvedDyeRes,
       CAPTURE_RESOLUTION,
       DENSITY_DISSIPATION,
       VELOCITY_DISSIPATION,
       PRESSURE,
-      PRESSURE_ITERATIONS,
+      PRESSURE_ITERATIONS: resolvedPressureIter,
       CURL,
       SPLAT_RADIUS,
       SPLAT_FORCE,
-      SHADING,
+      SHADING: resolvedShading,
       COLOR_UPDATE_SPEED,
       PAUSED: false,
       BACK_COLOR,
@@ -679,7 +699,7 @@ function SplashCursorCanvas({
     function updateKeywords() {
       let displayKeywords = [];
       if (config.SHADING) displayKeywords.push('SHADING');
-      if (config.INVERT_DISPLAY) displayKeywords.push('INVERT_DISPLAY');
+      if (invertRef.current) displayKeywords.push('INVERT_DISPLAY');
       displayMaterial.setKeywords(displayKeywords);
     }
 
@@ -688,10 +708,14 @@ function SplashCursorCanvas({
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
     let lastInputTime = 0;
+    let lastFrameTime = 0;
     const IDLE_MS = 1800;
+    const minFrameMs = profile.frameMs;
+    let scrollLocked = false;
+    let scrollTimer = 0;
 
     function resumeFrame() {
-      if (!isActive || animationFrameId.current) return;
+      if (!isActive || pausedRef.current || scrollLocked || animationFrameId.current) return;
       lastUpdateTime = Date.now();
       animationFrameId.current = requestAnimationFrame(updateFrame);
     }
@@ -701,12 +725,18 @@ function SplashCursorCanvas({
       resumeFrame();
     }
 
-    function updateFrame() {
+    function updateFrame(now) {
       if (!isActive) return;
       animationFrameId.current = null;
-      if (document.hidden) return;
+      if (document.hidden || pausedRef.current || scrollLocked) return;
       const idleFor = performance.now() - lastInputTime;
       if (idleFor > IDLE_MS) return;
+      if (minFrameMs > 0 && lastFrameTime > 0 && now - lastFrameTime < minFrameMs) {
+        animationFrameId.current = requestAnimationFrame(updateFrame);
+        return;
+      }
+      lastFrameTime = now;
+      updateKeywords();
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1073,8 +1103,23 @@ function SplashCursorCanvas({
       handleMouseMove(e);
     }
 
+    const onScroll = () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
+        lastFrameTime = 0;
+      }
+      scrollLocked = true;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        scrollLocked = false;
+        if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
+      }, 150);
+    };
+
     window.addEventListener('mousedown', handleMouseDownAndResume, { passive: true });
     window.addEventListener('mousemove', handleMouseMoveAndResume, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
@@ -1085,8 +1130,10 @@ function SplashCursorCanvas({
         animationFrameId.current = null;
       }
 
+      window.clearTimeout(scrollTimer);
       window.removeEventListener('mousedown', handleMouseDownAndResume);
       window.removeEventListener('mousemove', handleMouseMoveAndResume);
+      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVisibility);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1119,7 +1166,7 @@ function SplashCursorCanvas({
   );
 }
 
-export default function SplashCursor(props) {
+export default function SplashCursor({ paused = false, ...props }) {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
@@ -1135,5 +1182,5 @@ export default function SplashCursor(props) {
   }, []);
 
   if (!enabled) return null;
-  return <SplashCursorCanvas {...props} />;
+  return <SplashCursorCanvas paused={paused} {...props} />;
 }

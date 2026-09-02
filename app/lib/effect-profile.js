@@ -7,7 +7,12 @@ export function getEffectProfile() {
       cursor: false,
       shaderBlur: true,
       dpr: 1,
-      shaderPixels: 2_000_000,
+      shaderPixels: 1_200_000,
+      frameMs: 33,
+      cursorSimRes: 64,
+      cursorDyeRes: 256,
+      cursorPressureIter: 5,
+      cursorShading: false,
     };
   }
 
@@ -30,7 +35,12 @@ export function getEffectProfile() {
     constrained,
     cursor: hasFinePointer && !reduceMotion && !saveData,
     shaderBlur: !constrained,
-    dpr: Math.min(window.devicePixelRatio || 1, constrained ? 1 : 1.5),
-    shaderPixels: constrained ? 480_000 : 1_600_000,
+    dpr: Math.min(window.devicePixelRatio || 1, constrained ? 1 : 1.25),
+    shaderPixels: constrained ? 400_000 : 1_000_000,
+    frameMs: 33,
+    cursorSimRes: constrained ? 48 : 64,
+    cursorDyeRes: constrained ? 192 : 320,
+    cursorPressureIter: constrained ? 4 : 5,
+    cursorShading: false,
   };
 }
