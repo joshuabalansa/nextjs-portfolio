@@ -26,6 +26,8 @@ function SplashCursorCanvas({
   const animationFrameId = useRef(null);
   const invertRef = useRef(INVERT_DISPLAY);
   const pausedRef = useRef(paused);
+  const resumeFrameRef = useRef(() => {});
+  const lastInputTimeRef = useRef(performance.now());
 
   useEffect(() => {
     invertRef.current = INVERT_DISPLAY;
@@ -36,6 +38,9 @@ function SplashCursorCanvas({
     if (paused && animationFrameId.current) {
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = null;
+    } else if (!paused) {
+      lastInputTimeRef.current = performance.now();
+      resumeFrameRef.current();
     }
   }, [paused]);
 
@@ -707,10 +712,10 @@ function SplashCursorCanvas({
     initFramebuffers();
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
-    let lastInputTime = 0;
     let lastFrameTime = 0;
     const IDLE_MS = 1800;
     const minFrameMs = profile.frameMs;
+    const pauseOnScroll = false;
     let scrollLocked = false;
     let scrollTimer = 0;
 
@@ -720,8 +725,10 @@ function SplashCursorCanvas({
       animationFrameId.current = requestAnimationFrame(updateFrame);
     }
 
+    resumeFrameRef.current = resumeFrame;
+
     function markInput() {
-      lastInputTime = performance.now();
+      lastInputTimeRef.current = performance.now();
       resumeFrame();
     }
 
@@ -729,7 +736,7 @@ function SplashCursorCanvas({
       if (!isActive) return;
       animationFrameId.current = null;
       if (document.hidden || pausedRef.current || scrollLocked) return;
-      const idleFor = performance.now() - lastInputTime;
+      const idleFor = performance.now() - lastInputTimeRef.current;
       if (idleFor > IDLE_MS) return;
       if (minFrameMs > 0 && lastFrameTime > 0 && now - lastFrameTime < minFrameMs) {
         animationFrameId.current = requestAnimationFrame(updateFrame);
@@ -1090,7 +1097,7 @@ function SplashCursorCanvas({
         }
         return;
       }
-      if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
+      if (performance.now() - lastInputTimeRef.current <= IDLE_MS) resumeFrame();
     };
 
     function handleMouseDownAndResume(e) {
@@ -1104,6 +1111,7 @@ function SplashCursorCanvas({
     }
 
     const onScroll = () => {
+      if (!pauseOnScroll) return;
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
@@ -1113,7 +1121,7 @@ function SplashCursorCanvas({
       window.clearTimeout(scrollTimer);
       scrollTimer = window.setTimeout(() => {
         scrollLocked = false;
-        if (performance.now() - lastInputTime <= IDLE_MS) resumeFrame();
+        if (performance.now() - lastInputTimeRef.current <= IDLE_MS) resumeFrame();
       }, 150);
     };
 
@@ -1150,7 +1158,9 @@ function SplashCursorCanvas({
         width: '100%',
         height: '100%',
         contain: 'strict',
-        transform: 'translateZ(0)'
+        transform: 'translateZ(0)',
+        opacity: paused ? 0 : 1,
+        transition: 'opacity 0.35s ease',
       }}
     >
       <canvas
