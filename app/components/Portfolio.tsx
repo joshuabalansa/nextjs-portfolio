@@ -287,18 +287,56 @@ const approachSteps = [
   },
 ];
 
-const stats = [
-  { value: 15, suffix: "+", label: "Projects" },
-  { value: 5, suffix: "+", label: "Years Exp", display: "5+" },
-  { value: skills.length, suffix: "", label: "Tech Stack" },
-  { value: 0, suffix: "", label: "GMT+8", display: "PH" },
+const expertiseAreas = [
+  {
+    title: "E-commerce & Landing Pages",
+    description: "Storefronts, marketing sites, checkout flows, and admin panels built to convert and scale.",
+  },
+  {
+    title: "SaaS",
+    description: "Multi-tenant products with subscriptions, dashboards, and real-time data.",
+  },
+  {
+    title: "ERP & Operations",
+    description: "Inventory, orders, and internal workflows that teams rely on every day.",
+  },
+  {
+    title: "Full-stack delivery",
+    description: "React, Next.js, Laravel, and Node — from UI polish through production deploy.",
+  },
 ];
 
-const stackHighlights = [
-  { label: "Front-end", value: "React, Next.js, TypeScript, Tailwind" },
-  { label: "Back-end", value: "Laravel, Node.js, Express, REST APIs" },
-  { label: "Data", value: "MySQL, MongoDB, Firebase" },
-  { label: "Mindset", value: "Ship sharp, iterate fast" },
+const timeline = [
+  {
+    period: "2019 – 2023",
+    title: "BS Information Systems",
+    description:
+      "Studied system design and software development — requirements analysis, database modeling, and building applications from concept through deployment.",
+  },
+  {
+    period: "2023",
+    title: "Started as a Software Developer",
+    description:
+      "Moved from academics into professional development — shipping real products, learning production workflows, and sharpening skills across the stack.",
+  },
+  {
+    period: "2024",
+    title: "E-commerce & Marketplace Builds",
+    description:
+      "Focused on online retail and marketplace platforms — catalog flows, checkout, admin panels, and integrations that keep stores running smoothly.",
+  },
+  {
+    period: "2025",
+    title: "SaaS & Operations Platforms",
+    description:
+      "Shifted toward multi-tenant products and operations tooling — POS systems, ERP tasks, booking flows, dashboards, and AI-assisted business insights.",
+  },
+  {
+    period: "2026 – Present",
+    title: "Freelance Full-Stack Developer",
+    description:
+      "Working with clients worldwide on e-commerce, web apps, and product builds — from polished landing pages to full-stack platforms.",
+  },
 ];
 
 const whatIBring = [
@@ -307,23 +345,6 @@ const whatIBring = [
   "Clear async communication so remote work stays simple across time zones.",
   "A bias toward maintainable systems — not just a quick demo that breaks next month.",
 ];
-
-function animateCount(el: HTMLElement, target: number, display?: string, suffix = "") {
-  if (display) {
-    el.textContent = display;
-    return;
-  }
-  let current = 0;
-  const step = Math.max(1, Math.ceil(target / 40));
-  const timer = window.setInterval(() => {
-    current += step;
-    if (current >= target) {
-      current = target;
-      window.clearInterval(timer);
-    }
-    el.textContent = `${current}${suffix}`;
-  }, 40);
-}
 
 function getSkillTrackMetrics(track: HTMLElement) {
   const top = window.scrollY + track.getBoundingClientRect().top;
@@ -338,7 +359,6 @@ const Portfolio = () => {
   const [themeMounted, setThemeMounted] = useState(false);
   const [effectsPaused, setEffectsPaused] = useState(false);
   const { resolvedTheme } = useTheme();
-  const countedRef = useRef(false);
   const navRef = useRef<HTMLDivElement>(null);
   const skillTabRefs = useRef<Partial<Record<SkillTabId, HTMLButtonElement | null>>>({});
   const skillsTrackRef = useRef<HTMLDivElement>(null);
@@ -394,18 +414,6 @@ const Portfolio = () => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           entry.target.classList.add("active");
-
-          if (!countedRef.current && entry.target.querySelector("[data-count]")) {
-            countedRef.current = true;
-            entry.target.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
-              animateCount(
-                el,
-                Number(el.dataset.count),
-                el.dataset.display,
-                el.dataset.suffix ?? ""
-              );
-            });
-          }
         });
       },
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
@@ -795,19 +803,37 @@ const Portfolio = () => {
                   </div>
                 </div>
 
-                <dl className="reveal stagger-3 divide-y divide-border border-y border-border">
-                  {stackHighlights.map(({ label, value }) => (
-                    <div
-                      key={label}
-                      className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 py-4"
-                    >
-                      <dt className="sm:w-28 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted">
-                        {label}
-                      </dt>
-                      <dd className="text-foreground/90 font-medium">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
+                <div className="reveal stagger-3">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-6">
+                    Journey
+                  </p>
+                  <div className="divide-y divide-border border-y border-border">
+                    {timeline.map((item, index) => (
+                      <div
+                        key={item.period}
+                        className="relative py-6 pl-8 sm:pl-10"
+                      >
+                        {index < timeline.length - 1 && (
+                          <span
+                            aria-hidden
+                            className="absolute left-[7px] sm:left-[9px] top-9 bottom-0 w-px bg-border"
+                          />
+                        )}
+                        <span
+                          aria-hidden
+                          className="absolute left-0 top-7 h-[15px] w-[15px] rounded-full border-2 border-foreground bg-background"
+                        />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted mb-1 block">
+                          {item.period}
+                        </span>
+                        <h3 className="font-semibold text-foreground mb-2">{item.title}</h3>
+                        <p className="text-muted font-light leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 <div className="reveal stagger-4">
                   <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-6">
@@ -826,20 +852,23 @@ const Portfolio = () => {
                   </ul>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 reveal stagger-5">
-                  {stats.map((stat) => (
-                    <div key={stat.label} className="glass rounded-2xl p-5 text-center card-shine">
-                      <p
-                        className="text-3xl font-bold text-foreground mb-1"
-                        data-count={stat.value}
-                        data-suffix={stat.suffix}
-                        data-display={stat.display}
+                <div className="reveal stagger-5">
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted mb-6">
+                    What I build
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {expertiseAreas.map((area) => (
+                      <div
+                        key={area.title}
+                        className="glass rounded-2xl p-5 card-shine transition-colors hover:border-foreground/10"
                       >
-                        {stat.display ?? "0"}
-                      </p>
-                      <p className="text-xs text-muted uppercase tracking-wider">{stat.label}</p>
-                    </div>
-                  ))}
+                        <h3 className="font-semibold text-foreground mb-2">{area.title}</h3>
+                        <p className="text-sm text-muted font-light leading-relaxed">
+                          {area.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="reveal">
